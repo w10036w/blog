@@ -1,4 +1,4 @@
-# Ark's Blog
+# Ark's Tech Blog
 
 [Algo](/algojs.md) Algorithms \(mainly leetcode solutions\) JS version.
 

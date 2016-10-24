@@ -21,18 +21,18 @@ return [0, 1].
  * @return {number[]}
  */
 var twoSum = function(nums, target) {
- var tmp = {};
- var result;
- nums.some(function(e, i){
-   if(typeof tmp[target-e] === 'number'){
-     result = [tmp[target-e], i];
-     return true;
-   } else {
-     tmp[e] = i;
-     return false;
-   }
- });
- return result;
+  var tmp = {};
+  var result;
+  nums.some(function(e, i){
+    if(typeof tmp[target-e] === 'number'){
+      result = [tmp[target-e], i];
+      return true;
+    } else {
+      tmp[e] = i;
+      return false;
+    }
+  });
+  return result;
 };
 ```
 
