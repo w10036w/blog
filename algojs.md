@@ -1,10 +1,12 @@
 ## Algo
 
-> Leetcode solution in Javascript & python.
+> Leetcode solution in Javascript & python. 
+> Compressed JS code performs better. 
 
 * [Leetcode](https://leetcode.com)
-
   1. [Two Sum](/twosum.md)
   1. [Add 2 Numbers](/add2numbers.md)
+  1. [Longest Substring without Repeating Characters](/longest-substring-without-repeating-characters.md)
+
 
 

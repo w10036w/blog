@@ -5,14 +5,11 @@ Given an array of integers, return **indices** of the two numbers such that they
 You may assume that each input would have **_exactly_** one solution.
 
 **Example:**
-
 ```
 Given nums = [2, 7, 11, 15], target = 9,
-
 Because nums[0] + nums[1] = 2 + 7 = 9,
 return [0, 1].
 ```
-
 **Solution**
 
 *Javascript*
@@ -42,6 +39,21 @@ var twoSum = function(nums, target) {
 _Python_ (Yet)
 
 ```py
+class Solution():
+    def twoSum(self):
+    """
+    :type nums: List[int]
+    :type target: int
+    :rtype: List[int]
+    """
+    nums = [2,3,4,5,6,7,8]
+    target = 9
+    look_for = {}
+    for n, x in enumerate(nums):
+        try:
+            return look_for[x], n
+        except KeyError:
+            look_for.setdefault(target - x, n)
 
 ```
 
