@@ -48,29 +48,29 @@ var lengthOfLongestSubstring = function(s) {
 [**Existing Solution (96.38%, 142ms) JS**](https://github.com/paopao2/leetcode-js/blob/master/Longest%20Substring%20Without%20Repeating%20Characters.js)
 ```js
 var lengthOfLongestSubstring = function(s) {
-    var len = s.length,
-        max = 0,
-        chars = new Set(),
-        leftBound = 0,
-        ch,
-        i;
-    for (i = 0; i < len; i++) {
-        ch = s.charAt(i);
-        if (chars.has(ch)) {
-            //find the repeating character
-            //only store the latest version, async with 'max'
-            while (leftBound < i && s.charAt(leftBound) !== ch) {
-                chars.delete(s.charAt(leftBound));
-                leftBound++;
-            }  
-            leftBound++;
-        } else {
-            chars.add(ch);
-            //always keep the longest
-            max = Math.max(max, i - leftBound + 1);
-        }
+  var len = s.length,
+  max = 0,
+  chars = new Set(),
+  leftBound = 0,
+  ch,
+  i;
+  for (i = 0; i < len; i++) {
+    ch = s.charAt(i);
+    if (chars.has(ch)) {
+      //find the repeating character
+      //only store the latest version, async with 'max'
+      while (leftBound < i && s.charAt(leftBound) !== ch) {
+        chars.delete(s.charAt(leftBound));
+        leftBound++;
+      }  
+      leftBound++;
+    } else {
+      chars.add(ch);
+      //always keep the longest
+      max = Math.max(max, i - leftBound + 1);
     }
-    return max;
+  }
+  return max;
 };
 ```
 

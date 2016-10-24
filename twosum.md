@@ -36,24 +36,23 @@ var twoSum = function(nums, target) {
 };
 ```
 
-_Python_ (Yet)
+_Python_
 
 ```py
 class Solution():
-    def twoSum(self):
-    """
-    :type nums: List[int]
-    :type target: int
-    :rtype: List[int]
-    """
-    nums = [2,3,4,5,6,7,8]
-    target = 9
-    look_for = {}
-    for n, x in enumerate(nums):
-        try:
-            return look_for[x], n
-        except KeyError:
-            look_for.setdefault(target - x, n)
-
+  def twoSum(self):
+  """
+  :type nums: List[int]
+  :type target: int
+  :rtype: List[int]
+  """
+  nums = [2,3,4,5,6,7,8]
+  target = 9
+  look_for = {}
+  for n, x in enumerate(nums):
+    try:
+      return look_for[x], n
+    except KeyError:
+      look_for.setdefault(target - x, n)
 ```
 
