@@ -1,8 +1,10 @@
-# Ark's Tech Blog
+[算法思想](http://blog.csdn.net/wcyoot/article/details/6556088)
 
-[Algo](/algojs.md) Algorithms \(mainly leetcode solutions\) JS version.
+> 算法题要认真读题，先找数学规律，分析用
+> 
+> 递归，穷举，化归，动态规划，迭代，分治，贪心，回溯，分支限界
+> 
+> 等思维或组合的实现，再转化成算法
 
-[Data Structure](/datastructure.md) Data Structure & Analysis \(editing...\)
 
-[CSS](/css.md) impressive CSS rules
 
