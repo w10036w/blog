@@ -2,7 +2,7 @@
 
 * [Introduction](README.md)
 * [readme](readme.md)
-* [CSS](chapter1.md)
+* [CSS](css.md)
 * [Algo](algojs.md)
 * [Algo.TwoSum](algotwosum.md)
 * [Algo.Add2Numbers](add2numbers.md)

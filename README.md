@@ -2,7 +2,7 @@
 
 [Algo](/algojs.md) Algorithms \(mainly leetcode solutions\) JS version.
 
-[Data Structure](/datastructure.md) Data Structure & Analysis
+[Data Structure](/datastructure.md) Data Structure & Analysis \(editing...\)
 
-[CSS](/chapter1.md) impressive CSS rules
+[CSS](/css.md) impressive CSS rules
 
