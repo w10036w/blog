@@ -1,11 +1,14 @@
 # Summary
 
 * [Introduction](README.md)
+* [readme](readme.md)
 * [CSS](chapter1.md)
 * [Algo](algojs.md)
-* [Algo.TwoSum](twosum.md)
+* [Algo.TwoSum](algotwosum.md)
 * [Algo.Add2Numbers](add2numbers.md)
 * [Algo.LongestSubstringWithoutRepeatingCharacters](longest-substring-without-repeating-characters.md)
-* [readme](readme.md)
+* [Algo.ZigZagConversion](algozigzagconversion.md)
 * [DataStructure](datastructure.md)
+* [DS.tree](dstree.md)
+* [DS.LinkedList](dslinkedlist.md)
 
