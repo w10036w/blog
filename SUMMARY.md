@@ -2,7 +2,6 @@
 
 * [Introduction](README.md)
 * [readme](README.md)
-* [CSS](css.md)
 * [Algo](algojs.md)
     * [TwoSum](algotwosum.md)
     * [Add2Numbers](add2numbers.md)
@@ -12,4 +11,9 @@
 * [DataStructure](datastructure.md)
     * [tree](dstree.md)
     * [LinkedList](dslinkedlist.md)
+* [CSS](css.md)
+* [JS](js.md)
+    * [js-async](js-async.md)
+* [Python](python.md)
+* [Vue](vue.md)
 
