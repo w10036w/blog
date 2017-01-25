@@ -1,0 +1,1 @@
+[REST vs GraphQL](/rest-vs-graphql.md)

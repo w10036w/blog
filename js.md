@@ -1,3 +1,4 @@
 ## JS Impressive Rules
 
-- [Async](/js-async.md)
+- [Async in Javascript](/js-async.md)
+- [Optimization killers](/optimization-killers.md)
