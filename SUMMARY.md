@@ -19,5 +19,6 @@
 * [Vue](vue.md)
 * [others](others.md)
   * [REST vs GraphQL](rest-vs-graphql.md)
+  * [Object.assign](object.assign.md)
 * [blog](blog.md)
 
