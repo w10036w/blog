@@ -1,4 +1,4 @@
-Ark's Tech Blog
+Ark's GitBook
 
 [Algo](/algojs.md) Algorithms \(mainly leetcode solutions\) JS version.
 
@@ -13,6 +13,8 @@ Ark's Tech Blog
 [Node.js](/nodejs.md) Node.js analysis
 
 [Others](/others.md) Others
+
+[博客建设记录](/blog.md)
 
 D3.js
 
