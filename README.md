@@ -16,11 +16,7 @@ Ark's GitBook
 
 [博客建设记录](/blog.md)
 
-D3.js
-
-Three.js
-
-
+第三方
 [Thinking in Algorithm](http://blog.csdn.net/wcyoot/article/details/6556088)
 
 

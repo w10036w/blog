@@ -1,14 +1,20 @@
 # 博客建设记录
 #### 1月30日
 1. GraphQL的运行
-- schema
-1. 权限系统构建
-1. graph认证
-1. 前台优化
+- GraphQL / Apollo 在vue客户端的实现？
+- schema构建
+- 权限系统构建
+- graph认证
+- 前台优化
    - webpack
       - [tree shaking](https://blog.engineyard.com/2016/tree-shaking)
       - [http2 aggr splitting](https://github.com/webpack/webpack/tree/master/examples/http2-aggressive-splitting)
       - [koa2-proxy](https://www.npmjs.com/package/koa2-proxy)
+- [分页和mongo的性能查询优化](http://nodeonly.com/2015/07/04/mongo-paging/)
+   - [真 mongo分页高效处理](http://stackoverflow.com/questions/20960815/range-query-for-mongodb-pagination)
+   - [综合数据库分页性能比较](http://blog.sina.com.cn/s/blog_56545fd30101442b.html)
+- 渲染优化
+   - [阻塞分析和优化](https://gold.xitu.io/post/587f4afb61ff4b00651b3c18)
 
 #### 1月29日
 
