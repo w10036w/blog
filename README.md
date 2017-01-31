@@ -1,4 +1,4 @@
-Ark's GitBook
+## Ark's GitBook
 
 [Algo](/algojs.md) Algorithms \(mainly leetcode solutions\) JS version.
 
