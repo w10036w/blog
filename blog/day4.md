@@ -20,6 +20,7 @@
 自动部署自动测试，
 高模块化高移植性高可替代性高可拓展性
 
+[tcp 三次握手。。。](http://www.cnblogs.com/rootq/articles/1377355.html)
 一些面试须知
 [面试题](https://www.nowcoder.com/discuss/19305?type=2&order=0&pos=13&page=1)
 [面经](https://www.nowcoder.com/discuss/19662?type=2&order=0&pos=52&page=1)
