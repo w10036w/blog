@@ -1,4 +1,4 @@
-#### 第二天，1月30日
+### 第二天，1月30日
 1. schema构建: 完成用户和基本帖子
 - 权限系统构建：完成twitter，local，下一步试试github; facebook/google 有额外限制，wechat待研究
 - GraphQL Server: 完成get/post，待探究（类PUT）部分修改原理

@@ -26,4 +26,5 @@
   * [day1](blog/day1.md)
   * [day2](blog/day2.md)
   * [day3](blog/day3.md)
+  * [day4](blog/day4.md)
 
