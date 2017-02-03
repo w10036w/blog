@@ -1,4 +1,4 @@
-### 第二天，1月30日
+### 第2天，1月30日
 1. schema构建: 完成用户和基本帖子
 - 权限系统构建：完成twitter，local，下一步试试github; facebook/google 有额外限制，wechat待研究
 - GraphQL Server: 完成get/post，待探究（类PUT）部分修改原理
@@ -6,7 +6,7 @@
 - graph认证 （未完成）
 
 
-技术探索
+### Next
 - [_使用JWT，并不能起到加密作用，让别人无法看到信息。它的主要作用是，防止信息在中间过程被篡改。_](http://marshal.ohtly.com/2016/05/10/using-jwt-with-nodejs/)
 - [graphql official docs](https://facebook.github.io/graphql/#sec-Overview)
 - Mongo 系列
@@ -14,7 +14,7 @@
     - [MongoDB shared cluster](http://www.mongoing.com/archives/2782)
 - [OAuth 和 passport 详解](http://www.moye.me/2014/10/01/oauth-2-0%E5%92%8Cpassport/)
 - 前台优化
-- webpack
+- webpack的原理
 - [tree shaking](https://blog.engineyard.com/2016/tree-shaking)
 - [http2 aggr splitting](https://github.com/webpack/webpack/tree/master/examples/http2-aggressive-splitting)
 - [koa2-proxy](https://www.npmjs.com/package/koa2-proxy)

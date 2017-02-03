@@ -1,6 +1,8 @@
 # Summary
 
 * [Introduction](README.md)
+  * [smartparents](smartparents.md)
+    * [sp-podcast](smartparents/sp-podcast.md)
 * [readme](README.md)
 * [Algo](algojs.md)
   * [TwoSum](algotwosum.md)
@@ -27,4 +29,6 @@
   * [day2](blog/day2.md)
   * [day3](blog/day3.md)
   * [day4](blog/day4.md)
+  * [day5](blog/day5.md)
+  * [day6](blog/day6.md)
 

@@ -1,4 +1,4 @@
-### 第一天， 1月29日
+### 第1天， 1月29日
 
 1. https 的证书命令
 
@@ -31,7 +31,7 @@ openssl x509 -req -sha256 -days 365 -in server.csr -signkey server.key -out serv
    - user schema构建
    - [为何加盐](http://blog.jobbole.com/61872/)
    
-技术探索
+### Next
 - [https 安全](https://www.digitalocean.com/community/tutorials/how-to-set-up-nginx-with-http-2-support-on-ubuntu-16-04)
 - [申请证书 let’s encrypt](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-14-04) + [国内解决方案](https://cnodejs.org/topic/5711f1816a2d2bda52de962a)
 - 研究静态资源配置，暂时方案：七牛免费
