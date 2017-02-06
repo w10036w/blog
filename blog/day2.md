@@ -8,6 +8,7 @@
 
 ### Next
 - [_使用JWT，并不能起到加密作用，让别人无法看到信息。它的主要作用是，防止信息在中间过程被篡改。_](http://marshal.ohtly.com/2016/05/10/using-jwt-with-nodejs/)
+      但可以通过加盐和bcrypt来二次加密解决
 - [graphql official docs](https://facebook.github.io/graphql/#sec-Overview)
 - Mongo 系列
     - [Index](http://www.mongoing.com/archives/2797)
