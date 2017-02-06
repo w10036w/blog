@@ -6,6 +6,8 @@
 [Day 4, Feb 01](/blog/day4.md)
 [Day 5, Feb 02](/blog/day5.md)
 [Day 6/7, Feb 03/04](/blog/day6.md)
+[Day 8, Feb 05](/blog/day8.md)
+
 
 
 
