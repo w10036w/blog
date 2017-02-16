@@ -1,4 +1,4 @@
-### 第8-13天，2月5-10日
+## 第8-13天，2月5-10日
 - [x] 接口数据替换为restful: GraphQL缺陷，风险，熟练度
 - [x] [e03035a: 后台构建模型，待测试](/e03035a7042fe4dbc31211dce4cf3f8a0098ec39)
 - [x] 开放github注册
@@ -30,4 +30,4 @@
 ### Note
 select后需要多加一个空格，否则取不到最后一个
 e.g.
-/api/admin/user?criteria={"username":"admin"}&select="_id avatar role group level githubAddr facebookAddr twitterAddr favorites provider createAt updateAt hidden "
+/api/admin/user?criteria={"username":"admin"}&select="_id updateAt hidden "
