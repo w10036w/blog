@@ -16,6 +16,8 @@
 
 [博客建设记录](/blog.md)
 
+[个人技术选型及依赖](/progress.md)
+
 第三方
 [Thinking in Algorithm](http://blog.csdn.net/wcyoot/article/details/6556088)
 

@@ -9,9 +9,7 @@
 - [x] markdown w highlight.js
 - [ ] tag 界面
 - [ ] 创建回复
-- [ ] 七牛图片上传
 - [ ] user 界面 (基本信息，近期回复，主题，收藏，follower & following， （群组）
-- [ ] 七牛图片上传
 - [ ] sitemap
 - [ ] rss
 - [ ] 创建回复

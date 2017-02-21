@@ -1,7 +1,42 @@
-## 第23天，2月20日
+## 第23-天，2月20日-
+- [ ] replies
+  - [x] reply to topic
+  - [ ] reply to reply
+  - [ ] edit reply
+  - [ ] delete reply
+- [x] topic edit
+- [x] 图片上传
+- [ ] 用户主页内容
+- [ ] 进度条
+- [ ] 富媒体展示
+- [ ] sitemap / rss 
 
+- UGC -> 
+
+
+
+
+### Others
 关于富媒体展示的思考
+video gallery + playback control
+photo gallery (swipe 解决，可以考虑用新）
 
+mongoose 踩坑记
+_$
+_doc
+_pre
+_post
+schema中必须先定义field，然后异步后才能再往上填，开销最小的是Object，不存db里
+schema 中不要定义用不上的[Object]，没法改，用Object
+
+
+
+
+
+
+
+
+### Tech
 async / await 不成熟的性能问题, 不建议用作生产
 基于@i5ting的压测代码测试 node7.4 -harmony-async-await
 async await / generator 
@@ -58,3 +93,4 @@ Running 3s test @ http://localhost:3333
 Requests/sec:   7621.69
 Transfer/sec:      1.10MB
 ```
+
