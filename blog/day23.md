@@ -1,6 +1,8 @@
 ## 第23天，2月20日
 
-- [x] async / await 不成熟的性能问题, 不建议用作生产
+关于富媒体展示的思考
+
+async / await 不成熟的性能问题, 不建议用作生产
 基于@i5ting的压测代码测试 node7.4 -harmony-async-await
 async await / generator 
 
