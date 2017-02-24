@@ -4,7 +4,7 @@
   - [x] reply to reply
   - [x] edit reply
 - [x] topic edit
-- [ ] 图片上传
+- [ ] 图片上传,由交由后台代理改为前端直传
 - [ ] 用户主页内容
 - [ ] 进度条
 - [ ] 富媒体展示
@@ -48,6 +48,7 @@ schema 中不要定义用不上的[Object]，没法改，用Object
 
 
 ### Tech
+- [buffer vs string](http://stackoverflow.com/questions/4901570/buffer-vs-string-speed-why-is-string-faster)
 - window.performance.memory
 - v8 5.5 - 5.7
 - 使用ETags减少Web应用带宽和负载
