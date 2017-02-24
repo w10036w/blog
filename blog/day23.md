@@ -1,20 +1,29 @@
 ## 第23-天，2月20日-
-- [ ] replies
+- [x] replies
   - [x] reply to topic
-  - [ ] reply to reply
-  - [ ] edit reply
-  - [ ] delete reply
+  - [x] reply to reply
+  - [x] edit reply
 - [x] topic edit
-- [x] 图片上传
+- [ ] 图片上传
 - [ ] 用户主页内容
 - [ ] 进度条
 - [ ] 富媒体展示
-- [ ] sitemap / rss 
+  - [ ] 轮播
+  - [x] SNS widget
+- [ ] sitemap / rss
+- [ ] 拆分vendor，使用cdn
+- [ ] redis 存用户信息的使用方式？
+- [ ] 参考bootstrap 色彩方案模式
+
+api小任务
+- [x] 全换成asyncTry errHandler
+- [ ] 移除 _find 服务间调用
+
 
 - UGC -> 
 
-
-
+授权命令
+`sudo chown -R $(whoami) /usr/local`
 
 ### Others
 关于富媒体展示的思考
@@ -22,13 +31,15 @@ video gallery + playback control
 photo gallery (swipe 解决，可以考虑用新）
 
 mongoose 踩坑记
+1. 
 _$
 _doc
 _pre
 _post
 schema中必须先定义field，然后异步后才能再往上填，开销最小的是Object，不存db里
 schema 中不要定义用不上的[Object]，没法改，用Object
-
+2.
+直接拿到的_id是Object,需要toString()
 
 
 
@@ -37,8 +48,14 @@ schema 中不要定义用不上的[Object]，没法改，用Object
 
 
 ### Tech
-async / await 不成熟的性能问题, 不建议用作生产
-基于@i5ting的压测代码测试 node7.4 -harmony-async-await
+- window.performance.memory
+- v8 5.5 - 5.7
+- 使用ETags减少Web应用带宽和负载
+- [nginx 缓存](https://serversforhackers.com/nginx-caching)
+
+
+- async / await 不成熟的性能问题, 不建议用作生产
+基于@i5ting的压测代码测试 node7.6
 async await / generator 
 
 经测试，性能差和中间件个数成正比
@@ -46,51 +63,27 @@ async await / generator
 最终采用的测试方案
 wrk t8 c1000 10/15/20/25 middlewares
 
-测试结果：成功垫底，并有socket error和express相仿
-Express
+测试结果：成功超过express, koa1
+Async
 ```
 Running 3s test @ http://localhost:3333
   8 threads and 50 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     6.10ms    1.91ms  37.10ms   91.94%
-    Req/Sec     1.00k   181.97     1.81k    91.43%
-  24442 requests in 3.10s, 4.90MB read
-Requests/sec:   7874.38
-Transfer/sec:      1.58MB
+    Latency     5.25ms    1.88ms  35.58ms   95.94%
+    Req/Sec     1.17k   186.09     1.32k    93.55%
+  28941 requests in 3.10s, 4.17MB read
+Requests/sec:   9321.19
+Transfer/sec:      1.34MB
 ```
-Koa 1
+Koa2
 ```
 Running 3s test @ http://localhost:3333
   8 threads and 50 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     5.36ms    1.67ms  34.49ms   93.26%
-    Req/Sec     1.14k   242.39     2.91k    95.47%
-  27602 requests in 3.10s, 3.97MB read
-Requests/sec:   8897.56
-Transfer/sec:      1.28MB
-```
-Koa 2
-```
-Running 3s test @ http://localhost:3333
-  8 threads and 1000 connections
-  Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    16.84ms    5.70ms 172.49ms   87.18%
-    Req/Sec     1.67k   378.94     2.07k    91.23%
-  38075 requests in 3.07s, 5.48MB read
-  Socket errors: connect 0, read 419, write 0, timeout 0
-Requests/sec:  12394.52
-Transfer/sec:      1.78MB
-```
-Koa 2 async
-```
-Running 3s test @ http://localhost:3333
-  8 threads and 1000 connections
-  Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    10.73ms    8.60ms 296.96ms   96.05%
-    Req/Sec     1.10k   370.25     1.78k    75.70%
-  23585 requests in 3.09s, 3.40MB read
-  Socket errors: connect 0, read 219, write 0, timeout 0
-Requests/sec:   7621.69
-Transfer/sec:      1.10MB
+    Latency     3.61ms    1.60ms  34.12ms   95.88%
+    Req/Sec     1.72k   271.24     1.90k    93.55%
+  42541 requests in 3.10s, 6.13MB read
+Requests/sec:  13711.05
+Transfer/sec:      1.97MB
 ```
 
