@@ -1,5 +1,4 @@
-#
-Arkcms-api
+# Arkcms-api
 > A production-ready node.js CMS skeleton built on koa2, mongodb, redis
 
 ## Roadmap
@@ -26,7 +25,6 @@ Arkcms-api
 
 ### Continous Integration
 - [x] Makefile automation
-- [ ] Docker
 - [x] Nginx configuration
 - [ ] Hook or Jenkins
 - [ ] Docker
