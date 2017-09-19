@@ -1,0 +1,2 @@
+- [ ] 非首次渲染的tweetwidget不会加载脚本
+- [ ] hash锚点没生效，如topic reply

@@ -35,5 +35,7 @@
   * [day14](blog/day14.md)
   * [day23](blog/day23.md)
   * [upload-test](blog/upload-test.md)
+  * [bugs](blog/bugs.md)
+  * [API doc](blog/api-doc.md)
 * [progress](progress.md)
 
