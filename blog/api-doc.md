@@ -2,43 +2,43 @@
 > A production-ready node.js CMS skeleton built on koa2, mongodb, redis
 
 ## Roadmap
-- Design
+### Design
 - [x] Restful
 - [ ] Graphql
 
-- LOG
+### LOG
   - [x] log4js
   - [ ] winston
 
-- RoutingCORS dynamic list
+### Routing
+- [ ] CORS dynamic list
 
-- Database
+### Database
   - [x] Mongodb
   - [ ] MySql
 
-- Cache: Redis
+### Cache: Redis
 
-- CDN
+### CDN
   - [x] [qiniu](https://www.qiniu.com/) as image CDN
   - [ ] Akamai as cache CDN
 
-- Continous Integration
+### Continous Integration
   - [x] Makefile automation
   - [ ] Docker
   - [x] Nginx configuration
   - [ ] Hook or Jenkins
   - [ ] Docker
 
-- Maintenance
+### Maintenance
   - [x] PM2 management
   - [ ] Keymetrics maintenance
   
-- Documentation
-  - [x] PRIMARY - Swagger json / yaml (serve as static files)
-  - [x] [Swagger-jsdoc](http://mherman.org/blog/2016/05/26/swagger-and-nodejs/#.Wb68GNOg9TY) based on [OpenAPI](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md)
-    - Status: Rejected
-  - [x] Cancel Apiary: not simple and fast
-  - [x] [apidocjs](http://apidocjs.com/): [official example](http://apidocjs.com/example/) <b>Rejected</b>
+### Documentation
+  - [x] Swagger json / yaml (serve as static files)
+  - [x] ~~[Swagger-jsdoc](http://mherman.org/blog/2016/05/26/swagger-and-nodejs/#.Wb68GNOg9TY) based on [OpenAPI](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md)~~
+  - [x] ~~Cancel Apiary: not simple and fast~~
+  - [x] ~~[apidocjs](http://apidocjs.com/): [official example](http://apidocjs.com/example/)~~
     - Pros: 
       1. well structured UI
       1. well structured doc writing
@@ -46,21 +46,19 @@
       - no sending request support as swagger
       - cannot integrate with unit test
 
-- Test
+### Test
   - [ ] Unit test with Mocha, Chai
   - [ ] Integration test
   - [ ] E2E
   - [ ] Integrate with documentation
 
-- Thinking of generator for Model - ORM - API (admin, simple client) - DOC - UnitTest
-
-- Comments
+### Comments
   - [ ] Local comment support
   - [ ] Discuz
   - [ ] Facebook comments
 
-- STATICIZE
+### STATICIZE
   - [ ] Typescript
 
-
-## 
+### Xhink
+Thinking of generator for Model - ORM - API (admin, simple client) - DOC - UnitTest
