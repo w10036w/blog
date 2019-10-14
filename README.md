@@ -18,7 +18,7 @@
 
 [个人技术选型及依赖](/progress.md)
 
-[前端状态管理](/_posts/fe-state-mgmt.cn.md)
+[前端状态管理](/posts/fe-state-mgmt.cn.md)
 
 第三方
 [Thinking in Algorithm](http://blog.csdn.net/wcyoot/article/details/6556088)

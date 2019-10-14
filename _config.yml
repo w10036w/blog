@@ -1,4 +1,4 @@
-theme: jekyll-theme-minima
+theme: minima
 # languages: ["en", "zh"]
 # exclude_from_localizations: ["assets", "CNAME"]
 # defaultLang: en
