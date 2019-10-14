@@ -1,1 +1,7 @@
-theme: jekyll-theme-modernist
+theme: jekyll-theme-minima
+# languages: ["en", "zh"]
+# exclude_from_localizations: ["assets", "CNAME"]
+# defaultLang: en
+# languageNames:
+#   en: English
+#   zh: Chinese
