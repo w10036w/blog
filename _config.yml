@@ -1,6 +1,4 @@
 theme: minima
-plugins:
-  - jekyll-multiple-languages-plugin
 languages: ["en", "zh"]
 exclude_from_localizations: ["assets", "CNAME"]
 defaultLang: en
