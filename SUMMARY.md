@@ -20,10 +20,6 @@
 * [Python](python.md)
 * [Vue](vue.md)
 * [others](others.md)
-  * [REST vs GraphQL](rest-vs-graphql.md)
-  * [Object.assign](object.assign.md)
-  * [Deep Clone / Deep Copy](deep-clone-deep-copy.md)
-  * [Docker DevOps](docker-devops.md)
 * [blog](blog.md)
   * [day1](blog/day1.md)
   * [day2](blog/day2.md)
@@ -38,4 +34,3 @@
   * [bugs](blog/bugs.md)
   * [API doc](blog/api-doc.md)
 * [progress](progress.md)
-
