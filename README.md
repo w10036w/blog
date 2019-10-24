@@ -18,12 +18,8 @@
 
 [个人技术选型及依赖](/progress.md)
 
-[前端状态管理](/posts/fe-state-mgmt.cn.md)
+[前端深水区：状态管理](/posts/fe-state-mgmt.cn.md)
+[Frontend Deepsea: State Management](/posts/fe-state-mgmt.md)
 
 第三方
 [Thinking in Algorithm](http://blog.csdn.net/wcyoot/article/details/6556088)
-
-
-Work
-[SmartParents](/smartparents.md)
-
