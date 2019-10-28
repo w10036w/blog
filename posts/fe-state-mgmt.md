@@ -81,6 +81,16 @@ dispatch.count.addByAsync(1)                       // state = { count: 4 } after
 
 > React and redux based, lightweight and elm-style framework.
 
+---
+
+### [Mobx](https://github.com/mobxjs/mobx)
+
+> Anything that can be derived from the application state, should be derived. Automatically.
+
+![mobx model](https://mobx.js.org/assets/flow.png)
+
+
+---
 
 | cost analysis | bundle size (minified+gzipped) | 3G download time | Note |
 | :--- | ---: | ---: | :--- |
