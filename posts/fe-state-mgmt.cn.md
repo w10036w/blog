@@ -1,5 +1,14 @@
 # 前端深水区（Deepsea）React 状态管理库研究
 
+TODO:
+
+- [ ] 加入 detail/summary 展开代码：dva例子，mobx 异步
+- [ ] rxjs, cycle.js
+- [ ] 状态机
+- [ ] effector
+- [ ] 结论比较
+- [ ] 换主题
+
 ## 前言
 
 由于近年来前端大框架之争已趋于稳定，三大框架（React, Vue, Angular）在很多方面殊途同归，就目前的时间点看框架选择已经不再是前端人员的主要问题，绝大部分业务需求任一框架都能胜任。
@@ -7,18 +16,17 @@
 状态管理一直是前端的核心问题，能够和团队的技术风格和开发的思维模式互相影响，并决定应用的上下限。
 像评价或比较框架一样，对于有一定流行度的状态管理库，没有一个简单的好坏之分，它们只是在不同的维度上做了取舍。
 
-但作为业务工程师，我们期望的还是有一种瑞士军刀型状态管理库，能够胜任绝大多数需求。
+但作为业务工程师，我们期望的还是有一种瑞士军刀库，能够胜任绝大多数需求。
 
-本文的目标是分析代表性的开源状态管理库，供一线开发者和技术管理选型参考。
+本文的目标是分析代表性的 React 开源状态管理库，供一线开发者和技术管理选型参考。
 
 > my js state management library: `{}`
 >
 > [*TJ Holowaychuk*](https://twitter.com/tjholowaychuk/status/957853652483416064?lang=en)
 
 ## 比较维度
+> [A smooth development experience is everything.](https://medium.com/skillshare-team/how-we-ditched-redux-for-mobx-a05442279a2b)
 - **开发体验**
-  > [A smooth development experience is everything.](https://medium.com/skillshare-team/how-we-ditched-redux-for-mobx-a05442279a2b)
-
   对于开发者来讲，最重要的是开发体验。开发体验差的库必然会被更好的替代。开发体验包括：
   - **学习曲线**：一般程序员对于该库的理解成本，近似于学习曲线。与库的原始理论模型（如flux，有限状态机，响应式编程等）理解难度正相关，和接口设计无关；学习曲线复杂的库可能接口设计语义清晰，业务代码量少。
   - **接口设计**：接口设计越好，语义表现力越强，意味着库的使用者能用越少的代码完成同样的逻辑，实现相同的功能。反之，就需要写大量格式雷同的样板代码。一些包装层次高，内藏“黑魔法”或者做了大量”脏活“的库会在这一项有优势，比如 rematch 之于 redux，mobx 之于 redux。接口设计和学习曲线共同决定了学习曲线和可维护性。
@@ -96,7 +104,9 @@ react hooks 使函数组件能能访问本地组件状态 `useState()`，执行�
 
 Rematch 相当于给 redux 包装了语法糖，大大简化了store、action、reducer的创建过程，采用原生async/await处理异步，同时又可以使用redux生态的各种中间件。详情可见[对比](https://rematch.gitbook.io/handbook/mu-de)
 
-[Count示例](https://codesandbox.io/s/3kpyz2nnz6)
+<details>
+<summary>
+<a href="https://codesandbox.io/s/3kpyz2nnz6" target="_blank">Count示例</a></summary>
 
 ```js
 // 核心代码
@@ -135,6 +145,8 @@ dispatch({ type: 'count/addByAsync', payload: 1 }) // state = { count: 3 } after
 dispatch.count.addByAsync(1)                       // state = { count: 4 } after delay
 // view 层和纯redux一致
 ```
+
+</details>
 
 ### [Dva](https://github.com/dvajs/dva)
 > dva 首先是一个基于 redux 和 redux-saga 的数据流方案，然后为了简化开发体验，dva 还额外内置了 react-router 和 fetch，所以也可以理解为一个轻量级的应用框架。
