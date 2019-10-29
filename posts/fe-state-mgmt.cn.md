@@ -26,15 +26,12 @@ TODO:
 
 ## 比较维度
 > [A smooth development experience is everything.](https://medium.com/skillshare-team/how-we-ditched-redux-for-mobx-a05442279a2b)
-- **开发体验**
-  对于开发者来讲，最重要的是开发体验。开发体验差的库必然会被更好的替代。开发体验包括：
-  - **学习曲线**：一般程序员对于该库的理解成本，近似于学习曲线。与库的原始理论模型（如flux，有限状态机，响应式编程等）理解难度正相关，和接口设计无关；学习曲线复杂的库可能接口设计语义清晰，业务代码量少。
-  - **接口设计**：接口设计越好，语义表现力越强，意味着库的使用者能用越少的代码完成同样的逻辑，实现相同的功能。反之，就需要写大量格式雷同的样板代码。一些包装层次高，内藏“黑魔法”或者做了大量”脏活“的库会在这一项有优势，比如 rematch 之于 redux，mobx 之于 redux。接口设计和学习曲线共同决定了学习曲线和可维护性。
-  - **可扩展性**：随着应用复杂度上升、代码堆积和不同风格的程序员加入，库应该能够提供高效的组织结构使性能等不受太大，和优良的模式来定位错误并便于测试。
-  - **生态环境**：好的库离不开社区支持和文档支持。使用库的过程中总会遇到各种问题，但流行的库有大量前人踩坑经验，并由可靠的开发者更新**源码**，维护**文档**和开发**中间件**、各种**插件**（如浏览器，编辑器语法高亮或智能提示，命令行工具甚至第三方平台服务），也有较好的社区交流（github, stackoverflow, 语雀，slack, spectrum等）可供参考。当然最重要的是，你能找到足够多有相关经验的开发者。
+
+- **上手难度**：一般开发者对于该库的理解成本，能在多久之内开始上手使用。与库的原始理论模型（如flux，有限状态机，响应式编程等）理解难度，接口设计正相关。接口设计越好，语义表现力越强，意味着库的使用者能用越少的代码实现相同的功能。反之，就需要写大量格式雷同的样板代码。
+- **功能**：复杂的应用可能会有特殊功能需求，如时间回溯（撤销与重现），和其他库（路由等）联动；对此有现成解决方案的库会更受欢迎。
+- **可扩展性**：随着应用复杂度上升、代码堆积和不同风格的程序员加入，库应该提供高效的结构保持性能稳定，和优良的模式来定位错误并便于测试。
+- **生态环境**：好的库离不开社区支持和文档支持。使用库的过程中总会遇到各种问题，但流行的库有大量前人踩坑经验，并由可靠的开发者更新**源码**，维护**文档**和开发**中间件**、各种**插件**（如浏览器，编辑器语法高亮或智能提示，命令行工具甚至第三方平台服务），也有较好的社区交流（github, stackoverflow, 语雀，slack, spectrum等）可供参考。当然最重要的是，你能找到足够多有相关经验的开发者。
 - **性能**：性能也是重要考量之一，也是众多库竞争的重点。如需考虑弱网络环境下应用的初始加载速度，包和必需组件包的大小（如redux+react-redux）也会有一定影响。
-- **功能**：复杂的应用可能会有特殊功能需求，如时间回溯（撤销与重现），和其他库（路由等）联动；另外，部分库可能有破坏式更新，也会影响功能的实现或增加更新的成本。
-- **跨框架性**：当下有很多库是针对某个框架开发的，或者某个库是针对特定平台（如针对webkit浏览器）或语言开发的，这些库在一开始并没有考虑跨平台的可能性，但其中也有后续加入对其他环境的支持，无论是官方还是非官方。当然，也有很多一开始就是为跨平台而设计的。无疑，后者能够有更广泛的适用性，虽然可能牺牲了灵活性和性能。
 
 ## 结论
 
@@ -44,16 +41,15 @@ TODO:
 
 | 状态管理库比较 | 包大小 (minified+gzipped) | 3G下载速度 | 评价 |
 | :--- | ---: | ---: | :--- |
-| [redux](https://redux.js.org/introduction/getting-started) + redux-react | 2.6kB + 5.5kB | 52ms + 111ms | 开发体验⭐⭐⭐ <br>性能⭐⭐⭐⭐ <br>功能⭐⭐⭐⭐⭐ <br>跨框架性⭐⭐⭐⭐⭐ |
-| [rematch](https://github.com/rematch/rematch) + redux-react | 5.1kB + 5.5kB | 103ms + 111ms | 开发体验⭐⭐⭐⭐ <br>性能⭐⭐⭐⭐ <br>功能⭐⭐⭐⭐ <br>跨框架性⭐ |
-| [dva](https://github.com/rematch/rematch) + redux-react | 36kB | 720ms | |
+| [redux](https://redux.js.org/introduction/getting-started) + redux-react | 2.6kB + 5.5kB | 52ms + 111ms | 学习曲线⭐⭐⭐ <br>性能⭐⭐⭐⭐ <br>功能⭐⭐⭐⭐⭐ <br>跨框架性⭐⭐⭐⭐⭐ |
+| [rematch](https://github.com/rematch/rematch) + redux-react | 5.1kB + 5.5kB | 103ms + 111ms | 学习曲线⭐⭐⭐⭐ <br>性能⭐⭐⭐⭐ <br>功能⭐⭐⭐⭐ <br>跨框架性⭐ |
+| [dva](https://github.com/rematch/rematch) | 36kB | 720ms | |
+| mobx + mobx-react | 15.2kB + 4.6kB | 396ms |  |
+| mobx-state-tree | 19.7kB | |
 | [xstate](https://github.com/davidkpiano/xstate) + @xstate/react | 16.2kB | 323ms |  |
 | [iostore](https://www.npmjs.com/package/iostore) | 1kB | 20ms | React hooks specific solution
 | [Effector](https://github.com/zerobias/effector) | 8kB | 161ms | multi store, cross-framework JS solution |
 | [unstated](https://github.com/jamiebuilds/unstated) | 1.8kB | 36ms | |
-| 响应式
-| mobx + mobx-react | 15.2kB + 4.6kB | 396ms |  |
-| mobx-state-tree | 19.7kB | |
 | [rxjs](https://rxjs-dev.firebaseapp.com/guide/overview) | <10.8kB | <217ms |  |
 
 ## Redux (Flux) 系
@@ -106,7 +102,9 @@ Rematch 相当于给 redux 包装了语法糖，大大简化了store、action、
 
 <details>
 <summary>
-<a href="https://codesandbox.io/s/3kpyz2nnz6" target="_blank">Count示例</a></summary>
+<a href="https://codesandbox.io/s/3kpyz2nnz6" target="_blank">Count示例</a>
+</summary>
+<p>
 
 ```js
 // 核心代码
@@ -146,6 +144,7 @@ dispatch.count.addByAsync(1)                       // state = { count: 4 } after
 // view 层和纯redux一致
 ```
 
+</p>
 </details>
 
 ### [Dva](https://github.com/dvajs/dva)
