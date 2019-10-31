@@ -33,7 +33,8 @@ This article is to provide an overview and comparsion among the presentive open 
 
 ### [Rematch](https://github.com/rematch/rematch)
 
-> Rematch is Redux best practices without the boilerplate
+> Rematch is Redux best practices without the boilerplate<br>
+> Rematch offical website
 
 Rematch is like adding syntax sugar to redux, significantly simplify the creation of store, action and reducer, etc. It uses async/await for async actions, and fully opens to most middlrewares of redux. Check [Purpose of rematch](https://rematch.github.io/rematch/#/purpose) for details.
 
