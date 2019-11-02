@@ -2,6 +2,7 @@
 
 TODO:
 - [ ] hox
+- [ ] icestore
 - [ ] undux
 - [ ] easy-peasy
 - [ ] rxjs, cycle.js
