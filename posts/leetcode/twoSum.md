@@ -1,18 +1,16 @@
-### Two Sum
+# Two Sum
 
 Given an array of integers, return **indices** of the two numbers such that they add up to a specific target.
 
 You may assume that each input would have **_exactly_** one solution.
 
-**Example:**
-```
-Given nums = [2, 7, 11, 15], target = 9,
-Because nums[0] + nums[1] = 2 + 7 = 9,
-return [0, 1].
-```
-**Solution**
+## Example
 
-*Javascript*
+>Given nums = [2, 7, 11, 15], target = 9,<br>
+Because nums[0] + nums[1] = 2 + 7 = 9,<br>
+return [0, 1].
+
+## Solution
 
 ```js
 /**
@@ -20,23 +18,20 @@ return [0, 1].
  * @param {number} target
  * @return {number[]}
  */
-var twoSum = function(nums, target) {
-  var tmp = {};
-  var result;
-  nums.some(function(e, i){
-    if(typeof tmp[target-e] === 'number'){
-      result = [tmp[target-e], i];
-      return true;
-    } else {
-      tmp[e] = i;
-      return false;
+function twoSum(nums, target) {
+  const memo = {}
+  const l = nums.length
+  let i = 0
+  while (i<l) {
+    const diff = target-nums[i]
+    if (typeof memo[diff] === 'number') {
+      return [memo[diff], i]
     }
-  });
-  return result;
-};
+    memo[nums[i]] = i
+    i++
+  }
+}
 ```
-
-_Python_
 
 ```py
 class Solution():
@@ -55,4 +50,3 @@ class Solution():
     except KeyError:
       look_for.setdefault(target - x, n)
 ```
-
