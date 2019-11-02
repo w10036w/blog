@@ -1,5 +1,9 @@
 # 前端深水区（Deepsea）React 状态管理库研究
 
+> my js state management library: `{}`
+>
+> [*TJ Holowaychuk*](https://twitter.com/tjholowaychuk/status/957853652483416064?lang=en)
+
 TODO:
 - [ ] hox
 - [ ] icestore
@@ -13,17 +17,14 @@ TODO:
 状态管理作为前端的核心问题，能够和团队的技术风格和开发的思维模式互相影响，并决定应用的上下限。
 像评价或比较前端框架一样，对于各种状态管理库，没有简单的好坏之分，它们只是在不同的维度上做了取舍。
 
-但作为业务工程师，我们期望的还是有一种瑞士军刀库，能够胜任绝大多数需求。
-
 本文的目标是分析代表性的 React 开源状态管理库，供一线开发者和技术管理选型参考。
 
-> my js state management library: `{}`
->
-> [*TJ Holowaychuk*](https://twitter.com/tjholowaychuk/status/957853652483416064?lang=en)
-
-## 评价标准
+## 参考标准
 
 - **易学**：一般开发者对于该库理论模型的理解成本和学习曲线，亦可能是选择库的**最佳标准**。原始理论模型（如 flux，有限状态机，响应式编程等）越清晰越好；接口设计越好，语义表现力越强，用较少的代码即可实现功能。一个易学的库通常总会更受欢迎。
+- **开箱即用** 状态处理代码应该相对集中，在临近的文件贴近业务代码如组件等，便于查找和统一修改
+- batteries-included / out-of-the-box, 
+code locality 
 - **功能**：复杂的应用可能会有特殊功能需求，如时间回溯（撤销与重现），和其他库（路由等）联动；对此有现成解决方案的库会更受欢迎。
 - **扩展**：可扩展性 -- 随着应用复杂度上升、代码堆积和不同风格的程序员加入，库应该提供高效的结构保持性能稳定，和优良的模式来定位错误并便于测试。
 - **生态**：好的库离不开社区支持和文档支持。使用库的过程中总会遇到各种问题，但流行的库有大量前人踩坑经验，并由可靠的开发者更新**源码**，维护**文档**和开发**中间件**、各种**插件**（如浏览器，编辑器语法高亮或智能提示，命令行工具甚至第三方平台服务），也有较好的社区交流（github, stackoverflow, 语雀，slack, spectrum等）可供参考。当然最重要的是，你能找到足够多有相关经验的开发者。强大的社区支持也是稳定性的重要保障。
@@ -48,28 +49,32 @@ redux 的实现可以直接看源码，或者这个很棒的[从零实现](https
 
 [react hooks](https://reactjs.org/docs/hooks-intro.html) 使函数组件能能访问本地组件状态 `useState()`，执行副作用`useEffect()`等。
 
-### Redux 特性
+### Redux 设计哲学
 - 单一数据源 (single source of truth)
 - 不可变数据 (state is read-only)
-- 纯函数操作 (changes are made with pure functions)
+- 纯函数编程 (changes are made with pure functions)
 
-库的代码写得优雅简约，没有内藏黑魔法也没干”脏活“，在几乎无约束，极高自由度的同时，完全无法做到开箱即用，把非常多的问题（缓存，异步，订阅，记录/重放等）留给开发者或者中间件解决。如使用[immer](https://github.com/immerjs/immer), [immutable.js](https://github.com/immutable-js/immutable-js), [reselect](https://github.com/reduxjs/reselect)控制性能, 使用 redux-saga, redux-observable来处理异步。如此大大增加了开发成本。
+库的代码写得优雅简约，没有处理副作用，在几乎无约束，极高自由度的同时，把非常多的问题留给开发者或者中间件解决，如缓存，异步，订阅，记录/重放等。如此增加了开发成本。
 
-flux 靠主动”拉“数据 (pull-based) 来获取更新，有极佳的确定性（全靠手写显式声明），代价是所有的更新都需要手动获取，在状态复杂多样时十分繁琐。
+flux 靠主动”拉“数据 (pull-based) 来获取更新，有极佳的确定性（全靠手写显式声明），代价是所有的更新都需要手动获取，在状态复杂多样时会很繁琐。
 
 单一数据源要求全局单一的store，优点是所有状态都可以零成本互相访问，子组件父组件访问的是同一数据源无需同步，缺点是命名冲突（需要好的设计）和性能问题，原因包括遍历全部action type，和无关变量变更引起不必要的更新。
 
 单向数据流相比双向，能对数据变化有更好的记录、追踪，通过显式调用更直观，没有”黑魔法“，但也以增加代码量，在处理大量局部状态（用户交互等）时全部需要**极为繁琐地显式声明**为代价。事实上单向数据流已经被绝大多数库使用，并在处理用户交互组件的状态时能通过多写代码”变“成双向数据流。这种情况下，单双向数据流的区别也只是显式/隐式声明数据变化的操作而已[2]。由此，本文不作更多讨论。
 
-不可变数据要求对store的改变必须通过统一位置预定义的**纯函数**生成新store，实现了稳定可预测，可时间回溯，易测试，隔离“副作用”（用户交互和网络交互）；但同时导致业务工程师需要做”额外“的工作，既要 1) 为保证更新返回全新JS对象(参考immer)， 2）为防止更新缓存”相同”的对象（参考reselect），3) 实现纯函数必须分离副作用(redux-thunk, redux-saga)；另外，替换式更新也会消耗更多内存并损失性能。
+不可变数据要求对store的改变必须通过**纯函数**(reducer)生成新store，实现了稳定可预测，可时间回溯，易测试，隔离“副作用”（用户交互和网络交互）；但同时导致业务工程师需要做”额外“的工作，既要 1) 为保证更新返回全新JS对象(参考immer)， 2）为防止更新缓存”相同”的对象（参考reselect），3) 实现纯函数必须分离副作用(redux-thunk, redux-saga)；另外，替换式更新也会消耗更多内存并损失性能。
 
-另外，细致的分层（action, reducer, store）和重复声明大量基础定义(action type, switch)导致样板代码十分啰嗦，即使实现简单的功能也需写大量代码。
+另外，细致的分层（action, reducer, store）和重复的 action type, switch 不仅十分啰嗦，而且导致逻辑散布在多个不同的文件中，增加了宏观了解应用状态的成本。
+
+>Actions 和 ActionsTypes, 其实都是在模拟 Elm 的 ADT （代数数据类型）语法，对于动态语言有点冗余，分散在不同文件夹里导致这点更加明显，毕竟弱类型语言和强类型语言的套路不同，弱类型对 dry 原则要求更高，写的重复代码越多出现 bug 的几率就越大，而且重构时也容易出现遗漏。
+>
+>[知乎用户 Zack 的回答](https://www.zhihu.com/question/263928256/answer/274942926)
 
 进入 hooks 时代后，react-redux通过新的API [useSelector](https://react-redux.js.org/api/hooks#using-hooks-in-a-react-redux-app) 一方面省去了高阶组件(HOC)，一方面改变了触发渲染的比较模式。
 
 然而由于 hooks 模式下组件不再使用 `connect()`（内置 memorization），需要开发者自行缓存组件 `React.memo()`，容易面临性能问题
 
-绝大多数的功能已被社区插件补足，样板代码过多也由以下redux的高级封装库提供了解决方案：
+虽然绝大多数缺失的功能被社区丰富的中间件补足，但其
 
 ### [Rematch](https://github.com/rematch/rematch)
 > Rematch 是 Redux 不用写样板代码的最佳实践。<br>
@@ -177,9 +182,11 @@ mobx 的作者又推出了将redux和mobx的优点结合的 [mobx-state-tree](ht
 
 ---
 
-## 基于 React 特性的库 (无法跨框架)
+## 基于 React 独有特性的库
 
-其实通过之前 redux 系和 mobx 可以看出，React 环境下的状态管理最终实现还是基于 `Context API`，因此自 `React@16.3` 发布新 `Context()` 能够直接透（过多层组件）传 context 后，`unstated`、`react-waterfall` 等应运而生。
+也有很多状态库是直接基于 React 的独有API，无法跨框架实现。
+
+通过之前的 redux 和 mobx 可以看出，React 环境下的状态管理最终实现基于 `Context`。因此自 `React@16.3` 发布新 `Context()` 能够直接透（过多层组件）传 context 后，`unstated`、`react-waterfall` 等应运而生。
 
 ### [unstated](https://github.com/jamiebuilds/unstated)
 由广受欢迎的 [react-loadable](https://github.com/jamiebuilds/react-loadable) [作者](https://github.com/jamiebuilds)所写，其 Container 作为高阶组件只用 `setState()` 存储状态，同时用 render props 注入状态，写起来比 redux "更像" React 的原生解决方案。更多请阅读[这篇文章](https://zhuanlan.zhihu.com/p/48219978)。
@@ -303,20 +310,21 @@ Effector 另辟蹊径，使用监听类 Node.js **事件**的方式代替 action
 
 React 的设计理念是函数式编程，所以推崇纯函数，函数式组件和数据不可变。
 
-纵观各种状态管理库，提炼出决定开发体验的几点理想特性以供参考
+纵观各种状态管理库，笔者提炼出决定开发体验的几点理想特性以供参考
 
-- **低理解成本或多用已有概念，对新手友好** (如 unstated)
-- **减少组件层级，便于维护** (如使用 hooks)
-- **自动化收集依赖和变化，或自动生成相关代码** (mobx)
-- **性能无需手动优化，可扩展可维护**
-- **文档齐全，实战检验，社区活跃，面向未来** (redux)
-- **业务代码简洁有力，开箱即用和渐进式开发并举**
+- **低理解成本，或多用已有概念，对新手友好** (如 unstated)
+- **减少额外的组件层级，便于维护** (如使用 hooks 的库)
+- **自动收集依赖和变化，或能自动生成样板代码**
+- **性能无需手动优化，可扩展可维护** (mobx)
+- **在开箱即用和渐进式开发的取舍中达到一个平衡点**
+- **业务代码简洁紧凑，既能宏观上总览整个应用的状态，又能贴近业务代码，做到易搜索可插拔，最好能可视化**
+- **文档齐全，经实战检验，社区活跃，持续进化**
 
-笔者得到的最大启发还是
+最后，笔者得到的最大启发有三点：
 
 **顺畅的开发体验就是一切。**[**A smooth development experience is everything.**](https://medium.com/skillshare-team/how-we-ditched-redux-for-mobx-a05442279a2b)
 
-**为需求服务，不要解决不存在的需求。**
+**为需求服务，合理规划扩展性，不解决不存在的需求。**
 
 **生命苦短，多学更重要的设计理念，少加班写代码。**
 
