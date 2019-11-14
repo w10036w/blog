@@ -296,6 +296,151 @@ call, apply, bind
 * 标签语义化，比如 header，footer，nav，aside，article，section 等，利于开发/阅读模式/SEO，新增了很多表单元素，入 email，url 等，除去了 center 等样式标签，还有除去了有性能问题的 frame，frameset 等标签
 * video，audio
 * 新接口，如 navigator.geoloaction
+
+## 浏览器相关
+
+* `进程` 是 CPU 资源分配的最小单位；
+* `线程` 是 CPU 调度的最小单位，一个进程可有多个线程；
+* 不同 `进程` 间可通信，但代价大；
+* `单线程` 与 `多线程` ，指在一个 `进程` 内的情况
+
+### 浏览器进程
+
+* 主进程
+  * 控制其他进程（创建销毁协调）
+  * 界面 UI 显示，用户交互，前进后退收藏
+  * 将渲染进程得到的内存中的 Bitmap，绘制到用户界面上 ？？？
+  * 处理网络请求，文件访问等
+* 第三方插件进程：每插件一个进程
+* GPU进程：3D绘图
+* 渲染进程（浏览器内核）
+  * 页面渲染，脚本执行，事件处理
+  * **每 tab 创建一个独立进程**
+
+对于 `渲染进程`，其多线程如下：
+* GUI 渲染线程
+  * 负责渲染页面，布局和绘制
+  * 页面需要重绘和回流时，该线程就会执行
+  * 与 js 引擎线程互斥，防止渲染结果不可预期
+* JS引擎线程
+  * 负责处理解析和执行 javascript 脚本程序
+  * 只有一个 JS 引擎线程（单线程）
+  * 与 GUI 渲染线程互斥，防止渲染结果不可预期
+* 事件触发线程
+  * 用来控制事件循环（鼠标点击、setTimeout、ajax 等）
+  * 当事件满足触发条件时，将事件放入到 JS 引擎所在的执行队列中
+* 定时触发器线程
+  * setInterval 与 setTimeout 所在的线程
+  * 定时任务并不是由 JS 引擎计时的，是由定时触发线程来计时的
+  * 计时完毕后，通知事件触发线程
+* 异步http请求线程
+  * 浏览器有一个单独的线程用于处理 AJAX 请求
+  * 当请求完成时，若有回调函数，通知事件触发线程
+
+#### 为什么 javascript 是单线程的？
+
+首先是历史原因，在创建 javascript 这门语言时，多进程多线程的架构并不流行，硬件支持并不好。<br>
+其次是因为多线程的复杂性，多线程操作需要加锁，编码的复杂性会增高。<br>
+而且，如果同时操作 DOM ，在多线程不加锁的情况下，最终会导致 DOM 渲染的结果不可预期。
+
+当 JS引擎线程执行时 GUI渲染线程会被挂起，GUI 更新则会被保存在一个队列中等待 JS引擎线程空闲时立即被执行。
+
+#### 什么是宏任务
+我们可以将每次执行栈执行的代码当做是一个宏任务（包括每次从事件队列中获取一个事件回调并放到执行栈中执行），
+每一个宏任务会从头到尾执行完毕，不会执行其他。
+
+我们前文提到过 JS 引擎线程和 GUI 渲染线程是互斥的关系，浏览器为了能够使 宏任务和 DOM 任务有序的进行，会在一个 `宏任务` 执行结果后，在下一个 `宏任务` 执行前， GUI渲染线程开始工作，对页面进行渲染。
+
+> 主代码块，setTimeout，setInterval 等，都属于宏任务
+
+#### 什么是微任务
+我们已经知道 宏任务结束后，会执行渲染，然后执行下一个 宏任务，
+而微任务可以理解成在当前 宏任务执行后立即执行的任务。
+
+也就是说，当宏任务执行完，会在**渲染前**，将执行期间所产生的所有微任务都执行完。
+
+> Promise，process.nextTick 等，属于 微任务。
+
+```js
+document.body.style = 'background:blue'
+console.log(1);
+Promise.resolve().then(()={
+  console.log(2);
+  document.body.style = 'background:black'
+});
+console.log(3);
+```
+
+会打印132，直接变成黑色，因为 Promise 属于微任务，**在渲染前先执行**。
+
+```js
+setTimeout(() = {
+  console.log(1)
+  Promise.resolve(3).then(data = console.log(data))
+}, 0)
+setTimeout(() = {
+  console.log(2)
+}, 0)
+// print : 1 3 2
+```
+
+上面代码共包含两个 setTimeout ，也就是说除主代码块外，共有两个宏任务，
+其中第一个宏任务执行中，输出 1 ，并且创建了微任务队列，所以在下一个宏任务队列执行前，
+先执行微任务，在微任务执行中，输出 3 ，微任务执行后，执行下一次宏任务，执行中输出 2
+
+#### 顺序总结
+* 执行一个 `宏任务`（栈中没有就从事件队列中获取）
+* 执行过程中如果遇到 `微任务`，就将它添加到微任务的任务队列中
+* 宏任务执行完毕后，立即执行当前 微任务队列中的所有 微任务（依次执行）
+* 当前 宏任务执行完毕，开始检查渲染，然后 GUI线程接管渲染
+* 渲染完毕后， JS线程继续接管，开始下一个 `宏任务`（从事件队列中获取）
+
+![宏任务 微任务](../assets/img/macromicrotask.webp)
+
+测试：输出结果
+
+```js
+async function async1() {
+  console.log(1);
+  const result = await async2();
+  console.log(3);
+}
+
+async function async2() {
+  console.log(2);
+}
+
+Promise.resolve().then(() => {
+  console.log(4);
+});
+
+setTimeout(() => {
+  console.log(5);
+});
+
+async1();
+console.log(6);
+```
+
+> 12643 undefined 5
+### Promise
+
+[实现](https://github.com/forthealllight/promise-achieve/blob/master/myPromise.js)<br>
+要点
+* status = 'pending' | 'resolved' | 'rejected';
+* value = undefined, reason = undefined, 分别在 resolve / reject 后赋值给参数
+* onFullfilledArray = [], onRejectedArray = [], 分别在 resovle / reject 时依次执行
+* resolve 后 return 一个 myPromise
+* 入参检查 (resolve, reject)
+* then 绑在 prototype 上, 用递归把 全部 then 的回调绑在 onFullfilledArray, onRejectedArray 上
+* 定义 resolvePromise 
+
+### array 知识点
+
+reducer
+
+> arr.reduce(callback(accumulator, currentValue[, index[, array]])[, initialValue])
+
 * websocket 可以让我们建立客户端到服务器端的全双工通信，这就意味着服务器端可以主动推送数据到客户端，
 * web worker，web worker 是运行在浏览器后台的 js 程序，他不影响主程序的运行，是另开的一个 js 线程，可以用这个线程执行复杂的数据操作，然后把操作结果通过 postMessage 传递给主线程，这样在进行复杂且耗时的操作时就不会阻塞主线程了。
 * 页面间通信: 使用 cookie，使用 web worker，使用 localeStorage 和 sessionStorage
@@ -306,14 +451,13 @@ call, apply, bind
 * 重绘(repaint): 改变每个元素外观时所触发的浏览器行为，比如颜色，背景等样式发生了改变而进行的重新构造新外观的过程。重构不会引发页面的重新布局，不一定伴随着回流
 * 回流(reflow): 浏览器为了重新渲染页面的需要而进行的重新计算元素的几何大小和位置的，他的开销是非常大的，回流可以理解为渲染树需要重新进行计算，一般最好触发元素的重构，避免元素的回流；比如通过通过添加类来添加 css 样式，而不是直接在 DOM 上设置，当需要操作某一块元素时候，最好使其脱离文档流，这样就不会引起回流了，比如设置 position：absolute 或者 fixed，或者 display：none，等操作结束后在显示。
 
-## 浏览器相关
-
-回流 重绘
 
 ## Yarn & NPM
 
 > 参考 https://juejin.im/post/5da9c6b0e51d4524d67486e2
 
 一些题目
-https://github.com/dwqs/blog/issues/17
-https://juejin.im/post/5dac5d82e51d45249850cd20
+* [ ] https://github.com/dwqs/blog/issues/17
+* [ ] https://juejin.im/post/5dac5d82e51d45249850cd20
+
+* [ ] https://juejin.im/post/5dc20a4ff265da4d4e30040b
