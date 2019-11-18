@@ -1,10 +1,12 @@
-## Leetcode
+# Leetcode Solutions
+Leetcode solution in Javascript.
 
-> Leetcode solution in Javascript & python.
+## Updating
+- [11. Container With Most Water](leetcode/container-with-most-water.md)
 
-* [Leetcode](https://leetcode.com)
-  1. [Two Sum](/posts/leetcode/twoSum.md)
-  1. [Add 2 Numbers](/posts/leetcode/add2numbers.md)
-  1. [Longest Substring without Repeating Characters](/posts/leetcode/longest-substring-without-repeating-characters.md)
-  1. [Zig Zag Conversion](/posts/leetcode/algozigzagconversion.md)
-  1. [Reverse Integer](/posts/leetcode/reverseinteger.md)
+## Archived
+- [Two Sum](/posts/leetcode/twoSum.md)
+- [Add 2 Numbers](/posts/leetcode/add2numbers.md)
+- [Longest Substring without Repeating Characters](/posts/leetcode/longest-substring-without-repeating-characters.md)
+- [Zig Zag Conversion](/posts/leetcode/algozigzagconversion.md)
+- [Reverse Integer](/posts/leetcode/reverseinteger.md)
