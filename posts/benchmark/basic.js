@@ -1,24 +1,28 @@
 
 const { performance } = require('perf_hooks')
 
-function benchmark(funcs) {
-  let res
-  if (Array.isArray(funcs)) {
-    res = funcs.forEach(fn => measure(fn))
-    console.table
-  } else {
-    res = measure(funcs)
-  }
-  console
-}
+// function benchmark(funcs) {
+//   let res
+//   if (Array.isArray(funcs)) {
+//     res = funcs.forEach(fn => measure(fn))
+//     console.table
+//   } else {
+//     res = measure(funcs)
+//   }
+//   console
+// }
 
-// fn is either [function, args] or function
-function measure(fn) {
+// cases must be array
+function measure(fn, cases) {
   let tsStart
-  if (Array.isArray(fn)) {
+  if (cases) {
+    let i = -1
+    let l = cases.length
     // function with arguments
     tsStart = performance.now()
-    fn[0](fn[1])
+    while(++i<l) {
+      fn(cases[i])
+    }
   } else {
     tsStart = performance.now()
     fn()
@@ -37,4 +41,4 @@ function measure(fn) {
 // console.timeEnd(`${scope}/${item}`)
 
 // console.log(performance.now())
-console.table([performance.now(), 2,1])
+// console.table([performance.now(), 2,1])

@@ -113,3 +113,122 @@ there are no best state management in frontend, only the most suitable for your 
 Reference:
 
 - [Why do I choose Effector instead of Redux or MobX?](https://dev.to/lessmess/why-i-choose-effector-instead-of-redux-or-mobx-3dl7)
+
+
+
+# frontend state management
+
+## What is an ideal state management solution
+
+In my opinion, an ideal state management solution for frontend.
+When you start to think of the state management lib for your next project, you may consider the following principles:
+
+- Single state machine
+  
+  Single source/entry of truth, easy to manage. This also means strong constrainted to prevent you making mistakes.
+
+  ```js
+  const store = createStore()
+  ```
+
+- Simple, even "Stupid" api
+  
+  minimize learning curve
+
+  ```js
+  const state(s) = store.get({keyname}|{[keyname]})
+  store.set({keyname}|{[keyname]}, state)
+  ```
+
+- Trackable
+  
+  provide trackable snapshot or some interruptor
+  
+  ```js
+  const snapshot = store.snapshot()
+  store.subscribe((keyname, state) => {})
+  ```
+
+- Focus
+  
+  It should ONLY focus on getter, setter of the state, and never care about business, action, or effect.
+
+- Automate
+  
+  involved components are auto-updated, either pull or push, less manual handlers.
+
+- Isolate with view layer, è§£è€¦ (dob)
+
+- Independent of framework
+  
+  It can run across the major platform, e.g. web, if not possible, then make it fit the concept of the framework, e.g. make it "react"
+
+- Tiny
+  
+  The smaller, the better
+- Edge Case Covering
+  
+  e.g. proper exception handling
+  
+The best state management should always try to get close to these principles, and do some tradeoffs if some are unachievable
+
+## [noctx](https://github.com/w10036w/noctx) for React with Hooks
+
+> full examples check [sandbox](https://codesandbox.io/s/noctx-488oo5031x)
+
+- [x] Single state machine
+  
+  ```js
+  // store.js
+  import noctx from 'noctx'
+  const { getCtx, setCtx }  = noctx()
+  export { getCtx, setCtx }
+  ```
+
+- [x] Simple, even "Stupid" api
+
+  Since it is based on `React.createContext()`, it does need a `<Provider>` to wrap all involved components as children. The good is you can keep the states in control deepily, and easy to manage states in different hierarchy. The bad is Provider Hell. This is very "React", anyway.
+
+  ```js
+  // store/count.js
+  // create a custom hook
+  import { setCtx } from './store.js'
+  function useCount(initState = 0) {
+    const [count, setCount] = useState(initState)
+    const increaseCount = () => setCount(c => c + 1)
+    return { count, increaseCount }
+    // you need need this one day
+    // return useMemo(() => ({ count, increaseCount }), [count])
+  }
+  export default setCtx('count', useCount)
+
+  // provider-entry.js
+  import Count from './store/count.js'
+
+  export default = () => (
+    // if you need an initial state passing to useCount()
+    <Count.Provider> // -> initValue={2}
+      {/** ... */}
+    </Count.Provider>
+  )
+
+  // component.js
+  import { getCtx } from './store.js'
+  // your export of store/count.js
+  const { count, increaseCount } = getCtx('count')
+  // const [{ count, increaseCount }] = getCtx(['count'])
+  return (
+    <div>
+      <p>test: {count}</p>
+      <button onClick={increaseCount}>addCount</button>
+    </div>
+  )
+  ```
+
+- [ ] Trackable: **feature good to have but yet**
+- [x] Focus
+- [ ] Automate: due to React Hooks and no black magic
+- [ ] Isolate of view layer: it is based on React.createContext()
+- [x] Independ of framework or fit the framework: heavily rely on React, and in React style
+- [x] Tiny: [gzip: 501b](https://bundlephobia.com/result?p=noctx@0.1.1)
+- [ ] Edge Case Covering: partial, need test along the way
