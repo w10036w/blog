@@ -5,6 +5,9 @@ Leetcode solution in Javascript.
 - [11. Container With Most Water](leetcode/11-container-with-most-water.md)
 - [12. Integer to Roman](leetcode/12-integer-to-roman.md)
 - [14. Longest Common Prefix](leetcode/14-longest-common-prefix.md)
+- [15. 3Sum](leetcode/15-3sum.md)
+- [14. Longest Common Prefix](leetcode/14-longest-common-prefix.md)
+- [17. Letter Combinations of a Phone Number](leetcode/17-letter-combinations-of-a-phone-number.md)
 
 ## Archived
 - [Two Sum](leetcode/twoSum.md)
