@@ -296,6 +296,10 @@ call, apply, bind
 * 标签语义化，比如 header，footer，nav，aside，article，section 等，利于开发/阅读模式/SEO，新增了很多表单元素，入 email，url 等，除去了 center 等样式标签，还有除去了有性能问题的 frame，frameset 等标签
 * video，audio
 * 新接口，如 navigator.geoloaction
+* docType
+  * 混杂模式
+  * 标准模式
+  * 准标准模式
 
 ## 浏览器相关
 
@@ -450,6 +454,56 @@ reducer
   * 最后构建布局数，布局是含有元素的定位和几何信息
 * 重绘(repaint): 改变每个元素外观时所触发的浏览器行为，比如颜色，背景等样式发生了改变而进行的重新构造新外观的过程。重构不会引发页面的重新布局，不一定伴随着回流
 * 回流(reflow): 浏览器为了重新渲染页面的需要而进行的重新计算元素的几何大小和位置的，他的开销是非常大的，回流可以理解为渲染树需要重新进行计算，一般最好触发元素的重构，避免元素的回流；比如通过通过添加类来添加 css 样式，而不是直接在 DOM 上设置，当需要操作某一块元素时候，最好使其脱离文档流，这样就不会引起回流了，比如设置 position：absolute 或者 fixed，或者 display：none，等操作结束后在显示。
+
+### function, argument 知识点
+
+> https://www.cnblogs.com/yugege/p/5539020.html
+
+我们现在有这样的一个需求，有一个 people 对象，里面存着一些人名，如下：
+
+```js
+var people = {
+  values: ["Dean Edwards", "Sam Stephenson", "Alex Russell", "Dean Tom"]
+};
+```
+
+我们希望 people 对象拥有一个 `find` 方法，当不传任何参数时，就会把 people.values 里面的所有元素返回来；当传一个参数时，就把 first-name 跟这个参数匹配的元素返回来；当传两个参数时，则把 first-name 和 last-name 都匹配的才返回来。因为 find 方法是根据参数的个数不同而执行不同的操作的，所以，我们希望有一个 addMethod 方法，能够如下的为 people 添加 find 的重载：
+
+```js
+addMethod(people, "find", function() {}); /*不传参*/
+addMethod(people, "find", function(a) {}); /*传一个*/
+addMethod(people, "find", function(a, b) {}); /*传两个*/
+```
+
+这时候问题来了，这个全局的 addMethod 方法该怎么实现呢？John Resig 的实现方法如下，代码不长，但是非常的巧妙：
+
+```js
+function addMethod(object, name, fn) {
+　var old = object[name]; //把前一次添加的方法存在一个临时变量old里面
+　object[name] = function() { // 重写了object[name]的方法
+　　// 如果调用object[name]方法时，传入的参数个数跟预期的一致，则直接调用
+　　if(fn.length === arguments.length) { // Function.prototype.length 是参数的个数!
+　　  return fn.apply(this, arguments);
+　　　// 否则，判断old是否是函数，如果是，就调用old
+　　} else if(typeof old === "function") {
+　　　return old.apply(this, arguments);
+　　}
+　}
+}
+```
+
+#### this 指向
+
+```js
+const arrayLike = {
+   length: 0
+}
+const call = [].push.call; // typeof call "function"
+call(arrayLike, 1);
+console.log(arrayLike); // call is not a function
+// because "this" inside `call` points to global "this", thus there is no `call` on window/global/globalThis.
+```
+
 
 ### 位运算符 (bitwise operator)
 
