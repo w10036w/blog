@@ -1,286 +1,9 @@
-# 前端面试笔记
-
-## JS 语言基础
-
-### 类型
-[基本数据类型 primitive](https://developer.mozilla.org/en-US/docs/Glossary/Primitive)：
-Null Undefined Boolean String Number Symbol BigInt
-
-引用数据类型: 对象 Object
-* 一般对象 Object
-* 数组对象 - Array
-* 正则对象 - RegExp
-* 日期对象 - Date
-* 数学函数 - Math (浏览器全局对象)
-* 函数对象 - Function
-
-`typeof` 可以判断 primitive, 不适合判断引用数据类型 object
-对一个值使用 typeof 操作符可能会返回下列某个字符：
-* “undefined”：如果这个值未定义
-* “boolean”：如果这个值是布尔值
-* “number”：如果这个值是数值
-* “string”：如果这个值是字符串
-* “object”：如果这个值是 对象 或 Array 或 null
-* “function”：如果这个值是函数
-
-`instanceof` 是查询原型链，因此不适合判断 primitive 类型。
-
-```js
-var str1 = 'hello world';
-str1 instanceof String // false
-```
-
-判断对象（object）的类型最好用 `Object.prototype.toString.call`
-Object.prototype.toString.call(arg)==="[object Array]"
-
-instanceof 可以借助 Symbol 判断 primitive 类型：
-
-```js
-class PrimitiveNumber {
-  static [Symbol.hasInstance](x) {
-    return typeof x === 'number'
-  }
-}
-console.log(111 instanceof PrimitiveNumber) // true
-```
-
-### Number 数值
-
-最小的数值为：Number.MIN_VALUE，在大多数浏览器中该数值为 5e-324；
-最大的数值为：Number.MIN_VALUE ，在大多数浏览器中该数值为 1.7976931348623157e+308
-
-如果某次计算的结果值超出了数值范围，就会转换成特殊的 Infinity 值（ -Infinity 负无穷或 Infinity 正无穷）
-
-可以使用 isFinite () 函数判断是否为无穷数。
-
-有三个函数可以把非数值转换为数值：
-
-* Number()
-* parseInt()
-* parseFloat()
-
-Number () 可以用于任何数据类型，parseInt 和 parseFloat 专门用于把字符串转换成数值
-
-Number () 函数在转换时规则比较复杂且不够合理，所以更常用的是 parseInt () 函数
-
-parseInt () 函数在转换字符串时有几个规则
-* 它会忽略字符串前面的空格，直至找到第一个非空字符串。
-* 如果第一个字符不是数字字符或负数，parseInt () 就会返回 NaN。
-* 如果第一个字符是数字字符，parseInt 会继续解析第二个字符，知道解析完所有的字符或遇到一个非数字字符。
-* 可以在转换时，指定第二个参数即转换使用的基数（即多少进制），来消除 parseInt () 在进制方面的困惑。
-
-```js
-var num1 = parseInt("10", 2);   // 2（二进制）
-var num2 = parseInt("10", 8);   // 8（八进制）
-var num3 = parseInt("10", 10);  // 10（十进制）
-var num4 = parseInt("10", 16);  // 16（十六进制）
-```
-
-parseFloat 也会从第一个字符开始解析每个字符，也是一直解析到字符末尾，或者解析到遇见一个无效的浮点数字字符为止。也就是说第一个小数点是有效的，第二个就是无效的，后面的字符会被忽略。
-
-parseFloat 还有一个特点是会忽略前导的零。它只能解析十进制数值
-
-### String 字符串
-字符字面量 escape value
-* \n：换行
-* \t：横向tab缩进
-* \v: 纵向缩进
-* \b：退格
-* \r：回车
-* \f：换页
-* \：换行再续string，不一定被广泛支持，弃用
-
-### ==, ===
-
-"==" 两边的类型是否相同，相同的话就比较值的大小，例如 1==2，返回 false
- 判断的是否是 null 和 undefined，是的话就返回 true
- 判断的类型是否是 String 和 Number，是的话，把 String 类型转换成 Number，再进行比较
-判断其中一方是否是 Boolean，是的话就把 Boolean 转换成 Number，再进行比较
-如果其中一方为 Object，且另一方为 String、Number 或者 Symbol，会将 Object 转换成字符串，再进行比较
-
-因此
-
-```js
-[]==![] // [] -> 0, ![] -> false -> 0
-{a: 1} == "[object Object]") //true
-
-Object.is(NaN, NaN) // true
-Object.is(+0, -0) // false
-
-```
-
-
-### 计算
-<details>
-<summary>
-大数相加：</summary>
-1. 如有小数点，记录各自的小数点后位（如 11.12+34 为 2 0）后，去掉变为整数，补齐空位 （11.12+34 -> 1112+3400）
-2. 如有负值，第4步为减法
-3. 转化为string并倒转
-4. 遍历各对应位置位求和，满十后一位（用临时值）进一【减法若不够则后一位退一】，逢缺位结束并附上另一数多出的数位
-5. 倒转，加回小数点
-</details>
-
-### 闭包
-
-缺点是引用始终存在，占用内存
-
-### 原型链继承
-
-### 常用函数、关键字
-
-#### new
-new 代码化演示
-
-首先，，然后 
-
-
-其次，
-
-最后，改变构造函数内部的 this 的指向
-
-```js
-var obj = {}; // new 操作符为我们创建一个新的空对象，由此 this 重定向至新对象
-obj.__proto__ = fn.prototype; // 空对象的原型指向函数的原型
-fn.call(obj);  // 改变构造函数内部的 this 的指向
-```
-
-call, apply, bind
-
-## 底层协议
-
-### HTTP [状态码](https://juejin.im/post/5db7b2986fb9a02027084ff4)
-分类 | 描述
- :- | :-
-1** | 信息，服务器收到请求，需要请求者继续执行操作|
-2** | 成功，操作被成功接收并处理
-3** | 重定向，需要进一步的操作以完成请求
-4** | 客户端错误，请求包含语法错误或无法完成请求
-5** | 服务器错误，服务器在处理请求的过程中发生了错误
-
-<details>
-<summary>常用请求</summary>
-
-200: 请求已成功，请求所希望的响应头或数据体将随此响应返回。
-
-204: （OPTION / DELETE）服务器成功处理了请求，但不需要返回任何实体内容，并且希望返回更新了的元信息。响应可能通过实体头部的形式，返回新的或更新后的元信息。如果存在这些头部信息，则应当与所请求的变量相呼应。如果客户端是浏览器的话，那么用户浏览器应保留发送了该请求的页面，而不产生任何文档视图上的变化，即使按照规范新的或更新后的元信息应当被应用到用户浏览器活动视图中的文档。由于 204 响应被禁止包含任何消息体，因此它始终以消息头后的第一个空行结尾。
-
-301: 被请求的资源已永久移动到新位置，并且将来任何对此资源的引用都应该使用本响应返回的若干个 URI 之一。
-
-302: 请求的资源现在临时从不同的 URI 响应请求。由于这样的重定向是临时的，客户端应当继续向原有地址发送以后的请求。
-
-304: 协商缓存；如果客户端发送了一个带条件的 GET请求且该请求已被允许，而文档的内容（自上次访问以来或者根据请求的条件）并没有改变，则服务器应当返回这个状态码。
-
-400: 1、语义有误，当前请求无法被服务器理解。除非进行修改，否则客户端不应该重复提交这个请求。2、请求参数有误。
-
-401: 当前请求需要用户验证。该响应必须包含一个适用于被请求资源的 WWW-Authenticate 信息头用以询问用户信息。客户端可以重复提交一个包含恰当的 Authorization 头信息的请求。如果当前请求已经包含了 Authorization 证书，那么 401响应代表着服务器验证已经拒绝了那些证书。如果 401响应包含了与前一个响应相同的身份验证询问，且浏览器已经至少尝试了一次验证，那么浏览器应当向用户展示响应中包含的实体信息，因为这个实体信息中可能包含了相关诊断信息。
-
-403: 用户有授权但无权限；服务器已经理解请求，但是拒绝执行它。与 401响应不同的是，身份验证并不能提供任何帮助，而且这个请求也不应该被重复提交。
-
-404: 请求失败，请求所希望得到的资源未被在服务器上发现。没有信息能够告诉用户这个状况到底是暂时的还是永久的。
-
-500: 服务器遇到了一个未曾预料的状况，导致了它无法完成对请求的处理。一般来说，这个问题都会在服务器的程序码出错时出现。
-
-502: 网关错误；作为网关或者代理工作的服务器尝试执行请求时，从上游服务器接收到无效的响应。
-
-503: 网关过载；由于临时的服务器维护或者过载，服务器当前无法处理请求。这个状况是临时的，并且将在一段时间以后恢复。注意：503 状态码的存在并不意味着服务器在过载的时候必须使用它。某些服务器只不过是希望拒绝客户端的连接。
-
-504: 网关超时；作为网关或者代理工作的服务器尝试执行请求时，未能及时从上游服务器（URI 标识出的服务器，例如 HTTP、FTP、LDAP）或者辅助服务器（例如 DNS）收到响应。
-</details>
-
-<details>
-<summary>1** 请求</summary>
-100: 客户端应当继续发送请求。这个临时响应是用来通知客户端它的部分请求已经被服务器接收，且仍未被拒绝。客户端应当继续发送请求的剩余部分，或者如果请求已经完成，忽略这个响应。服务器必须在请求完成后向客户端发送一个最终响应。
-
-101: 服务器已经理解了客户端的请求，并将通过 Upgrade 消息头通知客户端采用不同的协议来完成这个请求。在发送完这个响应最后的空行后，服务器将会切换到在 Upgrade 消息头中定义的那些协议。只有在切换新的协议更有好处的时候才应该采取类似措施。例如，切换到新的 HTTP 版本比旧版本更有优势，或者切换到一个实时且同步的协议以传送利用此类特性的资源。
-
-102: 由 WebDAV（RFC 2518）扩展的状态码，代表处理将被继续执行。
-</details>
-
-<details>
-<summary>其他 2** 请求</summary>
-201: 请求已经被实现，而且有一个新的资源已经依据请求的需要而建立，且其 URI 已经随 Location 头信息返回。假如需要的资源无法及时建立的话，应当返回 '202 Accepted'。
-
-202: 服务器已接受请求，但尚未处理。正如它可能被拒绝一样，最终该请求可能会也可能不会被执行。在异步操作的场合下，没有比发送这个状态码更方便的做法了。返回 202状态码的响应的目的是允许服务器接受其他过程的请求（例如某个每天只执行一次的基于批处理的操作），而不必让客户端一直保持与服务器的连接直到批处理操作全部完成。在接受请求处理并返回 202状态码的响应应当在返回的实体中包含一些指示处理当前状态的信息，以及指向处理状态监视器或状态预测的指针，以便用户能够估计操作是否已经完成。
-
-203: 服务器已成功处理了请求，但返回的实体头部元信息不是在原始服务器上有效的确定集合，而是来自本地或者第三方的拷贝。当前的信息可能是原始版本的子集或者超集。
-
-205: 服务器成功处理了请求，且没有返回任何内容。但是与 204 响应不同，返回此状态码的响应要求请求者重置文档视图。该响应主要是被用于接受用户输入后，立即重置表单，以便用户能够轻松地开始另一次输入。
-
-206: 服务器已经成功处理了部分 GET 请求。类似于 FlashGet 或者迅雷这类的 HTTP 下载工具都是使用此类响应实现断点续传或者将一个大文档分解为多个下载段同时下载。该请求必须包含 Range 头信息来指示客户端希望得到的内容范围，并且可能包含 If-Range 来作为请求条件。响应必须包含如下的头部域:Content-Range 用以指示本次响应中返回的内容的范围；如果是 Content-Type 为 multipart/byteranges 的多段下载，则每一 multipart 段中都应包含 Content-Range 域用以指示本段的内容范围。假如响应中包含 Content-Length，那么它的数值必须匹配它返回的内容范围的真实字节数。Date ETag 和/或Content-Location，假如同样的请求本应该返回 200响应。Expires, Cache-Control，和/或 Vary，假如其值可能与之前相同变量的其他响应对应的值不同的话。假如本响应请求使用了 If-Range 强缓存验证，那么本次响应不应该包含其他实体头；假如本响应的请求使用了 If-Range 弱缓存验证，那么本次响应禁止包含其他实体头；这避免了缓存的实体内容和更新了的实体头信息之间的不一致。否则，本响应就应当包含所有本应该返回 200响应中应当返回的所有实体头部域。假如 ETag 或 Last-Modified 头部不能精确匹配的话，则客户端缓存应禁止将 206响应返回的内容与之前任何缓存过的内容组合在一起。任何不支持 Range 以及 Content-Range 头的缓存都禁止缓存 206响应返回的内容。
-
-207: 由 WebDAV(RFC 2518) 扩展的状态码，代表之后的消息体将是一个 XML 消息，并且可能依照之前子请求数量的不同，包含一系列独立的响应代码。
-</details>
-
-<details>
-<summary>其他 3** 请求</summary>
-300: 被请求的资源有一系列可供选择的回馈信息，每个都有自己特定的地址和浏览器驱动的商议信息。用户或浏览器能够自行选择一个首选的地址进行重定向。
-
-303: 对应当前请求的响应可以在另一个 URI 上被找到，而且客户端应当采用 GET 的方式访问那个资源。这个方法的存在主要是为了允许由脚本激活的 POST 请求输出重定向到一个新的资源。这个新的 URI 不是原始资源的替代引用。同时，303响应禁止被缓存。
-
-305: 被请求的资源必须通过指定的代理才能被访问。Location 域中将给出指定的代理所在的 URI 信息，接收者需要重复发送一个单独的请求，通过这个代理才能访问相应资源。只有原始服务器才能建立 305 响应。
-
-307: 请求的资源现在临时从不同的 URI 响应请求。由于这样的重定向是临时的，客户端应当继续向原有地址发送以后的请求。
-
-</details>
-
-<details>
-<summary>其他 4** 请求</summary>
-402: 该状态码是为了将来可能的需求而预留的。目前为 payment required.
-
-405: 请求行中指定的请求方法不能被用于请求相应的资源。该响应必须返回一个 Allow 头信息用以表示出当前资源能够接受的请求方法的列表。
-
-406: 请求的资源的内容特性无法满足请求头中的条件，因而无法生成响应实体。
-
-407: 与 401响应类似，只不过客户端必须在代理服务器上进行身份验证。
-
-408: 请求超时。客户端没有在服务器预备等待的时间内完成一个请求的发送。客户端可以随时再次提交这一请求而无需进行任何更改。
-
-409: 由于和被请求的资源的当前状态之间存在冲突，请求无法完成。
-
-410: 被请求的资源在服务器上已经不再可用，而且没有任何已知的转发地址。
-
-411: 服务器拒绝在没有定义 Content-Length 头的情况下接受请求。在添加了表明请求消息体长度的有效 Content-Length 头之后，客户端可以再次提交该请求。
-
-412: 服务器在验证在请求的头字段中给出先决条件时，没能满足其中的一个或多个。
-
-413: 服务器拒绝处理当前请求，因为该请求提交的实体数据大小超过了服务器愿意或者能够处理的范围。
-
-414: 请求的 URI 长度超过了服务器能够解释的长度，因此服务器拒绝对该请求提供服务。
-
-415: 对于当前请求的方法和所请求的资源，请求中提交的实体并不是服务器中所支持的格式，因此请求被拒绝。
-
-416: 如果请求中包含了 Range 请求头，并且 Range 中指定的任何数据范围都与当前资源的可用范围不重合，同时请求中又没有定义 If-Range 请求头，那么服务器就应当返回 416状态码。
-
-417: 在请求头 Expect 中指定的预期内容无法被服务器满足，或者这个服务器是一个代理服务器，它有明显的证据证明在当前路由的下一个节点上，Expect 的内容无法被满足。
-
-421: 从当前客户端所在的 IP 地址到服务器的连接数超过了服务器许可的最大范围。
-
-423: 请求格式正确，但是由于含有语义错误，无法响应。
-
-424: 由于之前的某个请求发生的错误，导致当前请求失败，例如 PROPPATCH。
-
-425: 在 WebDav Advanced Collections 草案中定义，但是未出现在《WebDAV 顺序集协议》（RFC 3658）中。
-
-426: 客户端应当切换到 TLS/1.0。
-
-449: 由微软扩展，代表请求应当在执行完适当的操作后进行重试。
-</details>
-
-<details>
-<summary>其他 5** 请求</summary>
-501: 服务器不支持当前请求所需要的某个功能。当服务器无法识别请求的方法，并且无法支持其对任何资源的请求。
-
-505: 服务器不支持，或者拒绝支持在请求中使用的 HTTP 版本。这暗示着服务器不能或不愿使用与客户端相同的版本。响应中应当包含一个描述了为何版本不被支持以及服务器支持哪些协议的实体。
-
-506: 由《透明内容协商协议》（RFC 2295）扩展，代表服务器存在内部配置错误：被请求的协商变元资源被配置为在透明内容协商中使用自己，因此在一个协商处理中不是一个合适的重点。
-
-507: 服务器无法存储完成请求所必须的内容。这个状况被认为是临时的。WebDAV (RFC 4918)
-
-509: 服务器达到带宽限制。这不是一个官方的状态码，但是仍被广泛使用。
-
-510: 获取资源所需要的策略并没有没满足。（RFC 2774）
-</details>
+# 前端面试基础 (TODO) 待分类
+
+- [底层协议](interview/protocols.md)
+- [JS 语言基础](interview/js.md)
+- [ES6 ES7 新特性](interview/es6.md)
+- [浏览器](interview/browser.md)
 
 ## CSS + HTML
 
@@ -301,132 +24,6 @@ call, apply, bind
   * 标准模式
   * 准标准模式
 
-## 浏览器相关
-
-* `进程` 是 CPU 资源分配的最小单位；
-* `线程` 是 CPU 调度的最小单位，一个进程可有多个线程；
-* 不同 `进程` 间可通信，但代价大；
-* `单线程` 与 `多线程` ，指在一个 `进程` 内的情况
-
-### 浏览器进程
-
-* 主进程
-  * 控制其他进程（创建销毁协调）
-  * 界面 UI 显示，用户交互，前进后退收藏
-  * 将渲染进程得到的内存中的 Bitmap，绘制到用户界面上 ？？？
-  * 处理网络请求，文件访问等
-* 第三方插件进程：每插件一个进程
-* GPU进程：3D绘图
-* 渲染进程（浏览器内核）
-  * 页面渲染，脚本执行，事件处理
-  * **每 tab 创建一个独立进程**
-
-对于 `渲染进程`，其多线程如下：
-* GUI 渲染线程
-  * 负责渲染页面，布局和绘制
-  * 页面需要重绘和回流时，该线程就会执行
-  * 与 js 引擎线程互斥，防止渲染结果不可预期
-* JS引擎线程
-  * 负责处理解析和执行 javascript 脚本程序
-  * 只有一个 JS 引擎线程（单线程）
-  * 与 GUI 渲染线程互斥，防止渲染结果不可预期
-* 事件触发线程
-  * 用来控制事件循环（鼠标点击、setTimeout、ajax 等）
-  * 当事件满足触发条件时，将事件放入到 JS 引擎所在的执行队列中
-* 定时触发器线程
-  * setInterval 与 setTimeout 所在的线程
-  * 定时任务并不是由 JS 引擎计时的，是由定时触发线程来计时的
-  * 计时完毕后，通知事件触发线程
-* 异步http请求线程
-  * 浏览器有一个单独的线程用于处理 AJAX 请求
-  * 当请求完成时，若有回调函数，通知事件触发线程
-
-#### 为什么 javascript 是单线程的？
-
-首先是历史原因，在创建 javascript 这门语言时，多进程多线程的架构并不流行，硬件支持并不好。<br>
-其次是因为多线程的复杂性，多线程操作需要加锁，编码的复杂性会增高。<br>
-而且，如果同时操作 DOM ，在多线程不加锁的情况下，最终会导致 DOM 渲染的结果不可预期。
-
-当 JS引擎线程执行时 GUI渲染线程会被挂起，GUI 更新则会被保存在一个队列中等待 JS引擎线程空闲时立即被执行。
-
-#### 什么是宏任务
-我们可以将每次执行栈执行的代码当做是一个宏任务（包括每次从事件队列中获取一个事件回调并放到执行栈中执行），
-每一个宏任务会从头到尾执行完毕，不会执行其他。
-
-我们前文提到过 JS 引擎线程和 GUI 渲染线程是互斥的关系，浏览器为了能够使 宏任务和 DOM 任务有序的进行，会在一个 `宏任务` 执行结果后，在下一个 `宏任务` 执行前， GUI渲染线程开始工作，对页面进行渲染。
-
-> 主代码块，setTimeout，setInterval 等，都属于宏任务
-
-#### 什么是微任务
-我们已经知道 宏任务结束后，会执行渲染，然后执行下一个 宏任务，
-而微任务可以理解成在当前 宏任务执行后立即执行的任务。
-
-也就是说，当宏任务执行完，会在**渲染前**，将执行期间所产生的所有微任务都执行完。
-
-> Promise，process.nextTick 等，属于 微任务。
-
-```js
-document.body.style = 'background:blue'
-console.log(1);
-Promise.resolve().then(()={
-  console.log(2);
-  document.body.style = 'background:black'
-});
-console.log(3);
-```
-
-会打印132，直接变成黑色，因为 Promise 属于微任务，**在渲染前先执行**。
-
-```js
-setTimeout(() = {
-  console.log(1)
-  Promise.resolve(3).then(data = console.log(data))
-}, 0)
-setTimeout(() = {
-  console.log(2)
-}, 0)
-// print : 1 3 2
-```
-
-上面代码共包含两个 setTimeout ，也就是说除主代码块外，共有两个宏任务，
-其中第一个宏任务执行中，输出 1 ，并且创建了微任务队列，所以在下一个宏任务队列执行前，
-先执行微任务，在微任务执行中，输出 3 ，微任务执行后，执行下一次宏任务，执行中输出 2
-
-#### 顺序总结
-* 执行一个 `宏任务`（栈中没有就从事件队列中获取）
-* 执行过程中如果遇到 `微任务`，就将它添加到微任务的任务队列中
-* 宏任务执行完毕后，立即执行当前 微任务队列中的所有 微任务（依次执行）
-* 当前 宏任务执行完毕，开始检查渲染，然后 GUI线程接管渲染
-* 渲染完毕后， JS线程继续接管，开始下一个 `宏任务`（从事件队列中获取）
-
-![宏任务 微任务](../assets/img/macromicrotask.webp)
-
-测试：输出结果
-
-```js
-async function async1() {
-  console.log(1);
-  const result = await async2();
-  console.log(3);
-}
-
-async function async2() {
-  console.log(2);
-}
-
-Promise.resolve().then(() => {
-  console.log(4);
-});
-
-setTimeout(() => {
-  console.log(5);
-});
-
-async1();
-console.log(6);
-```
-
-> 12643 undefined 5
 ### Promise
 
 [实现](https://github.com/forthealllight/promise-achieve/blob/master/myPromise.js)<br>
@@ -495,15 +92,12 @@ function addMethod(object, name, fn) {
 #### this 指向
 
 ```js
-const arrayLike = {
-   length: 0
-}
+const arrayLike = { length: 0 }
 const call = [].push.call; // typeof call "function"
 call(arrayLike, 1);
 console.log(arrayLike); // call is not a function
 // because "this" inside `call` points to global "this", thus there is no `call` on window/global/globalThis.
 ```
-
 
 ### 位运算符 (bitwise operator)
 
@@ -570,6 +164,128 @@ r = 1|2|4|8
 r & 4 // 如有权则返回4,否则0
 ```
 
+### 常用方法
+
+Array.map
+
+```js
+Array.prototype._map = function(fn, thisArg) {
+  if (this == null) {
+    throw new TypeError(" this is null or not defined");
+  }
+  if (Object.prototype.toString.call(fn) != "[object Function]") {
+    throw new TypeError(fn + " is not a function");
+  }
+  const arr = this
+  let T
+  if (thisArg) T = thisArg
+  const res = []
+
+  const l = arr.length
+  for(let i = 0; i<l; i++) {
+    const r = fn.call(T, arr[i], i, arr)
+    res.push(r)
+  }
+  return res
+}
+```
+
+**curry** function e.g. sum
+
+```js
+const sum = (a, b=0) => {
+  if (arguments.length === 0) {
+    return b
+  }
+  return n => {
+    let res = a+b
+    return sum(n, res)
+  }
+}
+
+console.log(sum(100,200)(300)(400)())
+```
+
+Promise / A+
+
+```js
+myPromise = function (resolve, reject) {
+
+}
+```
+
+**underscore.debounce**
+
+```js
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+function debounce(func, wait, immediate) {
+  var timeout;
+  return function() {
+    var context = this, args = arguments;
+    var later = function() {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+    var callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
+};
+```
+
+**underscore.throttle**
+
+```js
+// Returns a function, that, when invoked, will only be triggered at most once
+// during a given window of time. Normally, the throttled function will run
+// as much as it can, without ever going more than once per `wait` duration;
+// but if you'd like to disable the execution on the leading edge, pass
+// `{leading: false}`. To disable execution on the trailing edge, ditto.
+function(func, wait, options) {
+  var timeout, context, args, result;
+  var previous = 0;
+  if (!options) options = {};
+
+  var later = function() {
+    previous = options.leading === false ? 0 : Date.now();
+    timeout = null;
+    result = func.apply(context, args);
+    if (!timeout) context = args = null;
+  };
+
+  var throttled = function() {
+    var now = Date.now();
+    if (!previous && options.leading === false) previous = now;
+    var remaining = wait - (now - previous);
+    context = this;
+    args = arguments;
+    if (remaining <= 0 || remaining > wait) {
+      if (timeout) {
+        clearTimeout(timeout);
+        timeout = null;
+      }
+      previous = now;
+      result = func.apply(context, args);
+      if (!timeout) context = args = null;
+    } else if (!timeout && options.trailing !== false) {
+      timeout = setTimeout(later, remaining);
+    }
+    return result;
+  };
+
+  throttled.cancel = function() {
+    clearTimeout(timeout);
+    previous = 0;
+    timeout = context = args = null;
+  };
+
+  return throttled;
+};
+```
 
 ## Yarn & NPM
 

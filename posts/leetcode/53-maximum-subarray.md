@@ -17,20 +17,20 @@ If you have figured out the O(n) solution, try coding another solution using the
 
 <details>
 <summary>hint</summary>
-粘连型一维 dp, 需要在子问题多一层转化
+粘连型一维 dp[], 需要在子问题多一层转化<br>
 
 <b>最优解</b> 为 最大值<br>
-<b>子函数</b> dp[i] 构成为 前i个以nums[i]结尾的数组(例: i=2时, dp[i] 代表以-3 为最终数的所有数组[-2, 1, -3], [1, -3], [-3]的最优解)
+<b>子函数</b> dp[i] 构成为 前i个以nums[i]结尾的数组(例: i=2时, dp[i] 代表以-3 为最终数的所有数组[-2, 1, -3], [1, -3], [-3]的最优解)<br>
 
 <b>关系式</b>为<br>
-dp[i] = nums[i] + Math.max(dp[i-1],0)
+dp[i] = nums[i] + Math.max(dp[i-1],0)<br>
 
 <b>首项</b>为<br>
 dp[0] = nums[0]
 
-<b>限制条件</b>已包含在分解子函数中, 无
+<b>限制条件</b>已包含在分解子函数中, 无<br>
 
-然后 在所有解 `dp[]` 中搜索最优解(可与一维dp数组同步循环进行), 搜索结果即为最终解
+然后 在所有解 `dp[]` 中搜索最优解(可与一维dp数组同步循环进行), 搜索结果即为最终解<br>
 </details>
 
 ```js
