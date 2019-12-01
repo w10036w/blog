@@ -118,7 +118,7 @@ function clone(target, map = new WeakMap()) {
   }
 
   // 防止循环引用
-  if (map.get(target)) {
+  if (map.has(target)) {
     return map.get(target);
   }
   map.set(target, cloneTarget);

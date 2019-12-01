@@ -14,6 +14,10 @@ Leetcode solution in Javascript.
 - [15. 3Sum](leetcode/15-3sum.md)
 - [18. 4sum](leetcode/18-4sum.md)
 
+## 2 pointers
+- [26. Remove Duplicates from Sorted Array](leetcode/26-remove-duplicates-from-sorted-array.md)
+- [27. Remove Element](leetcode/27-remove-element.md)
+
 ## LinkedList
 - [21. Merge Two Sorted Lists](leetcode/21-merge-two-sorted-lists.md)
 

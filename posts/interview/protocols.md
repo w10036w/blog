@@ -52,31 +52,31 @@ wireshark 抓包 TLS RSA 通信图示
 
 TLS 握手步骤 (client-hello, server-hello, (cert verify with CA & OCSP), cipher-spec-exchanged)
 
-![tls handshake](/assets/img/interview-protocols-ssl-handshake-rsa.png)
+![tls handshake](../../assets/img/interview-protocols-ssl-handshake-rsa.png)
 
-1. `client-hello`: 客户端(浏览器)中完成地址输入后，解析域名获得 IP Host 地址，客户端会与此 Host 的 443 (默认，如果指定其他端口则会连接此端口) 尝试连接. 客户端会发送 
+1. `client-hello`: 客户端(浏览器)中完成地址输入后，解析域名获得 IP Host 地址，客户端会与此 Host 的 443 (默认，如果指定其他端口则会连接此端口) 尝试连接. 客户端会发送:
    1. `SSL version 协议版本`
    2. `supported ciphers 支持的加密`
    3. `supported compression 支持的压缩方法`
-   4. `random number1`
-2. `server-hello`: 服务器收到并存储客户端发送的 session ticket1, 然后发给客户端
-   1. `server cert 服务器证书`: 含 public key, 如果此证书无公钥, 还会发 `server key exchange`，
-   2. `cipher suite 加密方法`: 服务器与客户端兼容的方法, RSA/TLS1.0/..., 如版本不兼容则关闭该连接
-   3. `random number2`
+   4. `random`
+2. `server-hello`: 服务器收到并存储 clientHello.random, 然后发给客户端
+   1. `server cert 服务器证书`: 含 `public key`, 如果此证书无公钥, 还会发 `server key exchange`，
+   2. `cipher suite 加密方法`: 服务器与客户端兼容的方法, 非对称加密/双钥加密 RSA/DSA/Diffie-Hellman/ECC 椭圆加密, 如版本不兼容则关闭该连接
+   3. `random`
    4. `cert request` (optional): 如果是非常重要的信息, 服务端会向客户端发送 , 要求客户端提供证书(如银行 usb 密钥)
-   5. `server-hello-done`
+   5. `serverHelloDone`
 3. `client-key-exchange`: 如果服务端发送 `cert request`, 客户端需要发送自己的证书使其验证; 之后客户端验证服务器返回的证书
     * 有效期 (起止时间)
     * 域名 (与浏览器地址栏中域名是否匹配)
     * 吊销状态 (CRL+OCSP), [见 **吊销检查**].
     * 颁发机构，如果颁发机构是中间证书，在验证中间证书的有效期 / 颁发机构 / 吊销状态。一直验证到最后一层证书，如果最后一层证书是在操作系统或浏览器内置，那么就是可信的，否则就是自签名.
   
-    以上验证步骤，需要全部通过。否则就会显示警告. 检查通过后, 用 `number 1` (浏) & `number 2` (服) & `number 3` (浏) 生成 `master secret`.
+    以上验证步骤，需要全部通过。否则就会显示警告. 检查通过后, 生成 `master secret`. (PRF 为伪随机函数 pseudorandom function, PRF)
 
-    `master_secret = PRF(pre_master_secret,"master secret",ClientHello.random+ServerHello.random)`
+    `master_secret = PRF(pre_master_secret,"master secret",clientHello.random+serverHello.random)`
 
     之后发送给服务端如下内容
-     1. `encrypted random number3` ( `premaster secret`, 48bytße, protocol_version+random[46] ): 用协商的 `cipher suite` (非对称加密/双钥加密 RSA/DSA/Diffie-Hellman/ECC 椭圆加密) + `server public key` 加密
+     1. `encrypted-random` ( `pre_master_secret`, 48byte, protocol_version+random[46] ): 用协商的 `cipher suite` + `server public key` 加密
      2. `change-cipher-spec`: 编码改变通知, 表明发送端已取得用以生成连接参数的足够信息，已生成加密密钥 (主密钥), 并且将切换到加密模式。客户端和服务器在条件成熟是会发送这个消息
      3. `encrypted-client-finish`: Encrypted Handshake Message, 由 `master-secret` 含之前所有握手信息依序以 `master secret` 计算的 hash (`verify_data` 字段), 以供验证
 

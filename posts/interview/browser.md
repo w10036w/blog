@@ -41,6 +41,8 @@
 
 考查知识点：知道要尽量不使用 document.write()，知道 [passive 的事件监听器](https://zjy.name/passive-event-listeners/)是什么
 
+## serviceWorker
+
 ## Debug
 
 ### devtools

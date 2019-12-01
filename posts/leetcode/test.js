@@ -1,34 +1,48 @@
-/**
- * @param {string} digits
- * @return {string[]}
- */
-var fn = function(digits) {
-  if (digits == null || digits.length === 0) return [];
-  const mapping = {
-    2:['a', 'b', 'c'],
-    3:['d', 'e', 'f'],
-    4:['g', 'h', 'i'],
-    5:['j', 'k', 'l'],
-    6:['m', 'n', 'o'],
-    7:['p', 'q', 'r', 's'],
-    8:['t', 'u', 'v'],
-    9:['w', 'x', 'y', 'z'],
+var fn = function(nums) {
+  let [l, r, len] = [0, 0, nums.length]
+  while (++r<len) {
+    if (nums[l]!==nums[r]) {
+      nums[++l] = nums[r]
+    }
   }
-  let i = 0
-  const len = digits.length
-  let r = mapping[digits[i]]
-  while (++i<len) {
-    const temp = []
-    r.forEach(e => {
-      mapping[digits[i]].forEach(el => {
-        temp.push(e+el)
-      })
-    })
-    r = temp
-  }
-  return r
+  return l+1
 };
-// test
-const test = "23"
+const test = [1,1,1,2,2,2,2,2,3,3]
 
 console.log(fn(test))
+
+
+
+// async function a1 () {
+//   console.log('a1 start')
+//   await a2()
+//   console.log('a1 end')
+// }
+// async function a2 () {
+//   console.log('a2')
+// }
+
+// console.log('script start')
+
+// setTimeout(() => {
+//   console.log('setTimeout')
+// }, 0)
+
+// Promise.resolve().then(() => {
+//   console.log('promise1')
+// })
+
+// a1()
+
+// let promise2 = new Promise((resolve) => {
+//   resolve('promise2.then')
+//   console.log('promise2')
+// })
+
+// promise2.then((res) => {
+//   console.log(res)
+//   Promise.resolve().then(() => {
+//       console.log('promise3')
+//   })
+// })
+// console.log('script end')
