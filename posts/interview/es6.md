@@ -2,6 +2,9 @@
 
 [ES6 参考书](http://es6.ruanyifeng.com/)
 
+[js 实现斐波那契数列 (数组缓存、动态规划、尾调用优化)](https://www.jianshu.com/p/bbc7e54a98d6)
+
+Q & A
 ```js
 // Reflect 会返回 symbol 属性 key, getOwnPropertyNames 会返回不可枚举的属性 key
 Reflect.ownKeys(obj).length ≥ Object.getOwnPropertyNames(obj).length ≥ Object.keys(obj).length

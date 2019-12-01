@@ -108,6 +108,65 @@ Object.is(+0, -0) // false
 ```
 
 ## 计算
+
+### 位运算符 (bitwise operator)
+
+[https://juejin.im/entry/57317b2679df540060d5d6c2](我们要不要在 JS 使用二进制位运算？)
+[我们要不要在 JS 使用二进制位运算？](https://juejin.im/entry/57317b2679df540060d5d6c2)
+
+首先对性能基本没有负面影响, 纯数字计算更快, 但只能对 Number 使用
+
+& 按位与
+
+| 按位或
+
+^ 按位异或
+
+~ 按位非
+
+<< 左移
+
+\>\> 有符号右移
+
+\>\>\> 无符号右移
+
+位运算时对非 整数 需先转化为 Int32 型整数
+
+#### 位运算符在 js 中的妙用
+判断奇偶
+```js
+// 偶数 & 1 = 0
+// 奇数 & 1 = 1
+console.log(2 & 1)    // 0
+console.log(3 & 1)    // 1
+```
+使用 `~, >>, <<, >>>, |` 取整
+```js
+console.log(~~ 6.83)    // 6
+console.log(6.83 >> 0)  // 6
+console.log(6.83 << 0)  // 6
+console.log(6.83 | 0)   // 6, 或随机数取整
+// >>>不可对负数取整
+console.log(6.83 >>> 0)   // 6
+```
+使用 `^` 完成值交换  
+```js
+var a = 5
+var b = 8
+a ^= b
+b ^= a
+a ^= b
+console.log(a)   // 8
+console.log(b)   // 5
+```
+Linux 权限检查/验证 | 碰撞检测优化 | React effectTag
+```js
+// 授权时
+r = 1|2|4|8
+// 鉴权时
+r & 4 // 如有权则返回4,否则0
+```
+
 <details>
 <summary>
 大数相加：</summary>
@@ -117,7 +176,7 @@ Object.is(+0, -0) // false
 4. 遍历各对应位置位求和，满十后一位（用临时值）进一【减法若不够则后一位退一】，逢缺位结束并附上另一数多出的数位
 5. 倒转，加回小数点
 </details>
-
+<hr>
 ## 闭包
 
 缺点是引用始终存在，占用内存
@@ -125,6 +184,160 @@ Object.is(+0, -0) // false
 ## 原型链继承
 
 ## 常用函数、关键字
+```js
+// Array shared verification
+if (this == null) {
+  throw new TypeError(" this is null or not defined");
+}
+if (Object.prototype.toString.call(fn) != "[object Function]") {
+  throw new TypeError(fn + " is not a function");
+}
+```
+Array.map
+```js
+Array.prototype._map = function(fn, thisArg) {
+  const arr = this
+  let T
+  if (thisArg) T = thisArg
+  const res = []
+
+  const l = arr.length
+  for(let i = 0; i<l; i++) {
+    const r = fn.call(T, arr[i], i, arr)
+    res.push(r)
+  }
+  return res
+}
+```
+Array.reduce
+```js
+// if reduceRight, amend i
+Array.prototype._reduce = function(fn, initValue) {
+  const arr = this
+  const len = arr.length
+  let r = arr[0]
+  let i = 0
+  if (typeof initValue !== 'undefined') {
+    r = initValue
+    i--
+  }
+  while(++i<len) {
+    r = fn(r, arr[i], i, arr)
+  }
+  return r
+}
+```
+Array.filter
+```js
+Array.prototype._filter = function(fn, thisArg) {
+  const arr = this
+  const len = arr.length
+  const res = []
+  let i = -1
+  while (++i<len) {
+    const r = fn.call(thisArg, arr[i], i, arr)
+    if (r) res.push(arr[i])
+  }
+  return res
+}
+```
+
+**curry*- function e.g. sum
+
+```js
+const sum = (a, b=0) => {
+  if (arguments.length === 0) {
+    return b
+  }
+  return n => {
+    let res = a+b
+    return sum(n, res)
+  }
+}
+
+console.log(sum(100,200)(300)(400)())
+```
+
+Promise / A+
+
+```js
+myPromise = function (resolve, reject) {
+
+}
+```
+
+**underscore.debounce**
+
+```js
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+function debounce(func, wait, immediate) {
+  var timeout;
+  return function() {
+    var context = this, args = arguments;
+    var later = function() {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+    var callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
+};
+```
+
+**underscore.throttle**
+
+```js
+// Returns a function, that, when invoked, will only be triggered at most once
+// during a given window of time. Normally, the throttled function will run
+// as much as it can, without ever going more than once per `wait` duration;
+// but if you'd like to disable the execution on the leading edge, pass
+// `{leading: false}`. To disable execution on the trailing edge, ditto.
+function(func, wait, options) {
+  var timeout, context, args, result;
+  var previous = 0;
+  if (!options) options = {};
+
+  var later = function() {
+    previous = options.leading === false ? 0 : Date.now();
+    timeout = null;
+    result = func.apply(context, args);
+    if (!timeout) context = args = null;
+  };
+
+  var throttled = function() {
+    var now = Date.now();
+    if (!previous && options.leading === false) previous = now;
+    var remaining = wait - (now - previous);
+    context = this;
+    args = arguments;
+    if (remaining <= 0 || remaining > wait) {
+      if (timeout) {
+        clearTimeout(timeout);
+        timeout = null;
+      }
+      previous = now;
+      result = func.apply(context, args);
+      if (!timeout) context = args = null;
+    } else if (!timeout && options.trailing !== false) {
+      timeout = setTimeout(later, remaining);
+    }
+    return result;
+  };
+
+  throttled.cancel = function() {
+    clearTimeout(timeout);
+    previous = 0;
+    timeout = context = args = null;
+  };
+
+  return throttled;
+};
+```
 
 ### `new` 代码化演示
 
@@ -221,3 +434,4 @@ console.log(6);
 ```
 
 > 12643 undefined 5
+> 
