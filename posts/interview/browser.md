@@ -1,8 +1,8 @@
 # interview - browser 浏览器
 
 ## 基础知识
-* `进程` 是 CPU 资源分配的最小单位；
-* `线程` 是 CPU 调度的最小单位，一个进程可有多个线程；
+* `进程` process 是 CPU 资源分配的最小单位；
+* `线程` thread 是 CPU 调度的最小单位，一个进程可有多个线程；
 * 不同 `进程` 间可通信，但代价大；
 * `单线程` 与 `多线程` ，指在一个 `进程` 内的情况
 
@@ -40,6 +40,17 @@
   * 当请求完成时，若有回调函数，通知事件触发线程
 
 考查知识点：知道要尽量不使用 document.write()，知道 [passive 的事件监听器](https://zjy.name/passive-event-listeners/)是什么
+
+## CSRP 跨域
+
+1. 通过jsonp跨域
+jsonp在页面上引入不同域上的js脚本文件实现请求不同域上的数据
+(1) 通过script标签引入一个js文件
+(2) js文件载入成功后会执行我们在url参数中指定的函数，并且会把我们需要的json数据作为参数传入
+注：需要服务器端的页面进行相应的配合
+2. 通过修改document.domain来跨子域
+3. 使用window.name来进行跨域
+window对象有个name属性，该属性有个特征：即在一个窗口(window)的生命周期内,窗口载入的所有的页面都是共享一个window.name的，每个页面对window.name都有读写的权限，window.name是持久存在一个窗口载入过的所有页面中的，并不会因新页面的载入而进行重置。
 
 ## serviceWorker
 

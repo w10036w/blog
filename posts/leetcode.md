@@ -13,8 +13,10 @@ Leetcode solution in Javascript.
 - [11. Container With Most Water](leetcode/11-container-with-most-water.md)
 - [15. 3Sum](leetcode/15-3sum.md)
 - [18. 4sum](leetcode/18-4sum.md)
+- [28. Implement strStr()](leetcode/28-implement-strstr.md)
 
 ## 2 pointers
+- [19. Remove Nth Node From End of List](leetcode/19-remove-nth-node-from-end-of-list.md)
 - [26. Remove Duplicates from Sorted Array](leetcode/26-remove-duplicates-from-sorted-array.md)
 - [27. Remove Element](leetcode/27-remove-element.md)
 
