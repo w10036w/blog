@@ -12,7 +12,7 @@ Note:
 
 Given n will always be valid.
 
-BEST solution (2 pointers + combine 2 while loops)
+MY solution:
 ```js
 /**
  * Definition for singly-linked list.
@@ -27,49 +27,17 @@ BEST solution (2 pointers + combine 2 while loops)
  * @return {ListNode}
  */
 var removeNthFromEnd = function(head, n) {
-  let counter = 0;
-  let toEnd = 0;
-  
-  let iter = head;
-  let toRemove = null;
-  let prev = null;
-  
-  if(head.next === null) {return null}
-  
-  while(iter) {
-      if (counter === n) {
-          prev = head;
-          toRemove = head.next;
-      } else if (counter > n){
-          toRemove = toRemove.next;
-          prev = prev.next;
-      }
-      iter = iter.next;
-      counter++;
-  }
-  if(prev === null) head = head.next;
-  else if(toRemove.next !==null) prev.next  = toRemove.next;
-  else prev.next = null;
-  return head;
-}
-```
-
-MY solution:
-```js
-var removeNthFromEnd = function(head, n) {
   // 2 pointers
   if (!head || !head.next) return null
-  let i = -1
   let start = new ListNode()
   start.next = head
+  let i = 0
   let fast = start
   let slow = start
-  while (fast && ++i<n) {
+  while (fast.next!==null) { // combine 2 whiles
     fast = fast.next
-  }
-  while (fast.next) {
-    fast = fast.next
-    slow = slow.next
+    if (i<n) i++
+    else slow = slow.next
   }
   slow.next = slow.next.next
   return start.next

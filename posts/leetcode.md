@@ -24,7 +24,13 @@ Leetcode solution in Javascript.
 - [21. Merge Two Sorted Lists](leetcode/21-merge-two-sorted-lists.md)
 
 ## DP
+- [32. Longest Valid Parentheses](leetcode/32-longest-valid-parentheses.md)
 - [53. Maximum Subarray](leetcode/53-maximum-subarray.md)
+- [62. Unique Paths](leetcode/62-unique-paths.md)
+- [63. Unique Paths II](leetcode/63-unique-paths-ii.md)
+
+## Uncategoried
+- [980. Unique Paths III (yet)](leetcode/980-unique-paths-iii.md)
 
 ## Archived
 - [Add 2 Numbers](leetcode/add2numbers.md)
