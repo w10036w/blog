@@ -12,6 +12,7 @@
 ### CSS
 - 盒模型 box model
 - 各种边界奇葩现象，margin 上下的合并
+- display: block, inline*, flex, grid, table*, contents, none, initial, inherit, run-in, list-item
 - flex 布局
 - 伪元素，状态元素
 - selector 优先度

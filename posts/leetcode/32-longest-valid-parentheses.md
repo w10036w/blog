@@ -40,7 +40,7 @@ var longestValidParentheses = function(s) {
 };
 ```
 
-Solution (stack) ???
+Solution (stack - get it)
 ```js
 /**
  * @param {string} s
@@ -59,10 +59,11 @@ var longestValidParentheses = function(s) {
       if (stack.length===0) last = i
       else {
         stack.pop()
-        if (stack.length === 0) max = Math.max(max, i - last)
-        else max = Math.max(max, i - stack[stack.length-1])
+        if (stack.length === 0) res = Math.max(res, i - last)
+        else res = Math.max(res, i - stack[stack.length-1])
       }
     }
   }
+  return res
 };
 ```

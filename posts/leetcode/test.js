@@ -1,15 +1,11 @@
-var fn = function(nums) {
-  let [l, r, len] = [0, 0, nums.length]
-  while (++r<len) {
-    if (nums[l]!==nums[r]) {
-      nums[++l] = nums[r]
-    }
-  }
-  return l+1
-};
-const test = [1,1,1,2,2,2,2,2,3,3]
+var fn = function(s) {
 
-console.log(fn(test))
+};
+
+const test = ""
+
+const res = fn(test)
+console.log(res)
 
 
 
