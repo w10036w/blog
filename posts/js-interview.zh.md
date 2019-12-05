@@ -15,8 +15,19 @@
 - display: block, inline*, flex, grid, table*, contents, none, initial, inherit, run-in, list-item
 - flex 布局
 - 伪元素，状态元素
-- selector 优先度
+- selector 优先度: !important > inline > id > class > tag
 - pre-css (sass, stylus, 或 jss) + post-css
+- 清除浮动 `.clearfix`, `clear:both`, (同容器相邻元素) `overflow: hidden` (同容器内)
+  ```css
+  .clearfix:after {
+      visibility: hidden;
+      display: block;
+      font-size: 0;
+      content: " ";
+      clear: both;
+      height: 0;
+    }
+  ```
 
 ### HTML
 - 标签语义化，比如 header，footer，nav，aside，article，section 等，利于开发/阅读模式/SEO，新增了很多表单元素，入 email，url 等，除去了 center 等样式标签，还有除去了有性能问题的 frame，frameset 等标签
@@ -38,6 +49,33 @@
 - 入参检查 (resolve, reject)
 - then 绑在 prototype 上, 用递归把 全部 then 的回调绑在 onFullfilledArray, onRejectedArray 上
 - 定义 resolvePromise 
+
+Promise 化 ajax
+```js
+function myXHR(method, url, data) {
+  var requset = new XMLHttpRequest();
+  return new Promise((resolve, reject) => {
+    requset.onreadystatechange = function () {
+      if (requset.readyState === 4) {
+        if (requset.status === 200) resolve(requset.responseText)
+        else reject(requset.status)
+      }
+    }
+    requset.open(method, url);
+    requset.send(data);
+  });
+}
+
+var p = myXHR('GET', 'url');
+p.then(responseText => {
+  console.log(responseText);
+}).catch(status => {
+  console.log(new Error(status));
+})
+————————————————
+版权声明：本文为CSDN博主「HIQMingdeng」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/w1502713507/article/details/82828076
+```
 
 ### array 知识点
 

@@ -5,21 +5,21 @@
 Null Undefined Boolean String Number Symbol BigInt
 
 引用数据类型: 对象 Object
-* 一般对象 - Object
-* 数组对象 - Array
-* 正则对象 - RegExp
-* 日期对象 - Date
-* 数学函数 - Math (浏览器全局对象)
-* 函数对象 - Function
+- 一般对象 - Object
+- 数组对象 - Array
+- 正则对象 - RegExp
+- 日期对象 - Date
+- 数学函数 - Math (浏览器全局对象)
+- 函数对象 - Function
 
 `typeof` 可以判断 primitive, 不适合判断引用数据类型 object
 对一个值使用 typeof 操作符可能会返回下列某个字符：
-* “undefined”：如果这个值未定义
-* “boolean”：如果这个值是布尔值
-* “number”：如果这个值是数值
-* “string”：如果这个值是字符串
-* “object”：如果这个值是 对象 或 Array 或 null
-* “function”：如果这个值是函数
+- “undefined”：如果这个值未定义
+- “boolean”：如果这个值是布尔值
+- “number”：如果这个值是数值
+- “string”：如果这个值是字符串
+- “object”：如果这个值是 对象 或 Array 或 null
+- “function”：如果这个值是函数
 
 `instanceof` 是查询原型链，因此不适合判断 primitive 类型。
 
@@ -53,19 +53,19 @@ console.log(111 instanceof PrimitiveNumber) // true
 
 有三个函数可以把非数值转换为数值：
 
-* Number()
-* parseInt()
-* parseFloat()
+- Number()
+- parseInt()
+- parseFloat()
 
 Number () 可以用于任何数据类型，parseInt 和 parseFloat 专门用于把字符串转换成数值
 
 Number () 函数在转换时规则比较复杂且不够合理，所以更常用的是 parseInt () 函数
 
 parseInt () 函数在转换字符串时有几个规则
-* 它会忽略字符串前面的空格，直至找到第一个非空字符串。
-* 如果第一个字符不是数字字符或负数，parseInt () 就会返回 NaN。
-* 如果第一个字符是数字字符，parseInt 会继续解析第二个字符，知道解析完所有的字符或遇到一个非数字字符。
-* 可以在转换时，指定第二个参数即转换使用的基数（即多少进制），来消除 parseInt () 在进制方面的困惑。
+- 它会忽略字符串前面的空格，直至找到第一个非空字符串。
+- 如果第一个字符不是数字字符或负数，parseInt () 就会返回 NaN。
+- 如果第一个字符是数字字符，parseInt 会继续解析第二个字符，知道解析完所有的字符或遇到一个非数字字符。
+- 可以在转换时，指定第二个参数即转换使用的基数（即多少进制），来消除 parseInt () 在进制方面的困惑。
 
 ```js
 var num1 = parseInt("10", 2);   // 2（二进制）
@@ -80,13 +80,13 @@ parseFloat 还有一个特点是会忽略前导的零。它只能解析十进制
 
 ## String 字符串
 字符字面量 escape value
-* \n：换行
-* \t：横向tab缩进
-* \v: 纵向缩进
-* \b：退格
-* \r：回车
-* \f：换页
-* \：换行再续string，不一定被广泛支持，弃用
+- \n：换行
+- \t：横向tab缩进
+- \v: 纵向缩进
+- \b：退格
+- \r：回车
+- \f：换页
+- \：换行再续string，不一定被广泛支持，弃用
 
 ## ==, ===
 
@@ -339,7 +339,7 @@ function(func, wait, options) {
 };
 ```
 
-### `new` 代码化演示
+### `new fn()` 操作代码化演示
 
 ```js
 var obj = {}; // new 操作符为我们创建一个新的空对象，由此 this 重定向至新对象
@@ -351,20 +351,26 @@ fn.call(obj);  // 改变构造函数内部的 this 的指向
 
 bind
 ```js
-Function.prototype._bind = function (context) {
-  if (typeof this !== "function") {
-    throw new Error("Function.prototype.bind - what is trying to be bound is not callable");
-  }
-  var self = this;
-  var args = Array.prototype.slice.call(arguments, 1);
-  var fNOP = function () {};
-  var fbound = function () {
-      self.apply(this instanceof self ? this : context, args.concat(Array.prototype.slice.call(arguments)));
-  }
-  fNOP.prototype = this.prototype;
-  fbound.prototype = new fNOP();
-  return fbound;
-}
+// polyfill
+// see full in https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_objects/Function/bind#Polyfill
+// Does not work with `new funcA.bind(thisArg, args)`
+if (!Function.prototype.bind) (function(){
+  var slice = Array.prototype.slice;
+  Function.prototype.bind = function() {
+    var thatFunc = this, thatArg = arguments[0];
+    var args = slice.call(arguments, 1);
+    if (typeof thatFunc !== 'function') {
+      // closest thing possible to the ECMAScript 5
+      // internal IsCallable function
+      throw new TypeError('Function.prototype.bind - ' +
+        'what is trying to be bound is not callable');
+    }
+    return function(){
+      var funcArgs = args.concat(slice.call(arguments))
+      return thatFunc.apply(thatArg, funcArgs);
+    };
+  };
+})();
 ```
 
 ### 为什么 javascript 是单线程的
@@ -417,38 +423,71 @@ setTimeout(() = {
 先执行微任务，在微任务执行中，输出 3 ，微任务执行后，执行下一次宏任务，执行中输出 2
 
 #### 顺序总结
-* 执行一个 `宏任务`（栈中没有就从事件队列中获取）
-* 执行过程中如果遇到 `微任务`，就将它添加到微任务的任务队列中
-* 宏任务执行完毕后，立即执行当前 微任务队列中的所有 微任务（依次执行）
-* 当前 宏任务执行完毕，开始检查渲染，然后 GUI线程接管渲染
-* 渲染完毕后， JS线程继续接管，开始下一个 `宏任务`（从事件队列中获取）
+- 执行一个 `宏任务`（栈中没有就从事件队列中获取）
+- 执行过程中如果遇到 `微任务`，就将它添加到微任务的任务队列中
+- 宏任务执行完毕后，立即执行当前 微任务队列中的所有 微任务（依次执行）
+- 当前 宏任务执行完毕，开始检查渲染，然后 GUI线程接管渲染
+- 渲染完毕后， JS线程继续接管，开始下一个 `宏任务`（从事件队列中获取）
 
 ![宏任务 微任务](/assets/img/macromicrotask.webp)
 
 测试：输出结果
 
 ```js
-async function async1() {
-  console.log(1);
-  const result = await async2();
-  console.log(3);
+async function a1 () {
+  console.log('a1 start')
+  await a2()
+  console.log('a1 end')
+}
+async function a2 () {
+  console.log('a2')
 }
 
-async function async2() {
-  console.log(2);
-}
-
-Promise.resolve().then(() => {
-  console.log(4);
-});
+console.log('macro1')
 
 setTimeout(() => {
-  console.log(5);
-});
+  console.log('setTimeout')
+}, 0)
 
-async1();
-console.log(6);
+Promise.resolve().then(() => {
+  console.log('promise1')
+})
+
+a1()
+
+let promise2 = new Promise((resolve) => {
+  resolve('promise2.then')
+  console.log('promise2')
+})
+
+promise2.then((res) => {
+  console.log(res)
+  Promise.resolve().then(() => {
+      console.log('promise3')
+  })
+})
+console.log('macro2')
 ```
 
-> 12643 undefined 5
-> 
+> macro1, a1 start, a2, promise2, macro2, promise1, a1 end, promise2.then, promise3, setTimeout
+
+### 垃圾回收
+垃圾回收为`后台` `进程`
+垃圾 = 没有被引用的对象 / 根访问不到的循环引用
+基础: 标记清除.
+优化
+- 分代回收
+- 增量回收
+- 只在 CPU 闲时收集
+
+## QA
+- `window, document`: window 对象是指浏览器打开的窗口。document 对象是 HTML 文档对象的一个只读引用，window 对象的一个属性
+- 求 [1, 10, 11, -1,'-5',12, 13, 14, 15, 2, 3, 4, 7, 8, 9] 内最大值与最小值之差:
+  ```js
+  function MaxMinPlus(arr) {
+    // 返回最大值与最小值之差
+    return Array.isArray(arr) ? Math.max.apply(Math, arr) - Math.min.apply(Math, arr) : console.log('err')
+  }
+  ```
+- `String.trim()`: `str => str.replace(/(^\s+)|(\s+$)/g, '')`
+- `setTimeout` 在控制台会返回一个 id.
