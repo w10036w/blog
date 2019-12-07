@@ -35,11 +35,53 @@
   - setInterval 与 setTimeout 所在的线程
   - 定时任务并不是由 JS 引擎计时的，是由定时触发线程来计时的
   - 计时完毕后，通知事件触发线程
-- 异步http请求线程
+- 异步 http 请求线程
   - 浏览器有一个单独的线程用于处理 AJAX 请求
   - 当请求完成时，若有回调函数，通知事件触发线程
 
-考查知识点：知道要尽量不使用 document.write()，知道 [passive 的事件监听器](https://zjy.name/passive-event-listeners/)是什么
+尽量不使用 document.write()，知道 [passive 的事件监听器](https://zjy.name/passive-event-listeners/)是什么
+
+## 浏览器渲染
+- 首先获取 html，然后构建 dom 树
+- 其次根据 css 构建 render 树，render 树中不包含定位和几何信息
+- 最后构建布局数，布局是含有元素的定位和几何信息
+
+`重绘(repaint)`: 改变每个元素外观时所触发的浏览器行为，比如颜色，背景等样式发生了改变而进行的重新构造新外观的过程。重构不会引发页面的重新布局，不一定伴随着回流
+
+`回流(reflow)`: 浏览器为了重新渲染页面的需要而进行的重新计算元素的几何大小和位置的，他的开销是非常大的，回流可以理解为渲染树需要重新进行计算，一般最好触发元素的重构，避免元素的回流；比如通过通过添加类来添加 css 样式，而不是直接在 DOM 上设置，当需要操作某一块元素时候，最好使其脱离文档流，这样就不会引起回流了，比如设置 position：absolute 或者 fixed，或者 display：none，等操作结束后在显示。
+
+## 浏览器缓存
+> https://www.geekjc.com/post/5d37f67480c18e4071ccc440
+
+浏览器缓存分为强缓存和协商缓存。当客户端请求某个资源时，获取缓存的流程如下 (命中协商缓存 `304`, 命中强缓存 `200`)
+
+1. 先根据这个资源的一些 `http header` 判断它是否命中强缓存，如果命中，则直接从本地获取缓存资源，不会发请求到服务器；
+2. 当强缓存没有命中时，客户端会发送请求到服务器，服务器通过另一些 `request header` 验证这个资源是否命中协商缓存，称为 `http 再验证`，如果命中，服务器将请求返回，但不返回资源，而是告诉客户端直接从缓存中获取，客户端收到返回后就会从缓存中获取资源；
+3. 强缓存和协商缓存共同之处在于，如果命中缓存，服务器都不会返回资源； 区别是，**强缓存对发送请求到服务器，但协商缓存会**。
+4. 当协商缓存也没命中时，服务器就会将资源发送回客户端。
+5. 当 ctrl+f5 强制刷新网页时，直接从服务器加载，跳过强缓存和协商缓存；
+6. 当 f5 刷新网页时，跳过强缓存，但是会检查协商缓存；
+
+### 强缓存
+通过默认 http 请求发送, 命中时 `200`, 优先级从高到低
+
+- `Cache-Control:max-age`: 定义于 `http1.1`，利用其 `max-age` 值来判断缓存资源的最大生命周期，它的值单位为 `秒`
+  ```js
+  Cache-control: max-age=30 // 30s 后过期
+  // 'no-store': 不需要缓存的资源
+  // 'no-cache' + Etag: 频繁变动
+  // 'max-age=31536000' + Etag: 代码文件, 一旦文件名变动即重新下载
+  ```
+- `Expires`: 定义于 `http1.0`，值为 `GMT字符串`，代表缓存资源的过期时间
+  ```js
+  Expires: Wed, 22 Oct 2018 08:41:00 GMT // 此时间后过期; 受本地时间影响
+  ```
+
+### 协商缓存
+通过新的 http 请求发送, 命中时 `304`, 优先级从高到低
+
+- `ETag` + `If-None-Match`: `Etag` 表资源唯一标识，客户端如发现 (资源) 有 `Etag`, 通过 `If-None-Match` 将其发送给服务端, 如服务端发现 `Etag` 不一致则发更新的资源，否则命中
+- `Last-Modified` + `If-Modified-Since`: `Last-Modified` 为本地文件最后修改日期，由之前服务端所返回. 客户端如发现有 `Last-Modified`, 通过 `If-Modified-Since` 将其发送至服务端, 如服务端发现此日期后有更新则发资源, 否则命中. 但是如果在 `本地打开缓存文件`， `Last-Modified` 会被修改
 
 ## CSRP 跨域
 
@@ -53,9 +95,98 @@ jsonp在页面上引入不同域上的js脚本文件实现请求不同域上的�
 window对象有个name属性，该属性有个特征：即在一个窗口(window)的生命周期内,窗口载入的所有的页面都是共享一个window.name的，每个页面对window.name都有读写的权限，window.name是持久存在一个窗口载入过的所有页面中的，并不会因新页面的载入而进行重置。
 
 ## 跨页面通讯
-`WebSocket` (唯一可在无痕模式用), `locatStorage`, `cookies`
+`WebSocket` (可无痕模式用), `locatStorage`, `cookies`, `web worker`
 
-## serviceWorker
+## WebSocket
+> https://zhuanlan.zhihu.com/p/23386938
+
+H5新协议, 在单个 TCP 连接上建立客户端到服务端的全双工通信 (Full Duplex, 单工通信只能 A->B, 半双工可A->B或B->A, 不能同时进行), 这就意味着服务器端可以主动推送数据到客户端. 一开始借助 http 请求 (一次握手) 完成.
+
+客户端握手请求 `connection: upgrade` 表示开始准备进行 websocket 通信, 服务端如支持 upgrade, sec-webscoket-version, `sec-websocket-key` + `sec-websocket-accept` 即返回 `101 switching protocols`
+![handshake](../../assets/img/interview-browser-websocket-handshake.png)
+
+```js
+ws = new WebSocket("wss://127.0.0.1:1000/application")
+// listeners: ws.
+ws.onopen, ws.onmessage, ws.onclose, ws.onerror
+ws.send() // client sends msg
+ws.readyState // current status
+```
+
+## DNS 原理
+
+DNS (Domain Name System, 域名系统)，作为域名和 IP 地址相互映射的一个分布式数据库。
+
+当浏览器访问一个域名的时候，需要解析一次 DNS，获得对应域名的 ip 地址。在解析过程中，按照`浏览器缓存`、`系统缓存`、`路由器缓存`、`ISP(运营商)DNS缓存`、`根域名服务器`、`顶级域名服务器`、`主域名服务器`的顺序，逐步读取缓存，直到拿到 IP 地址。
+
+### 总结
+如果浏览器最近将一个域名解析为 IP 地址，所属的操作系统将会缓存，下一次 DNS 解析时间可以低至 0-1ms。 如果结果不在系统本地缓存，则需要读取路由器的缓存，则解析时间的最小值大约为 15ms。如果路由器缓存也不存在，则需要读取 ISP（运营商）DNS 缓存，一般像 taobao.com、baidu.com 这些常见的域名，读取 ISP（运营商）DNS 缓存需要的时间在 80-120ms，如果是不常见的域名，平均需要 200-300ms。一般的网站在运营商这里都能查询的到，所以普遍来说 DNS Prefetch 可以给一个域名的 DNS 解析过程带来 15-300ms 的提升，尤其是一些大量引用很多其他域名资源的网站，提升效果就更加明显了。
+<hr>
+
+## [serviceWorker vs webWorker](https://stackoverflow.com/questions/38632723/what-can-service-workers-do-that-web-workers-cannot)
+> 参考 https://bitsofco.de/web-workers-vs-service-workers-vs-worklets/
+
+`web worker` 目的是**不阻塞主线程的平行运行**, 多对一(tab), 生命周期和对应 tab 相同, 是后台运行的单独线程, 无需 UI 即可完成任务, 如发送 `网络请求`. 可执行复杂的数据操作后通过 `postMessage` 传递给 js 主线程.
+
+`service worker` 目的是**离线或基于网络连接状态变化的用户体验**, 一对多(tab), 独立生命周期, 作为 `各 web 应用, 浏览器和网络` 的代理服务器. 其同样支持消息推送和后台同步 API.
+
+## link
+
+- DNS 预加载 `dns-prefetch`
+  > https://www.geekjc.com/post/5d762123c15afd63c91f4862
+  > https://bubkoo.com/2015/11/19/prefetching-preloading-prebrowsing/
+
+  DNS Prefetch 根据浏览器定义的规则，提前解析之后可能会用到的域名，使解析结果缓存到系统缓存中，缩短 DNS 解析时间，来提高网站的访问速度。
+
+  Chromium 不使用浏览器的网络堆栈，直接使用操作系统的缓存。通过 8 个异步线程执行预解析，每个线程处理一个队列，来等待域名的响应，最终操作系统会响应一个 DNS 结果给线程，然后线程丢弃它，等待下一个预解析请求。
+
+  这似乎是一个非常微小的性能优化，显得也并非那么重要，但事实并非如此 – Chrome 一直都做了类似的优化。当在浏览器的地址栏中输入 URL 的一小段时，Chrome 就自动完成了 DNS 预解析（甚至页面预渲染），从而为每个请求节省了至关重要的时间。
+
+  `自动解析`: 当遇到 a 标签，Chromium 会自动将 href 中的域名解析为 IP 地址，这个解析过程是与用户浏览网页并行处理的。但是为了确保安全性，在 HTTPS 页面中不会自动解析。
+
+  当我们希望在 HTTPS 页面开启自动解析功能时，添加如下标记
+  ```html
+  <meta http-equiv="x-dns-prefetch-control" content="on"> <!-- off 为关闭 -->
+  ```
+  `手动解析`:
+  ```html
+  <link rel="dns-prefetch" href="//delai.me">
+  <!-- use chrome://histograms/DNS.PrefetchQueue to check cache hit-->
+  ```
+- 预加载 `preload`, 声明式 `fetch`, 不阻塞 `onload`
+  ```html
+  <link rel="preload" href="https://www.geekjc.com">
+  ```
+- 预连接 `preconnect`, DNS 预解析 + TCP 握手 + 建立传输层协议
+  ```html
+  <link rel="preconnect" href="http://example.com">
+  ```
+  > 现代浏览器都试着预测网站将来需要哪些连接，然后预先建立 socket 连接，从而消除昂贵的 DNS 查找、TCP 握手和 TLS 往返开销。然而，浏览器还不够聪明，并不能准确预测每个网站的所有预链接目标。好在，在 Firefox 39 和 Chrome 46 中我们可以使用 preconnect 告诉浏览器我们需要进行哪些预连接。
+- 预渲染 `prerender`, 确保该页面一定会被打开时使用; 预加载页面的全部资源
+  ```html
+  <link rel="prerender" href="https://www.geekjc.com">
+  ```
+  使用 [Page Visibility API](http://www.w3.org/TR/page-visibility/) 可以防止页面真正可见前被执行。
+- 预获取 `prefetch`, 确保该资源一定会被用到时使用; 没有同源策略的限制; 对 `webfonts` 性能提升明显
+  ```html
+  <link rel="prefetch" href="image.png">
+  ```
+- 最高优先级预获取 `subresource`, 在所有 `prefetch` 前运行
+  ```html
+  <link rel="subresource" href="styles.css">
+  ```
+  > `rel=prefetch` 为将来的页面提供了一种低优先级的资源预加载方式，而 `rel=subresource` 为当前页面提供了一种高优先级的资源预加载。
+
+## performance
+- DNS 预解析: dns-prefetch
+- 浏览器缓存: html 协商缓存, css/js/img 强缓存 + hash (cache-control + etag)
+- 使用 http2: 多路复用, 压缩 head
+- 预加载: link rel=preload
+- 预渲染: link rel=prerender
+- 懒执行懒加载
+- 文件优化: 图片 `webp`, fontawesome, 小图 base64/svg; JS: server compression, `defer/async`, `Worker`
+- [CDN](infrastructure.md)
+- webpack + tree shaking
 
 ## Debug
 

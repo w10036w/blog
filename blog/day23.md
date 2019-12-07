@@ -34,7 +34,7 @@ video gallery + playback control
 photo gallery (swipe 解决，可以考虑用新）
 
 #### mongoose 踩坑记
-1. Promise拿到的实际的entity对象是这个样子，访问_doc才能取到数据 
+1. Promise拿到的实际的entity对象是这个样子，访问_doc才能取到数据
 > { __$, _doc, _pre, _post }
 
 1. schema中必须先定义field，然后异步后才能再往上填，开销最小的是Object，不存db里
@@ -42,7 +42,7 @@ schema 中不要定义用不上的[Object]，没法改，用Object
 
 1. 直接拿到的_id是Object,需要toString()
 
-#### Promise 
+#### Promise
 Promise的奇怪点
 ```js
 //错误，path没有的时候SSR首渲没有category和tag
@@ -71,17 +71,12 @@ if (path) {
 }
 ```
 
-
-
-
-
 ### Tech
 - [buffer vs string](http://stackoverflow.com/questions/4901570/buffer-vs-string-speed-why-is-string-faster)
 - window.performance.memory
 - v8 5.5 - 5.7
 - 使用ETags减少Web应用带宽和负载
 - [nginx 缓存](https://serversforhackers.com/nginx-caching)
-
 
 - async / await 不成熟的性能问题, 不建议用作生产
 基于@i5ting的压测代码测试 node7.6
@@ -94,7 +89,7 @@ wrk t8 c1000 10/15/20/25 middlewares
 
 测试结果：成功超过express, koa1
 Async
-```
+```shell
 Running 3s test @ http://localhost:3333
   8 threads and 50 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
@@ -105,7 +100,7 @@ Requests/sec:   9321.19
 Transfer/sec:      1.34MB
 ```
 Koa2
-```
+```shell
 Running 3s test @ http://localhost:3333
   8 threads and 50 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
@@ -115,4 +110,3 @@ Running 3s test @ http://localhost:3333
 Requests/sec:  13711.05
 Transfer/sec:      1.97MB
 ```
-

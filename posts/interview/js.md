@@ -182,8 +182,33 @@ r & 4 // 如有权则返回4,否则0
 缺点是引用始终存在，占用内存
 
 ## 原型链继承
+1. 类属性使用 `this` 绑定
+2. 类方法使用 `prototype` 对象来绑定
+3. 为了继承属性， 使用 `call` 函数来传递 this
+4. 为了继承方法，使用 `Object.create` 连接父和子的原型
+5. 始终将子类构造函数设置为自身，以获得其对象的正确类型
+```js
+// 1.
+function Animal(name, type) {
+  this.name = name;
+  this.type = type;
+}
+// 2.
+Animal.prototype.shout = function () { return this.name + ' shout' }
+// 3.
+function Dog(name, type) {
+Animal.call(this, name, type);
+this.sound = 'bow';
+}
+// 4. Link prototype chains to inherit parent class functions
+Dog.prototype = Object.create(Animal.prototype);
+// 5. target the constructor to itself
+Dog.prototype.constructor = Dog;
+```
 
-## 常用函数、关键字
+## 常用函数实现
+
+### Array
 ```js
 // Array shared verification
 if (this == null) {
@@ -193,7 +218,7 @@ if (Object.prototype.toString.call(fn) != "[object Function]") {
   throw new TypeError(fn + " is not a function");
 }
 ```
-Array.map
+Array.`map`
 ```js
 Array.prototype._map = function(fn, thisArg) {
   const arr = this
@@ -209,7 +234,7 @@ Array.prototype._map = function(fn, thisArg) {
   return res
 }
 ```
-Array.reduce
+Array.`reduce`
 ```js
 // if reduceRight, amend i
 Array.prototype._reduce = function(fn, initValue) {
@@ -227,7 +252,7 @@ Array.prototype._reduce = function(fn, initValue) {
   return r
 }
 ```
-Array.filter
+Array.`filter`
 ```js
 Array.prototype._filter = function(fn, thisArg) {
   const arr = this
@@ -241,33 +266,33 @@ Array.prototype._filter = function(fn, thisArg) {
   return res
 }
 ```
-
-**curry*- function e.g. sum
-
+Array.`flat`
 ```js
+flat = arr => {
+  var res = []
+  arr.forEach(e => {
+    if (Array.isArray(e)) res.push(...flat(e))
+    else res.push(e)
+  })
+  return res
+}
+```
+
+### lodash / underscore
+`curry`
+```js
+// e.g. sum, hint: use arguments.length
 const sum = (a, b=0) => {
-  if (arguments.length === 0) {
-    return b
-  }
+  if (arguments.length === 0) return b
   return n => {
     let res = a+b
     return sum(n, res)
   }
 }
-
 console.log(sum(100,200)(300)(400)())
 ```
-
-Promise / A+
-
-```js
-myPromise = function (resolve, reject) {
-
-}
-```
-
-**underscore.debounce**
-
+underscore.`debounce`
+> 不管触发了多少次回调，只认最后一次
 ```js
 // Returns a function, that, as long as it continues to be invoked, will not
 // be triggered. The function will be called after it stops being called for
@@ -288,9 +313,21 @@ function debounce(func, wait, immediate) {
   };
 };
 ```
-
-**underscore.throttle**
-
+naive.`throttle`
+```js
+var throttle = function(fn, wait){
+  var last = 0
+  return function(){
+    var curr = +new Date()
+    if (curr-last>wait || !last){
+      fn.apply(this, arguments)
+      last = curr
+    }
+  }
+}
+```
+underscore.`throttle`
+> 在某段时间内，不管触发了多少次回调，都只认第一次，并在计时结束时给予响应。
 ```js
 // Returns a function, that, when invoked, will only be triggered at most once
 // during a given window of time. Normally, the throttled function will run
@@ -338,18 +375,67 @@ function(func, wait, options) {
   return throttled;
 };
 ```
-
-### `new fn()` 操作代码化演示
-
+`EventEmitter`
 ```js
-var obj = {}; // new 操作符为我们创建一个新的空对象，由此 this 重定向至新对象
-obj.__proto__ = fn.prototype; // 空对象的原型指向函数的原型
-fn.call(obj);  // 改变构造函数内部的 this 的指向
+// https://zhuanlan.zhihu.com/p/60324936
+class EventEmitter {
+  constructor() {
+    this.listeners = {}
+    // this.maxLength = 10
+  }
+
+  on(type, cb) {
+    let fns = (this.listeners[type] = this.listeners[type] || [])
+    if (!fns.includes(cb)) {
+      fns.push(cb)
+    }
+    return this
+  }
+  // removeListener + removeAllListener
+  off(type, cb) {
+    let fns = this.listeners[type]
+    if (Array.isArray(fns)) {
+      if (typeof cb === 'function') {
+        const i = fns.indexOf(cb)
+        if (i!==-1) fns.splice(i, 1)
+      } else fns.length = 0
+    }
+    return this
+  }
+
+  once(type, cb) {
+    const self = this;
+    function fn() {
+      var args = Array.prototype.slice.call(arguments);
+      self.listeners.apply(null, args);
+      self.off(event, fn);
+    }
+    this.on(event, fn)
+  }
+
+  emit(type, args) {
+    let fns = this.listeners[type]
+    if (Array.isArray(fns)) {
+      fns.forEach(fn => fn(args))
+    }
+    return this
+  }
+}
 ```
-
-### `this` 和 `call, apply, bind`
-
-bind
+`delegate` 事件委托
+```js
+// hint: 绑定父元素, 通过 `e.target.nodeName` 限定委托元素 e.target
+document.addEventListener('DOMContentLoaded', function() {
+  let app = document.getElementById('todo');
+  app.addEventListener('click', function(e) {
+    if (e.target && e.target.nodeName === 'LI') {
+      let item = e.target;
+      alert('you clicked on item: ' + item.innerHTML)
+    }
+  })
+})
+```
+`Function.bind`
 ```js
 // polyfill
 // see full in https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_objects/Function/bind#Polyfill
@@ -372,6 +458,145 @@ if (!Function.prototype.bind) (function(){
   };
 })();
 ```
+
+### `new fn()` 操作代码化演示
+
+```js
+var obj = {}; // new 操作符为我们创建一个新的空对象，由此 this 重定向至新对象
+obj.__proto__ = fn.prototype; // 空对象的原型指向函数的原型
+fn.call(obj);  // 改变构造函数内部的 this 的指向
+```
+
+### `this`, `arguments` 和 `call, apply, bind`
+this 指向 错误
+```js
+const arrayLike = { length: 0 }
+const call = [].push.call; // typeof call "function"
+call(arrayLike, 1);
+console.log(arrayLike); // call is not a function
+// because "this" inside `call` points to global "this", thus there is no `call` on window/global/globalThis.
+```
+
+arguments
+> https://www.cnblogs.com/yugege/p/5539020.html
+
+我们现在有这样的一个需求，有一个 people 对象，里面存着一些人名，如下：
+```js
+var people = {
+  values: ["Dean Edwards", "Sam Stephenson", "Alex Russell", "Dean Tom"]
+};
+```
+我们希望 people 对象拥有一个 `find` 方法，当不传任何参数时，就会把 people.values 里面的所有元素返回来；当传一个参数时，就把 first-name 跟这个参数匹配的元素返回来；当传两个参数时，则把 first-name 和 last-name 都匹配的才返回来。因为 find 方法是根据参数的个数不同而执行不同的操作的，所以，我们希望有一个 addMethod 方法，能够如下的为 people 添加 find 的重载：
+
+```js
+addMethod(people, "find", function() {}); /*不传参*/
+addMethod(people, "find", function(a) {}); /*传一个*/
+addMethod(people, "find", function(a, b) {}); /*传两个*/
+```
+这时候问题来了，这个全局的 addMethod 方法该怎么实现呢？John Resig 的实现方法如下，代码不长，但是非常的巧妙：
+```js
+function addMethod(object, name, fn) {
+　var old = object[name]; //把前一次添加的方法存在一个临时变量old里面
+　object[name] = function() { // 重写了object[name]的方法
+　　// 如果调用object[name]方法时，传入的参数个数跟预期的一致，则直接调用
+　　if(fn.length === arguments.length) { // Function.prototype.length 是参数的个数!
+　　  return fn.apply(this, arguments);
+　　　// 否则，判断old是否是函数，如果是，就调用old
+　　} else if(typeof old === "function") {
+　　　return old.apply(this, arguments);
+　　}
+　}
+}
+```
+
+### 观察者模式 发布订阅模式
+> https://zhuanlan.zhihu.com/p/60324936
+
+观察者模式：
+> 它定义了对象间的一种一对多的关系，让多个观察者对象同时监听某一个主题对象，当一个对象发生改变时，所有依赖于它的对象都将得到通知。<br>
+观察者模式在前端开发中非常常用， 我们经常用的事件就是观察者模式的一种体现，它对我们解耦模块，开发基于消息的业务起着非常重要的作用。
+
+![observer vs pubsub](../../assets/img/interview-pattern-observer-subpub.jpg)
+从图中可以看出，观察者模式中观察者和目标直接进行交互，而发布订阅模式中统一由调度中心进行处理，订阅者和发布者互不干扰。
+
+观察者模式的订阅者与发布者之间是存在依赖的，而发布/订阅模式则不会。
+
+发布 / 订阅模式优势在于， 这样一方面实现了解耦，还有就是可以实现更细粒度的一些控制。比如发布者发布了很多消息，但是不想所有的订阅者都接收到，就可以在调度中心做一些处理，类似于权限控制之类的。还可以做一些节流操作。
+
+观察者 代码
+```js
+class Observer {
+  constructor() { }
+  update(val) {
+    //
+  }
+}
+// 观察者列表
+class ObserverList {
+  constructor() {
+    this.observerList = []
+  }
+  add(observer) {
+    return this.observerList.push(observer);
+  }
+  remove(observer) {
+    this.observerList = this.observerList.filter(ob => ob !== observer);
+  }
+  count() {
+    return this.observerList.length;
+  }
+  get(index) {
+    return this.observerList(index);
+  }
+}
+// 目标
+class Subject {
+  constructor() {
+    this.observers = new ObserverList();
+  }
+  addObserver(observer) {
+    this.observers.add(observer);
+  }
+  removeObserver(observer) {
+    this.observers.remove(observer);
+  }
+  notify(...args) {
+    let obCount = this.observers.count();
+    for (let index = 0; index < obCount; index++) {
+      this.observers.get(i).update(...args);
+    }
+  }
+}
+```
+订阅发布 PubSub 代码
+```js
+class PubSub {
+  constructor() {
+    this.subscribers = {}
+  }
+  subscribe(type, fn) {
+    let listeners = this.subscribers[type] || [];
+    listeners.push(fn);
+  }
+  unsubscribe(type, fn) {
+    let listeners = this.subscribers[type];
+    if (!listeners || !listeners.length) return;
+    this.subscribers[type] = listeners.filter(v => v !== fn);
+  }
+  publish(type, ...args) {
+    let listeners = this.subscribers[type];
+    if (!listeners || !listeners.length) return;
+    listeners.forEach(fn => fn(...args));
+  }
+}
+
+let ob = new PubSub();
+ob.subscribe('add', (val) => console.log(val));
+ob.publish('add', 1);
+```
+观察者模式由具体目标调度，每个被订阅的目标里面都需要有对观察者的处理，会造成代码的冗余。而发布订阅模式则统一由调度中心处理，消除了发布者和订阅者之间的依赖。
+
+<hr>
 
 ### 为什么 javascript 是单线程的
 
@@ -472,7 +697,7 @@ console.log('macro2')
 > macro1, a1 start, a2, promise2, macro2, promise1, a1 end, promise2.then, promise3, setTimeout
 
 ### 垃圾回收
-垃圾回收为`后台` `进程`
+垃圾回收为 `后台` `进程`
 垃圾 = 没有被引用的对象 / 根访问不到的循环引用
 基础: 标记清除.
 优化

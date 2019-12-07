@@ -24,7 +24,7 @@ TCP 和 UDP 的优缺点无法简单地、绝对地去做比较：TCP 用于在�
 
 #### 断开 四次握手
 1. `client fin`: 客户端应用程序关闭, 发送 `FIN`
-2. `server ack`: 收到, 序号+1, 向应用提交 `EOF`, 开始关闭其连接, 发回 `ACK`
+2. `server ack`: 收到, 序号+1, 向服务端应用提交 `EOF`, 开始关闭其连接, 向客户端发回 `ACK`
 3. `server fin`: 服务端确认关闭, 发回 `FIN`
 4. `client ack`: 客户端确认服务端的 `FIN`
 
@@ -33,8 +33,9 @@ TCP 和 UDP 的优缺点无法简单地、绝对地去做比较：TCP 用于在�
 一个 http 请求
 ![http request](../../assets/img/js-interview-http-req.png)
 
-http 缓存策略
-![http cache](../../assets/img/js-interview-http-cache.png)
+http 协商缓存
+- ![http cache](../../assets/img/js-interview-http-cache.png)
+- cookies 缓存
 
 ### HTTPS
 
@@ -64,12 +65,12 @@ TLS 握手步骤 (client-hello, server-hello, (cert verify with CA & OCSP), ciph
    2. `cipher suite 加密方法`: 服务器与客户端兼容的方法, 非对称加密/双钥加密 RSA/DSA/Diffie-Hellman/ECC 椭圆加密, 如版本不兼容则关闭该连接
    3. `random`
    4. `cert request` (optional): 如果是非常重要的信息, 服务端会向客户端发送 , 要求客户端提供证书(如银行 usb 密钥)
-   5. `serverHelloDone`
+   5. `server-hello-done`
 3. `client-key-exchange`: 如果服务端发送 `cert request`, 客户端需要发送自己的证书使其验证; 之后客户端验证服务器返回的证书
-    * 有效期 (起止时间)
-    * 域名 (与浏览器地址栏中域名是否匹配)
-    * 吊销状态 (CRL+OCSP), [见 **吊销检查**].
-    * 颁发机构，如果颁发机构是中间证书，在验证中间证书的有效期 / 颁发机构 / 吊销状态。一直验证到最后一层证书，如果最后一层证书是在操作系统或浏览器内置，那么就是可信的，否则就是自签名.
+    - 有效期 (起止时间)
+    - 域名 (与浏览器地址栏中域名是否匹配)
+    - 吊销状态 (CRL+OCSP), [见 **吊销检查**].
+    - 颁发机构，如果颁发机构是中间证书，在验证中间证书的有效期 / 颁发机构 / 吊销状态。一直验证到最后一层证书，如果最后一层证书是在操作系统或浏览器内置，那么就是可信的，否则就是自签名.
   
     以上验证步骤，需要全部通过。否则就会显示警告. 检查通过后, 生成 `master secret`. (PRF 为伪随机函数 pseudorandom function, PRF)
 
@@ -126,8 +127,8 @@ CRL 是一份全量的文件，记录了被此 CRL 限制的证书中所有被�
 
 ### HTTP2
 
-* 压缩 http 头信息, 减少数据包量
-* 多路复用
+- 压缩 http head, 减少数据包量
+- 多路复用
 
 ### HTTP [状态码](https://juejin.im/post/5db7b2986fb9a02027084ff4)
 分类 | 描述
