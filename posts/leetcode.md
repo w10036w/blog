@@ -1,7 +1,7 @@
 # Leetcode Solutions
 Leetcode solution in Javascript.
 
-## Updating
+## to be updated
 - [12. Integer to Roman](leetcode/12-integer-to-roman.md)
 - [14. Longest Common Prefix](leetcode/14-longest-common-prefix.md)
 - [14. Longest Common Prefix](leetcode/14-longest-common-prefix.md)
@@ -14,11 +14,15 @@ Leetcode solution in Javascript.
 - [15. 3Sum](leetcode/15-3sum.md)
 - [18. 4sum](leetcode/18-4sum.md)
 - [28. Implement strStr()](leetcode/28-implement-strstr.md)
+- [287. Find the Duplicate Number](leetcode/287-find-the-duplicate-number.md)
 
 ## 2 pointers
 - [19. Remove Nth Node From End of List](leetcode/19-remove-nth-node-from-end-of-list.md)
 - [26. Remove Duplicates from Sorted Array](leetcode/26-remove-duplicates-from-sorted-array.md)
 - [27. Remove Element](leetcode/27-remove-element.md)
+
+## Sort
+- [75. Sort Colors](leetcode/75-sort-colors.md)
 
 ## LinkedList
 - [21. Merge Two Sorted Lists](leetcode/21-merge-two-sorted-lists.md)
