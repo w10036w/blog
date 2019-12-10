@@ -62,6 +62,17 @@ http 协商缓存
 - ![http cache](../../assets/img/js-interview-http-cache.png)
 - cookies 缓存
 
+### get vs post
+- `幂等`: GET 可 (多次请求不会对资源造成影响); POST 不可
+- `后退刷新`: GET 可免通知重试; POST 提示用户重新提交
+- `收藏为书签`: GET 可; POST 不可
+- `缓存`: GET 可; POST 不可 (除响应头声明强缓存 `Cache-Control/Expires`)
+- `请求体`: GET 一般无, 只需 encodeUrl, 只需发一次; POST 一般有, 支持多种编码 (`Accept-Encoding`), 允许客户端先发送一次请求 `Expect:100-continue` 以询问服务端是否接收, 允许后在第二次发送请求体
+- `历史记录`: GET 可保存参数; POST 不可
+- `长度`: GET 取决于浏览器/代理/服务器等; POST 无限制
+- `字符`: GET 只允许 `ASCII`; POST 无限制支持二进制
+- `安全`: GET 差 地址栏可见; POST 好
+
 ### HTTPS
 
 如无优化或缓存, 最坏(访问 http 后跳转)比 http 增加 7 个 RTT (循环时间 Round-Trip Time)

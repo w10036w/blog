@@ -1,13 +1,4 @@
-# Leetcode Solutions
-Leetcode solution in Javascript.
-
-## to be updated
-- [12. Integer to Roman](leetcode/12-integer-to-roman.md)
-- [14. Longest Common Prefix](leetcode/14-longest-common-prefix.md)
-- [14. Longest Common Prefix](leetcode/14-longest-common-prefix.md)
-- [17. Letter Combinations of a Phone Number](leetcode/17-letter-combinations-of-a-phone-number.md)
-- [416. Partition Equal Subset Sum](leetcode/419-partition-equal-subset-sum.md)
-
+# Leetcode JS
 ## Array
 - [1. Two Sum](leetcode/1-two-sum.md)
 - [11. Container With Most Water](leetcode/11-container-with-most-water.md)
@@ -24,7 +15,7 @@ Leetcode solution in Javascript.
 ## Sort
 - [75. Sort Colors](leetcode/75-sort-colors.md)
 
-## Backtracking / Deep First Search (DFS)
+## [Backtracking / Deep First Search (DFS)](algorithms/backtracking.md)
 - [46. Permutations](leetcode/46-permutations.md)
 - [47. Permutations II](leetcode/47-permutations-ii.md)
 
@@ -40,6 +31,11 @@ Leetcode solution in Javascript.
 - [343. Integer Break](leetcode/343-integer-break.md)
 
 ## Uncategoried
+- [12. Integer to Roman](leetcode/12-integer-to-roman.md)
+- [14. Longest Common Prefix](leetcode/14-longest-common-prefix.md)
+- [14. Longest Common Prefix](leetcode/14-longest-common-prefix.md)
+- [17. Letter Combinations of a Phone Number](leetcode/17-letter-combinations-of-a-phone-number.md)
+- [416. Partition Equal Subset Sum](leetcode/419-partition-equal-subset-sum.md)
 - [980. Unique Paths III (yet)](leetcode/980-unique-paths-iii.md)
 
 ## Archived

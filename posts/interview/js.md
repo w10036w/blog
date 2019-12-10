@@ -6,12 +6,7 @@
 Null Undefined Boolean String Number Symbol BigInt
 
 引用数据类型: 对象 Object
-- 一般对象 - Object
-- 数组对象 - Array
-- 正则对象 - RegExp
-- 日期对象 - Date
-- 数学函数 - Math (浏览器全局对象)
-- 函数对象 - Function
+包含 Array, Function, RegExp, Date, Math, *Map, *Set, *Array, Arguments, *Error
 
 `typeof` 可以判断 primitive, 不适合判断引用数据类型 object
 对一个值使用 typeof 操作符可能会返回下列某个字符：
@@ -28,11 +23,7 @@ Null Undefined Boolean String Number Symbol BigInt
 var str1 = 'hello world';
 str1 instanceof String // false
 ```
-
-判断对象（object）的类型最好用 `Object.prototype.toString.call`
-Object.prototype.toString.call(arg)==="[object Array]"
-
-instanceof 可以借助 Symbol 判断 primitive 类型：
+`instanceof` 可以借助 `Symbol` 判断 `primitive` 类型：
 
 ```js
 class PrimitiveNumber {
@@ -42,6 +33,18 @@ class PrimitiveNumber {
 }
 console.log(111 instanceof PrimitiveNumber) // true
 ```
+`实现较全的 getType()`
+```js
+function getType(obj) {
+   if (obj === null) return String(obj);
+   return typeof obj === 'object'
+   ? Object.prototype.toString.call(obj)
+    .replace('[object ', '').replace(']', '') // .replace(/^\[object |]$/g, '')
+    .toLowerCase()
+   : typeof obj;
+}
+```
+
 
 ## Number 数值
 
@@ -310,9 +313,19 @@ flat = arr => {
 ```
 
 ### lodash / underscore
-`curry`
+!!! `curry`
 ```js
-// e.g. sum, hint: use arguments.length
+const curry = (fn, ...args1) => (...args2) => (
+ arg => arg.length === fn.length ? fn(...arg) : curry(fn, ...arg)
+)([...args1, ...args2]);
+// 调用
+const foo = (a, b, c) => a * b * c;
+curry(foo)(2, 3, 4); // -> 24
+curry(foo, 2)(3, 4); // -> 24
+curry(foo, 2, 3)(4); // -> 24
+curry(foo, 2, 3, 4)(); // -> 24
+
+// e.g. infinite sum, hint: arguments.length
 const sum = (a, b=0) => {
   if (arguments.length === 0) return b
   return n => {
@@ -322,7 +335,7 @@ const sum = (a, b=0) => {
 }
 console.log(sum(100,200)(300)(400)())
 ```
-underscore.`debounce`
+!!! underscore.`debounce`
 > 不管触发了多少次回调，只认最后一次
 ```js
 // Returns a function, that, as long as it continues to be invoked, will not
@@ -344,7 +357,7 @@ function debounce(func, wait, immediate) {
   };
 };
 ```
-naive.`throttle`
+!!! naive.`throttle`
 ```js
 var throttle = function(fn, wait){
   var last = 0
@@ -357,7 +370,7 @@ var throttle = function(fn, wait){
   }
 }
 ```
-underscore.`throttle`
+!!! underscore.`throttle`
 > 在某段时间内，不管触发了多少次回调，都只认第一次，并在计时结束时给予响应。
 ```js
 // Returns a function, that, when invoked, will only be triggered at most once
