@@ -29,6 +29,10 @@
       height: 0;
     }
   ```
+[文本溢出](https://juejin.im/post/5dc15b35f265da4d432a3d10)
+
+[CSS 图形](https://github.com/qq449245884/xiaozhi/issues/42)
+
 
 ### HTML
 - 标签语义化，比如 header，footer，nav，aside，article，section 等，利于开发/阅读模式/SEO，新增了很多表单元素，入 email，url 等，除去了 center 等样式标签，还有除去了有性能问题的 frame，frameset 等标签

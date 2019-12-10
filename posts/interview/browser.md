@@ -83,13 +83,16 @@
 - `ETag` + `If-None-Match`: `Etag` 表资源唯一标识，客户端如发现 (资源) 有 `Etag`, 通过 `If-None-Match` 将其发送给服务端, 如服务端发现 `Etag` 不一致则发更新的资源，否则命中
 - `Last-Modified` + `If-Modified-Since`: `Last-Modified` 为本地文件最后修改日期，由之前服务端所返回. 客户端如发现有 `Last-Modified`, 通过 `If-Modified-Since` 将其发送至服务端, 如服务端发现此日期后有更新则发资源, 否则命中. 但是如果在 `本地打开缓存文件`， `Last-Modified` 会被修改
 
-## CSRP 跨域
-
-1. 通过jsonp跨域
+## CORS 跨域
+同源策略：浏览器安全策略，同协议、ip、端口的脚本才会执行。
+只要协议、域名、端口有任何一个不同，都被当作是不同的域
+1. `NGINX 反向代理`: `proxy_pass http://xxx.xxx.xxx`
+2. 服务端 如 `express`, `koa` 配置 `cors`
+3. 通过jsonp跨域
 jsonp在页面上引入不同域上的js脚本文件实现请求不同域上的数据
-(1) 通过script标签引入一个js文件
-(2) js文件载入成功后会执行我们在url参数中指定的函数，并且会把我们需要的json数据作为参数传入
-注：需要服务器端的页面进行相应的配合
+  - 通过script标签引入一个js文件
+  - js文件载入成功后会执行我们在url参数中指定的函数，并且会把我们需要的json数据作为参数传入
+    注：需要服务器端的页面进行相应的配合
 2. 通过修改document.domain来跨子域
 3. 使用window.name来进行跨域
 window对象有个name属性，该属性有个特征：即在一个窗口(window)的生命周期内,窗口载入的所有的页面都是共享一个window.name的，每个页面对window.name都有读写的权限，window.name是持久存在一个窗口载入过的所有页面中的，并不会因新页面的载入而进行重置。
@@ -176,6 +179,66 @@ DNS (Domain Name System, 域名系统)，作为域名和 IP 地址相互映射�
   <link rel="subresource" href="styles.css">
   ```
   > `rel=prefetch` 为将来的页面提供了一种低优先级的资源预加载方式，而 `rel=subresource` 为当前页面提供了一种高优先级的资源预加载。
+
+## 常用事件
+
+### 移动浏览器
+#### 手机 平板 判断
+```js
+var deviceFix = function() {
+  var pixelRatio = window.devicePixelRatio;
+  var screenWidth  = screen.width;
+  //Retina
+  if( pixelRat >= 2 ){}
+  //iPhone 3gs, 3g, Edge
+  if( pixelRat < 2 && screenWidth === 320 ){}
+  // etc.
+}
+```
+#### 方向变化
+> https://davidwalsh.name/orientation-change
+JS 处理
+```js
+// experimental
+window.addEventListener("deviceorientation", handleOrientation, true);
+
+// Listen for orientation changes
+window.addEventListener("orientationchange", function() {
+  // Announce the new orientation number
+  alert(screen.orientation.angle); // -90 means landscape rotated to the right
+}, false);
+
+// Listen for resize changes, works better
+window.addEventListener("resize", function() {
+  // Get screen size (inner/outerWidth, inner/outerHeight)
+  // then calculate if landscape / portrait
+
+  // innerWidth, innerHeight: with scrollbar / toolbar
+  // outerWidth, outerHeight: 
+}, false);
+```
+CSS Media Queries
+```css
+/* portrait */
+@media screen and (orientation:portrait) {
+  /* portrait-specific styles */
+}
+/* landscape */
+@media screen and (orientation:landscape) {
+  /* landscape-specific styles */
+}
+/* to determine orientation you will have a problem with when keyboard is showing height will be smaller the with I will recommend to use: */
+/* portrait */
+@media screen and (max-aspect-ration: 13/9) {
+  /* portrait-specific styles */
+}
+/* landscape */
+@media screen and (min-aspect-ration: 13/9) {
+  /* landscape-specific styles */
+}
+```
+
+<hr>
 
 ## performance
 - DNS 预解析: dns-prefetch

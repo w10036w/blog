@@ -24,6 +24,10 @@ Leetcode solution in Javascript.
 ## Sort
 - [75. Sort Colors](leetcode/75-sort-colors.md)
 
+## Backtracking / Deep First Search (DFS)
+- [46. Permutations](leetcode/46-permutations.md)
+- [47. Permutations II](leetcode/47-permutations-ii.md)
+
 ## LinkedList
 - [21. Merge Two Sorted Lists](leetcode/21-merge-two-sorted-lists.md)
 
@@ -32,6 +36,8 @@ Leetcode solution in Javascript.
 - [53. Maximum Subarray](leetcode/53-maximum-subarray.md)
 - [62. Unique Paths](leetcode/62-unique-paths.md)
 - [63. Unique Paths II](leetcode/63-unique-paths-ii.md)
+- [70. Climbing Stairs](leetcode/70-climbing-stairs.md)
+- [343. Integer Break](leetcode/343-integer-break.md)
 
 ## Uncategoried
 - [980. Unique Paths III (yet)](leetcode/980-unique-paths-iii.md)

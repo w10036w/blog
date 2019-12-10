@@ -1,4 +1,5 @@
 # JS 语言基础
+## [V8](https://github.com/qq449245884/xiaozhi/issues/2)
 
 ## 类型
 [基本数据类型 primitive](https://developer.mozilla.org/en-US/docs/Glossary/Primitive)：
@@ -111,26 +112,24 @@ Object.is(+0, -0) // false
 
 ### 位运算符 (bitwise operator)
 
-[https://juejin.im/entry/57317b2679df540060d5d6c2](我们要不要在 JS 使用二进制位运算？)
 [我们要不要在 JS 使用二进制位运算？](https://juejin.im/entry/57317b2679df540060d5d6c2)
-
 首先对性能基本没有负面影响, 纯数字计算更快, 但只能对 Number 使用
 
-& 按位与
+`&` 按位与
 
-| 按位或
+`|` 按位或
 
-^ 按位异或
+`^` 按位异或
 
-~ 按位非
+`~` 按位非
 
-<< 左移
+`<<` 左移
 
-\>\> 有符号右移
+`>>` 有符号右移
 
-\>\>\> 无符号右移
+`>>>` 无符号右移
 
-位运算时对非 整数 需先转化为 Int32 型整数
+位运算时对非 `整数` 需先转化为 `Int32` 型整数
 
 #### 位运算符在 js 中的妙用
 判断奇偶
@@ -206,7 +205,39 @@ Dog.prototype = Object.create(Animal.prototype);
 Dog.prototype.constructor = Dog;
 ```
 
+## 作用域 + 基本变量
+块级作用域: let, const, if, function 等
+
+暂时性死区
+
+`window, document`: window 对象是指浏览器打开的窗口。document 对象是 HTML 文档对象的一个只读引用，window 对象的一个属性
+
+### 高度/宽度
+> https://segmentfault.com/a/1190000010746091
+
+1. `document.documentElement.clientWidth / clientHeight`: 屏幕可视区域的宽高, 不含滚动条和工具条
+2. `window.innerWidth / innerHeight`: 可视区域的宽高
+3. `window.outerWidth / outerHeight`: `innerWidth` 加上相应的工具条和滚动条窗口
+4. `screen.availWidth / availHeight`: 屏幕的可用宽高, 如 mac 下顶部状态工具栏高 23px, `availHeight` = monitorResolution - 23px
+
+以下为 DOMElement 所拥有
+
+5. `clientWidth / clientHeight`: 内容的宽高
+6. `offsetHeight / offsetWidth`: e.g. `document.body.offsetHeight`, DOM 元素本身的宽高, 如长段文字会超出屏幕
+7. `offsetLeft / offsetTop`: 所有 HTML 元素拥有 offsetLeft 和 offsetTop 属性来返回元素的 X 和 Y 坐标
+   1. 相对于已定位元素的后代元素和一些其他元素（表格单元），这些属性返回的坐标是相对于父元素
+   2. 一般元素，则是相对于文档，返回的是文档坐标
+   3. `offsetParent` 指其相对的父元素, `null` 表示是一般元素, Left/Top 为相对文档坐标.
+8. `scrollWidth / scrollHeight`: 元素的内容区域加上内边距，在加上任何溢出内容的尺寸.<br>没有溢出时 = `client*`, 溢出时 = `offset*`
+9. `scrollLeft & scrollTop`: 元素的滚动条的位置, 修改其让元素中的内容滚动
+
 ## 常用函数实现
+
+### String
+String.`trim`
+```js
+str => str.replace(/(^\s+)|(\s+$)/g, '')
+```
 
 ### Array
 ```js
@@ -647,7 +678,7 @@ setTimeout(() = {
 其中第一个宏任务执行中，输出 1 ，并且创建了微任务队列，所以在下一个宏任务队列执行前，
 先执行微任务，在微任务执行中，输出 3 ，微任务执行后，执行下一次宏任务，执行中输出 2
 
-#### 顺序总结
+#### 宏任务微任务 顺序总结
 - 执行一个 `宏任务`（栈中没有就从事件队列中获取）
 - 执行过程中如果遇到 `微任务`，就将它添加到微任务的任务队列中
 - 宏任务执行完毕后，立即执行当前 微任务队列中的所有 微任务（依次执行）
@@ -696,23 +727,68 @@ console.log('macro2')
 
 > macro1, a1 start, a2, promise2, macro2, promise1, a1 end, promise2.then, promise3, setTimeout
 
+#### [Promise 顺序总结 必看](https://juejin.im/post/5dc028dcf265da4d4b5fe94f)
+理解 `Promise` 的注册时机和执行时机
+注意: `Promise.resolve()` (resolve 无 value) 按 A+ 实现时为 `完全同步代码` (return UNDEFINED), 但在 webkit 上实现为新建一个 `Promise` (resolved and return undefined), 因此会影响任务的注册和执行时机
+> 核心原因是第一次 new Promise 的时候，他接着入栈了一个 undefined value，导致需要多执行一次的 undefined 的 then 回调。  
+isolate->factory ()->undefined_value ()
+
+#### setTimeout
+`setTimeout` 在控制台会返回一个 id.
+
 ### 垃圾回收
+> https://github.com/qq449245884/xiaozhi/issues/3
+
 垃圾回收为 `后台` `进程`
-垃圾 = 没有被引用的对象 / 根访问不到的循环引用
-基础: 标记清除.
+
+垃圾 = 没有被引用的对象 / 根访问不到的循环引用 (引用计数法无法清除)
+
+基础: 标记清除 (mark and sweep)
+1. 构建 “根” (gc root, window/global/globalThis)，保存引用的全局变量。
+2. 检查所有根及其子节点，标记为活动的。任何根不能到达的地方都将被标记为垃圾。
+3. 释放所有未标记到的内存块，并将该内存返回给操作系统。
+![gc](../../assets/img/interview-js-gc.gif)
+
 优化
 - 分代回收
 - 增量回收
 - 只在 CPU 闲时收集
 
+常见内存泄漏
+- 误修改全局变量
+- 被遗忘的定时器和回调
+- 闭包
+- 脱离 DOM 的引用 (可使用 WeakMap 避免)
+
+### 依赖注入
+
 ## QA
-- `window, document`: window 对象是指浏览器打开的窗口。document 对象是 HTML 文档对象的一个只读引用，window 对象的一个属性
-- 求 [1, 10, 11, -1,'-5',12, 13, 14, 15, 2, 3, 4, 7, 8, 9] 内最大值与最小值之差:
+
+Q: 求 [1, 10, 11, -1,'-5',12, 13, 14, 15, 2, 3, 4, 7, 8, 9] 内最大值与最小值之差:
+
+A:  
   ```js
   function MaxMinPlus(arr) {
     // 返回最大值与最小值之差
     return Array.isArray(arr) ? Math.max.apply(Math, arr) - Math.min.apply(Math, arr) : console.log('err')
   }
   ```
-- `String.trim()`: `str => str.replace(/(^\s+)|(\s+$)/g, '')`
-- `setTimeout` 在控制台会返回一个 id.
+Q: [如果我们在浏览器控制台中运行 'foo' 函数，是否会导致堆栈溢出错误？](https://juejin.im/post/5d2d146bf265da1b9163c5c9#heading-3)
+  ```js
+  function foo() {
+    setTimeout(foo, 0); // 是否存在堆栈溢出错误?
+  };
+  ```
+A: 不会.
+
+JavaScript 并发模型基于 “事件循环”。 当我们说 “浏览器是 JS 的家” 时我真正的意思是浏览器提供运行时环境来执行我们的 JS 代码。
+浏览器的主要组件包括 `调用堆栈`，`事件循环`，`任务队列` 和 `Web API`。 像 `setTimeout`, `setInterval` 和 `Promise` 这样的全局函数不是 JavaScript 的一部分，而是 Web API 的一部分。 JavaScript 环境的可视化形式如下所示：
+
+![browser eventloop](../../assets/img/interview-js-qa4-eventloop.png)
+
+JS 调用栈是后进先出 (LIFO) 的。引擎每次从堆栈中取出一个函数，然后从上到下依次运行代码。每当它遇到一些异步代码，如 setTimeout，它就把它交给 Web API(箭头 1)。因此，每当事件被触发时，callback 都会被发送到任务队列（箭头 2）。
+事件循环 (Event loop) 不断地监视任务队列 (Task Queue)，并按它们排队的顺序一次处理一个回调。每当调用堆栈 (call stack) 为空时，Event loop 获取回调并将其放入堆栈 (stack)(箭头 3) 中进行处理。请记住，如果调用堆栈不是空的， 则事件循环不会将任何回调推入堆栈。
+
+Q:
+
+A:

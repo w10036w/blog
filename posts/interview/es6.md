@@ -9,6 +9,10 @@ Object.freeze / Object.isFrozen
 
 Object.seal / Object.isSealed: 密封一个对象，阻止添加新属性并将所有现有属性标记为不可配置。当前属性的值只要可写就可以改变。
 
+## Class
+
+实现私有变量可以靠 `WeakMap` (无引用即被回收) 或 `Symbol`
+
 ## Array
 ```js
 .from(arrayLike) // convert arrayLike to array
@@ -61,7 +65,9 @@ F: `document.all` 具有其性质
 ## Promise
 
 [实现](https://github.com/forthealllight/promise-achieve/blob/master/myPromise.js)<br>
-要点
+[实现2](https://juejin.im/post/5b83cb5ae51d4538cc3ec354)
+
+实现要点
 - status = 'pending' | 'resolved' | 'rejected';
 - value = undefined, reason = undefined, 分别在 resolve / reject 后赋值给参数
 - onFullfilledArray = [], onRejectedArray = [], 分别在 resovle / reject 时依次执行
@@ -69,6 +75,14 @@ F: `document.all` 具有其性质
 - 入参检查 (resolve, reject)
 - then 绑在 prototype 上, 用递归把 全部 then 的回调绑在 onFullfilledArray, onRejectedArray 上
 - 定义 resolvePromise
+
+注意事项
+- 在 Pending 转为另外两种之一的状态时候，状态不可在改变..
+- Promise 的 then 为异步。而 (new Promise()) 构造函数内为同步
+- Promise 的 `catch` **不能捕获任意情况的错误** (比如 then 里面的 setTimout 内手动抛出一个 Error)
+- Promise 的 then 返回 Promise.reject() 会中断链式调用
+- Promise 的 resolve 若是传入值而非函数，会发生值穿透的现象
+- Promise 的 `catch, then`,return 的都是一个新的 `Promise`(在 Promise 没有被中断的情况下)
 
 Promise 化 ajax
 ```js
