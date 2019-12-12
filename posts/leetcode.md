@@ -18,6 +18,9 @@
 ## [Backtracking / Deep First Search (DFS)](algorithms/backtracking.md)
 - [46. Permutations](leetcode/46-permutations.md)
 - [47. Permutations II](leetcode/47-permutations-ii.md)
+- [60. Permutation Sequence](leetcode/60-permutation-sequence.md)
+- [78. Subsets](leetcode/78-subsets.md)
+- [784. Letter Case Permutation](leetcode/784-letter-case-permuatation.md)
 
 ## LinkedList
 - [21. Merge Two Sorted Lists](leetcode/21-merge-two-sorted-lists.md)

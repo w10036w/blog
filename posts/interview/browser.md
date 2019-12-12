@@ -215,11 +215,6 @@ window.addEventListener("orientationchange", function() {
 
 // Listen for resize changes, works better
 window.addEventListener("resize", function() {
-  // Get screen size (inner/outerWidth, inner/outerHeight)
-  // then calculate if landscape / portrait
-
-  // innerWidth, innerHeight: with scrollbar / toolbar
-  // outerWidth, outerHeight: 
 }, false);
 ```
 CSS Media Queries
@@ -276,4 +271,3 @@ F. 在指定的节点被删除时自动断点
 ## 浏览器本地存储 local storage
 
 [localForage: IndexedDB/WebSQL or localStorage](https://localforage.docschina.org/)
-

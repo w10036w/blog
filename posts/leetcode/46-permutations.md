@@ -16,13 +16,33 @@ Output: [
 ];
 ```
 
-My solution
+Classic Backtrack
 
 ```js
 /**
  * @param {number[]} nums
  * @return {number[][]}
  */
+var permute = function(nums) {
+  const res = []
+  const len = nums.length
+
+  function bt(tmp, nums) {
+    if (tmp.length===len) return res.push(tmp.slice())
+    for (let i=0; i<len; i++) {
+      if (tmp.includes(nums[i])) continue;
+      tmp.push(nums[i])
+      bt(tmp, nums)
+      tmp.pop()
+    }
+  }
+  bt([], nums)
+  
+  return res
+};
+```
+Naive Solu
+```js
 var permute = function(nums) {
   var r = [];
   function go(curr, rest) {
@@ -56,8 +76,8 @@ function permutation(arr, pos, n, res) {
   }
 }
 function swap(arr,index1,index2){
-  let temp = arr[index1];
+  let tmp = arr[index1];
   arr[index1] = arr[index2];
-  arr[index2] = temp;
+  arr[index2] = tmp;
 }
 ```

@@ -24,19 +24,19 @@ var permuteUnique = function(nums) {
   const res = []
   const used = [] // KEY
   
-  function dfs(nums, used, len, list) {
-    if (list.length===len) return res.push(list.slice())
+  function dfs(tmp, nums, used) {
+    if (tmp.length===len) return res.push(tmp.slice())
     for (let i=0; i<len; i++) {
       if (used[i]) continue;
       if (i>0 && nums[i]===nums[i-1] && !used[i-1]) continue; // KEY
-      list.push(nums[i])
+      tmp.push(nums[i])
       used[i] = true
-      bt(nums, used, len, list)
-      list.pop()
+      bt(nums, used, len, tmp)
+      tmp.pop()
       used[i]=false
     }
   }
-  dfs(nums, used, len, [])
+  dfs([], nums, used)
   
   return res
 };
