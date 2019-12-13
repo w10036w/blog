@@ -19,7 +19,7 @@ Output:
   []
 ]
 ```
-DFS solution:
+DFS solution (best):
 ```js
 /**
  * @param {number[]} nums

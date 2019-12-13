@@ -1,31 +1,21 @@
-var fn = function(nums) {
-  const len = nums.length
-  if (len===1) return nums
-  nums.sort((a,b)=>a-b)
+var fn = function(num) {
   const res = []
-  const used = []
-  
-  function bt(nums, used, len, list) {
-    const l = list.length
-    if (l===len) return res.push(list.slice())
-    for (let i=0; i<len; i++) {
-      if (used[i]) continue;
-      if (i>0 && nums[i]===nums[i-1] && !used[i-1]) continue;
-      used[i] = true
-      list.push(nums[i])
-      bt(nums, used, len, list)
-      list.pop()
-      used[i]=false
+  function dfs(n, hrs, mins, p) {
+    if (hrs>=12 || mins>59) return
+    if (n===0) return res.push(`${hrs}:${mins>9?mins:'0'+mins}`)
+    for (let i=p;i<10;i++) {
+      if (i<4) dfs(n-1, hrs+(1<<i), mins, i+1)
+      // if (i<4) dfs(n-1, hrs+Math.pow(2, i), mins, i+1)
+      else dfs(n-1, hrs, mins +(1<<(i-4)), i+1)
     }
   }
-  bt(nums, used, len, [])
-  
-  return res
-}
+  dfs(num, 0, 0, 0)
 
+  return res.sort()
+};
 
-
-const test = [1,1,2,2]
+const test = 4
+// const test = [1,2,3,4,7]
 
 const res = fn(test)
 console.log(res)

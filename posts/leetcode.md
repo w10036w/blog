@@ -5,6 +5,7 @@
 - [15. 3Sum](leetcode/15-3sum.md)
 - [18. 4sum](leetcode/18-4sum.md)
 - [28. Implement strStr()](leetcode/28-implement-strstr.md)
+- [31. Next Permutation](leetcode/31-next-permutation.md)
 - [287. Find the Duplicate Number](leetcode/287-find-the-duplicate-number.md)
 
 ## 2 pointers
@@ -20,6 +21,7 @@
 - [47. Permutations II](leetcode/47-permutations-ii.md)
 - [60. Permutation Sequence](leetcode/60-permutation-sequence.md)
 - [78. Subsets](leetcode/78-subsets.md)
+- [401. Binary Watch](leetcode/401-binary-watch.md)
 - [784. Letter Case Permutation](leetcode/784-letter-case-permuatation.md)
 
 ## LinkedList
