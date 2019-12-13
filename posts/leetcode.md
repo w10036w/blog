@@ -16,6 +16,11 @@
 ## Sort
 - [75. Sort Colors](leetcode/75-sort-colors.md)
 
+## Hash Table
+- [36. Valid Sudoku](leetcode/36-valid-sudoku.md)
+- [49. Group Anagrams](leetcode/49-group-anagrams.md)
+- [720. Longest Word in Dictionary](leetcode/720-longest-word-in-dict.md)
+
 ## [Backtracking / Deep First Search (DFS)](algorithms/backtracking.md)
 - [46. Permutations](leetcode/46-permutations.md)
 - [47. Permutations II](leetcode/47-permutations-ii.md)
