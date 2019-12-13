@@ -7,6 +7,7 @@
 - [28. Implement strStr()](leetcode/28-implement-strstr.md)
 - [31. Next Permutation](leetcode/31-next-permutation.md)
 - [287. Find the Duplicate Number](leetcode/287-find-the-duplicate-number.md)
+- [349. Intersection of Two Arrays](leetcode/349-intersection-of-two-arrays.md)
 
 ## 2 pointers
 - [19. Remove Nth Node From End of List](leetcode/19-remove-nth-node-from-end-of-list.md)
@@ -31,6 +32,9 @@
 
 ## LinkedList
 - [21. Merge Two Sorted Lists](leetcode/21-merge-two-sorted-lists.md)
+
+## Tree
+- [94. Binary Tree Inorder Traversal](leetcode/94-binary-tree-inorder-traversal.md)
 
 ## DP
 - [32. Longest Valid Parentheses](leetcode/32-longest-valid-parentheses.md)
