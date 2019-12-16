@@ -27,7 +27,7 @@ Input: n = 4, k = 9
 Output: "2314"
 ```
 
-My solution
+My solution (non-recursive)
 ```js
 /**
  * @param {number} n
@@ -35,7 +35,7 @@ My solution
  * @return {string}
  */
 var getPermutation = function(n, k) {
-  const arr = ['1','2','3','4','5','6','7','8','9'].slice(0, n)
+  const arr = '123456789'.split('').slice(0, n)
   const fact = [1]
   for (let i=1; i<n; i++) {
     fact[i] = arr[i]*fact[i-1]
@@ -57,6 +57,28 @@ var getPermutation = function(n, k) {
   return res.join('')
 };
 ```
+backtrack
+```js
+var getPermutation = function(n, k) {
+  const arr = '123456789'.split('').slice(0, n)
+  const fact = [1]
+  for (let i=1; i<n; i++) {
+    fact[i] = arr[i]*fact[i-1]
+  }
+  let res = ''
+  bs(n, k)
+  return res
+  function bs(n, k) {
+    if (k === 1||k===0) return res += arr.join('')
+    const div = fact[n-2]
+    let i = n
+    while(--i*div>=k);
+    res += arr.splice(i, 1)
+    bs(n-1, k-i*div)
+  }
+}
+```
+
 JAVA
 ```java
 public class Solution {

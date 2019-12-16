@@ -17,12 +17,15 @@
 ## Sort
 - [75. Sort Colors](leetcode/75-sort-colors.md)
 
-## Hash Table
+## Hash Table / Dict
 - [36. Valid Sudoku](leetcode/36-valid-sudoku.md)
 - [49. Group Anagrams](leetcode/49-group-anagrams.md)
 - [720. Longest Word in Dictionary](leetcode/720-longest-word-in-dict.md)
 
 ## [Backtracking / Deep First Search (DFS)](algorithms/backtracking.md)
+- [22. Generate Parentheses](leetcode/22-generate-parentheses.md)
+- [39. Combination Sum](leetcode/39-combination-sum.md)
+- [40. Combination Sum II](leetcode/40-combination-sum-ii.md)
 - [46. Permutations](leetcode/46-permutations.md)
 - [47. Permutations II](leetcode/47-permutations-ii.md)
 - [60. Permutation Sequence](leetcode/60-permutation-sequence.md)
@@ -35,6 +38,10 @@
 
 ## Tree
 - [94. Binary Tree Inorder Traversal](leetcode/94-binary-tree-inorder-traversal.md)
+- [95. Unique Binary Search Trees II]
+
+## RegExp
+- [771. Jewels and Stones](leetcode/771-jewel-and-stones.md)
 
 ## DP
 - [32. Longest Valid Parentheses](leetcode/32-longest-valid-parentheses.md)

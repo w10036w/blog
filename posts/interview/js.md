@@ -8,7 +8,9 @@ Null Undefined Boolean String Number Symbol BigInt
 引用数据类型: 对象 Object
 包含 Array, Function, RegExp, Date, Math, *Map, *Set, *Array, Arguments, *Error
 
-`typeof` 可以判断 primitive, 不适合判断引用数据类型 object
+### 类型判断
+对基本类型 primitive 可用 `typeof`:
+
 对一个值使用 typeof 操作符可能会返回下列某个字符：
 - “undefined”：如果这个值未定义
 - “boolean”：如果这个值是布尔值
@@ -17,6 +19,7 @@ Null Undefined Boolean String Number Symbol BigInt
 - “object”：如果这个值是 对象 或 Array 或 null
 - “function”：如果这个值是函数
 
+#### 对引用数据类型 object
 `instanceof` 是查询原型链，因此不适合判断 primitive 类型。
 
 ```js
@@ -33,7 +36,7 @@ class PrimitiveNumber {
 }
 console.log(111 instanceof PrimitiveNumber) // true
 ```
-`实现较全的 getType()`
+实现较全的 `getType()`
 ```js
 function getType(obj) {
    if (obj === null) return String(obj);
@@ -44,7 +47,11 @@ function getType(obj) {
    : typeof obj;
 }
 ```
-
+原型链方法 `{Type}.prototype.isPrototypeOf(test)`
+```js
+// e.g.
+Array.prototype.isPrototypeOf(obj)
+```
 
 ## Number 数值
 
@@ -357,7 +364,7 @@ function debounce(func, wait, immediate) {
   };
 };
 ```
-!!! naive.`throttle`
+**naive.`throttle`**
 ```js
 var throttle = function(fn, wait){
   var last = 0
@@ -370,8 +377,9 @@ var throttle = function(fn, wait){
   }
 }
 ```
-!!! underscore.`throttle`
+**underscore.`throttle`**
 > 在某段时间内，不管触发了多少次回调，都只认第一次，并在计时结束时给予响应。
+
 ```js
 // Returns a function, that, when invoked, will only be triggered at most once
 // during a given window of time. Normally, the throttled function will run
@@ -419,7 +427,9 @@ function(func, wait, options) {
   return throttled;
 };
 ```
+
 `EventEmitter`
+
 ```js
 // https://zhuanlan.zhihu.com/p/60324936
 class EventEmitter {
@@ -479,10 +489,8 @@ document.addEventListener('DOMContentLoaded', function() {
   })
 })
 ```
-`Function.bind`
+`Function.bind` see [full in MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_objects/Function/bind#Polyfill)
 ```js
-// polyfill
-// see full in https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_objects/Function/bind#Polyfill
 // Does not work with `new funcA.bind(thisArg, args)`
 if (!Function.prototype.bind) (function(){
   var slice = Array.prototype.slice;
@@ -540,24 +548,25 @@ addMethod(people, "find", function(a, b) {}); /*传两个*/
 这时候问题来了，这个全局的 addMethod 方法该怎么实现呢？John Resig 的实现方法如下，代码不长，但是非常的巧妙：
 ```js
 function addMethod(object, name, fn) {
-　var old = object[name]; //把前一次添加的方法存在一个临时变量old里面
-　object[name] = function() { // 重写了object[name]的方法
-　　// 如果调用object[name]方法时，传入的参数个数跟预期的一致，则直接调用
-　　if(fn.length === arguments.length) { // Function.prototype.length 是参数的个数!
-　　  return fn.apply(this, arguments);
-　　　// 否则，判断old是否是函数，如果是，就调用old
-　　} else if(typeof old === "function") {
-　　　return old.apply(this, arguments);
-　　}
-　}
+  var old = object[name]; //把前一次添加的方法存在一个临时变量old里面
+  object[name] = function() { // 重写了object[name]的方法
+    // 如果调用object[name]方法时，传入的参数个数跟预期的一致，则直接调用
+    if(fn.length === arguments.length) { // Function.prototype.length 是参数的个数!
+      return fn.apply(this, arguments);
+      // 否则，判断old是否是函数，如果是，就调用old
+    } else if(typeof old === "function") {
+      return old.apply(this, arguments);
+    }
+  }
 }
 ```
 
-### 观察者模式 发布订阅模式
-> https://zhuanlan.zhihu.com/p/60324936
+### 观察者模式 发布订阅模式 
+> 参考[知乎链接](https://zhuanlan.zhihu.com/p/60324936)
 
-观察者模式：
-> 它定义了对象间的一种一对多的关系，让多个观察者对象同时监听某一个主题对象，当一个对象发生改变时，所有依赖于它的对象都将得到通知。<br>
+观察者模式
+
+它定义了对象间的一种一对多的关系，让多个观察者对象同时监听某一个主题对象，当一个对象发生改变时，所有依赖于它的对象都将得到通知。<br>
 观察者模式在前端开发中非常常用， 我们经常用的事件就是观察者模式的一种体现，它对我们解耦模块，开发基于消息的业务起着非常重要的作用。
 
 ![observer vs pubsub](../../assets/img/interview-pattern-observer-subpub.jpg)
@@ -698,7 +707,7 @@ setTimeout(() = {
 - 当前 宏任务执行完毕，开始检查渲染，然后 GUI线程接管渲染
 - 渲染完毕后， JS线程继续接管，开始下一个 `宏任务`（从事件队列中获取）
 
-![宏任务 微任务](/assets/img/macromicrotask.webp)
+![宏任务 微任务](../../assets/img/macromicrotask.webp)
 
 测试：输出结果
 
@@ -749,10 +758,9 @@ isolate->factory ()->undefined_value ()
 #### setTimeout
 `setTimeout` 在控制台会返回一个 id.
 
-### 垃圾回收
-> https://github.com/qq449245884/xiaozhi/issues/3
+### 垃圾回收 [参考1](https://github.com/qq449245884/xiaozhi/issues/3) 
 
-垃圾回收为 `后台` `进程`
+垃圾回收为后台进程
 
 垃圾 = 没有被引用的对象 / 根访问不到的循环引用 (引用计数法无法清除)
 
@@ -760,6 +768,7 @@ isolate->factory ()->undefined_value ()
 1. 构建 “根” (gc root, window/global/globalThis)，保存引用的全局变量。
 2. 检查所有根及其子节点，标记为活动的。任何根不能到达的地方都将被标记为垃圾。
 3. 释放所有未标记到的内存块，并将该内存返回给操作系统。
+
 ![gc](../../assets/img/interview-js-gc.gif)
 
 优化
@@ -783,7 +792,11 @@ A:
   ```js
   function MaxMinPlus(arr) {
     // 返回最大值与最小值之差
-    return Array.isArray(arr) ? Math.max.apply(Math, arr) - Math.min.apply(Math, arr) : console.log('err')
+    return Array.isArray(arr)
+      ? Math.max(...arr) - Math.min(...arr)
+      // alternative
+      // ? Math.max.apply(Math, arr) - Math.min.apply(Math, arr)
+      : console.log('err')
   }
   ```
 Q: [如果我们在浏览器控制台中运行 'foo' 函数，是否会导致堆栈溢出错误？](https://juejin.im/post/5d2d146bf265da1b9163c5c9#heading-3)
@@ -802,6 +815,93 @@ JavaScript 并发模型基于 “事件循环”。 当我们说 “浏览器是
 JS 调用栈是后进先出 (LIFO) 的。引擎每次从堆栈中取出一个函数，然后从上到下依次运行代码。每当它遇到一些异步代码，如 setTimeout，它就把它交给 Web API(箭头 1)。因此，每当事件被触发时，callback 都会被发送到任务队列（箭头 2）。
 事件循环 (Event loop) 不断地监视任务队列 (Task Queue)，并按它们排队的顺序一次处理一个回调。每当调用堆栈 (call stack) 为空时，Event loop 获取回调并将其放入堆栈 (stack)(箭头 3) 中进行处理。请记住，如果调用堆栈不是空的， 则事件循环不会将任何回调推入堆栈。
 
-Q:
+Q: (头条)`function request (urls, maxNumber, callback)` 要求编写函数实现，根据 urls 数组内的 url 地址进行并发网络请求，最大并发数 maxNumber, 当所有请求完毕后调用 callback 函数 (已知请求网络的方法可以使用 fetch api)
 
 A:
+```js
+function request(urls, maxNumber, callback) {
+  let res = {}
+  let i = 0
+  const chain = () => {
+    if (!urls.length) return
+    const url = urls.shift()
+    fetch(url).then(data => {
+      res[url] = data
+      return urls.length && chain()
+    })
+  }
+  const reqs = new Array(maxNumber).fill(chain())
+  Promise.all(reqs).then(_ => callback(res))
+
+}
+```
+Q: `redux` 问题 [参考掘金](https://juejin.im/post/5b9617835188255c781c9e2f)
+
+A: redux 本身有哪些作用？我们先来快速的过一下 redux 的核心思想（工作流程）：
+
+- `createStore.js`: 将状态统一放在一个 state 中，由 store 来管理这个 state。
+- `combineReducers.js`: 这个 store 按照 reducer 的 “shape”（形状）创建。reducer 的作用是接收到 action 后，输出一个新的状态，对应地更新 store 上的状态。
+- `dispatch()`: 根据 redux 的原则指导，外部改变 state 的最佳方式是通过调用 store 的 dispatch 方法，触发一个 action，这个 action 被对应的 reducer 处理，完成 state 更新。
+- `subscribe()`, `getState()å`: 可以通过 subscribe 在 store 上添加一个监听函数。每当调用 dispatch 方法时，会执行所有的监听函数。
+- `applyMiddleware()`, 可以添加中间件（中间件是干什么的我们后面讲）处理副作用。
+- `compose.js`, `bindActionCreators,hs`: 工具函数
+
+Q: `React` 组件实例对象结构
+
+A: 参考 [react ts 定义](https://www.saltycrane.com/cheat-sheets/typescript/react/latest/#react)
+
+[React.ComponentType](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/8a31a2fe9e8417d47550db09e5f9f50fd09a8e60/types/react/index.d.ts#L76): [ComponentClass<P={}, S=ComponentState>](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/8a31a2fe9e8417d47550db09e5f9f50fd09a8e60/types/react/index.d.ts#L531) | [FunctionComponent](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/8a31a2fe9e8417d47550db09e5f9f50fd09a8e60/types/react/index.d.ts#L515)
+
+  `Class` 有 `props` 继承, `context`, 生命周期 `lifecycle`, 内部状态管理 `state` 等, `functional` 无 `state` 无 `lifecycle` 有 `hooks`
+```ts
+interface ComponentClass<P = {}, S = ComponentState> extends StaticLifecycle<P, S> {
+  new (props: P, context?: any): Component<P, S>;
+  propTypes?: WeakValidationMap<P>;
+  contextType?: Context<any>;
+  contextTypes?: ValidationMap<any>;
+  childContextTypes?: ValidationMap<any>;
+  defaultProps?: Partial<P>;
+  displayName?: string;
+}
+interface FunctionComponent<P = {}> {
+  (props: PropsWithChildren<P>, context?: any): ReactElement | null;
+  propTypes?: WeakValidationMap<P>;
+  contextTypes?: ValidationMap<any>;
+  defaultProps?: Partial<P>;
+  displayName?: string;
+}
+
+interface ComponentLifecycle<P, S, SS = any> extends NewLifecycle<P, S, SS>, DeprecatedLifecycle<P, S> {
+  /**
+   * Called immediately after a component is mounted. Setting state here will trigger re-rendering.
+   */
+  componentDidMount?(): void;
+  /**
+   * Called to determine whether the change in props and state should trigger a re-render.
+   *
+   * `Component` always returns true.
+   * `PureComponent` implements a shallow comparison on props and state and returns true if any
+   * props or states have changed.
+   *
+   * If false is returned, `Component#render`, `componentWillUpdate`
+   * and `componentDidUpdate` will not be called.
+   */
+  shouldComponentUpdate?(nextProps: Readonly<P>, nextState: Readonly<S>, nextContext: any): boolean;
+  /**
+   * Called immediately before a component is destroyed. Perform any necessary cleanup in this method, such as
+   * cancelled network requests, or cleaning up any DOM elements created in `componentDidMount`.
+   */
+  componentWillUnmount?(): void;
+  /**
+   * Catches exceptions generated in descendant components. Unhandled exceptions will cause
+   * the entire component tree to unmount.
+   */
+  componentDidCatch?(error: Error, errorInfo: ErrorInfo): void;
+}
+
+// Unfortunately, we have no way of declaring that the component constructor must implement this
+interface StaticLifecycle<P, S> {
+  getDerivedStateFromProps?: GetDerivedStateFromProps<P, S>;
+  getDerivedStateFromError?: GetDerivedStateFromError<P, S>;
+}
+```

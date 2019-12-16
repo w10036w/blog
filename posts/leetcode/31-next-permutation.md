@@ -8,9 +8,9 @@ The replacement must be in-place and use only constant extra memory.
 
 Here are some examples. Inputs are in the left-hand column and its corresponding outputs are in the right-hand column.
 ```js
-1,2,3 → 1,3,2
-3,2,1 → 1,2,3
-1,1,5 → 1,5,1
+1,2,3 -> 1,3,2
+3,2,1 -> 1,2,3
+1,1,5 -> 1,5,1
 ```
 ### [idea](https://leetcode.com/problems/next-permutation/discuss/13867/C%2B%2B-from-Wikipedia)
 1. From tail find the largest index `k` that `nums[k] < nums[k + 1]`. If no such index exists, just reverse nums and done.
@@ -56,7 +56,7 @@ var nextPermutation = function (nums) {
   reverse(i, nums.length - 1);
 };
 ```
-Solution
+my Solution
 ```js
 var nextPermutation = function(nums) {
   var last = nums.length-1
