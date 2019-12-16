@@ -320,11 +320,10 @@ flat = arr => {
 ```
 
 ### lodash / underscore
-!!! `curry`
+!!! `curry` 帮助创建 偏函数 [Partial function](https://www.liaoxuefeng.com/wiki/1016959663602400/1017454145929440)
 ```js
-const curry = (fn, ...args1) => (...args2) => (
- arg => arg.length === fn.length ? fn(...arg) : curry(fn, ...arg)
-)([...args1, ...args2]);
+const curry = (fn, ...args1) => fn.length === args1.length ? fn(...args1) : (...args2) => curry(fn, [...args1, ...args])
+
 // 调用
 const foo = (a, b, c) => a * b * c;
 curry(foo)(2, 3, 4); // -> 24

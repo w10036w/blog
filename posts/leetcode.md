@@ -29,16 +29,19 @@
 - [46. Permutations](leetcode/46-permutations.md)
 - [47. Permutations II](leetcode/47-permutations-ii.md)
 - [60. Permutation Sequence](leetcode/60-permutation-sequence.md)
+- [77. Combinations](leetcode/771-jewel-and-stones.md)
 - [78. Subsets](leetcode/78-subsets.md)
 - [401. Binary Watch](leetcode/401-binary-watch.md)
 - [784. Letter Case Permutation](leetcode/784-letter-case-permuatation.md)
 
 ## LinkedList
 - [21. Merge Two Sorted Lists](leetcode/21-merge-two-sorted-lists.md)
+- [141. Linked List Cycle](leetcode/141-linked-list-cycle.md)
+- [142. Linked List Cycle II](leetcode/142-linked-list-cycle-ii.md)
+- [160. Intersection of Two Linked Lists](leetcode/160-intersection-of-two-linked-lists.md)
 
 ## Tree
 - [94. Binary Tree Inorder Traversal](leetcode/94-binary-tree-inorder-traversal.md)
-- [95. Unique Binary Search Trees II]
 
 ## RegExp
 - [771. Jewels and Stones](leetcode/771-jewel-and-stones.md)
