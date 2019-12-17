@@ -97,13 +97,13 @@ DOM -> CSSOM -> Render Tree -> Layout -> Paint -> Composite
 只要协议、域名、端口有任何一个不同，都被当作是不同的域
 1. `NGINX 反向代理`: `proxy_pass http://xxx.xxx.xxx`
 2. 服务端 如 `express`, `koa` 配置 `cors`
-3. 通过jsonp跨域
-jsonp在页面上引入不同域上的js脚本文件实现请求不同域上的数据
-  - 通过script标签引入一个js文件
-  - js文件载入成功后会执行我们在url参数中指定的函数，并且会把我们需要的json数据作为参数传入
+3. 通过 `jsonp` 跨域
+jsonp在页面上引入不同域上的 js 脚本文件实现请求不同域上的数据
+  - 通过 `script` 标签引入一个 js 文件
+  - js 文件载入成功后会执行我们在url参数中指定的函数，并且会把我们需要的json数据作为参数传入
     注：需要服务器端的页面进行相应的配合
-2. 通过修改document.domain来跨子域
-3. 使用window.name来进行跨域
+4. 通过修改document.domain来跨子域
+5. 使用 `window.name` 来进行跨域
 window对象有个name属性，该属性有个特征：即在一个窗口(window)的生命周期内,窗口载入的所有的页面都是共享一个window.name的，每个页面对window.name都有读写的权限，window.name是持久存在一个窗口载入过的所有页面中的，并不会因新页面的载入而进行重置。
 
 ## 跨页面通讯

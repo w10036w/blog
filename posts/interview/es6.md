@@ -4,6 +4,11 @@
 
 [js 实现斐波那契数列 (数组缓存、动态规划、尾调用优化)](https://www.jianshu.com/p/bbc7e54a98d6)
 
+## String
+新方法
+- `String.fromCodePoint()`: 弥补 `String.fromCharCode()`(从 Unicode 码点返回对应字符，但是这个方法不能识别码点大于 `0xFFFF` 的字符), 识别全部 Unicode, 和 `codePointAt()` 互反;
+- `String.raw()`: 不对 `\n` 等转义字符转义(如换行等), 原样返回
+
 ## Object
 Object.freeze / Object.isFrozen
 
@@ -12,6 +17,59 @@ Object.seal / Object.isSealed: 密封一个对象，阻止添加新属性并将�
 ## Class
 
 实现私有变量可以靠 `WeakMap` (无引用即被回收) 或 `Symbol`
+
+## Reflect & Proxy
+`Reflect`
+1. **Object 语言内部方法**: 将 Object 对象的一些属于语言内部的方法如 `Object.defineProperty`, 放到 Reflect 对象上。现阶段，某些方法同时在 Object 和 Reflect 对象上部署，未来的新方法将只部署在 Reflect 对象上。也就是说，从 Reflect 对象上可以拿到语言内部的方法。
+2. **Object 部分方法的返回值改变**: 让其变得更合理。比如，`Object.defineProperty(obj, name, desc)` 在无法定义属性时，会抛出一个错误，而 Reflect.defineProperty(obj, name, desc) 则会返回 `false`.
+3. **object 操作函数化**: 如 `name in obj` -> `Reflect.has(obj, name)`, `delete obj[name]` -> `Reflect.deleteProperty(obj, name)`
+4. **与 `Proxy` 方法一一对应**: 让 Proxy 对象可以方便地调用对应的 Reflect 方法，完成默认行为，作为修改行为的基础。也就是说，不管 Proxy 怎么修改默认行为，你总可以在 Reflect 上获取默认行为。
+
+`Proxy`
+- 修改某些操作的默认行为，等同于在语言层面做出修改，所以属于一种 “元编程”（meta programming），即对编程语言进行编程。
+- 在目标对象之前架设一层 “拦截”，外界对该对象的访问，都必须先通过这层拦截，因此提供了一种机制，可以对外界的访问进行过滤和改写.
+
+基本用法 basic usage
+```js
+var proxy = new Proxy(target={}, handler={});
+```
+
+```js
+// all handlers
+var obj = new Proxy({}, {
+  get(target, propKey, receiver) { // 拦截: 该对象属性的读取
+    console.log(`getting ${propKey}!`);
+    return Reflect.get(target, propKey, receiver);
+  },
+  set(target, propKey, value, receiver) { // 拦截: 该对象属性的
+    console.log(`setting ${propKey}!`);
+    return Reflect.set(target, propKey, value, receiver);
+  },
+  has(target, propKey) {}, // 拦截: propKey in obj
+  deleteProperty(target, propKey){}, // 拦截: delete obj[propKey]
+  ownKeys(target)：拦截 Object.getOwnPropertyNames(proxy)、Object.getOwnPropertySymbols(proxy)、Object.keys(proxy)、for...in 循环，返回一个数组。该方法返回目标对象所有自身的属性的属性名，而 Object.keys() 的返回结果仅包括目标对象自身的可遍历属性。
+});
+```
+1. 安全枚举类型 safe enumerable type
+```js
+export default function enum(object) {
+  return new Proxy(object, {
+    get(target, prop) {
+      if (target[prop]) {
+        return Reflect.get(target, prop)
+      } else {
+        throw new ReferenceError(`Unknown enum '${prop}'`)
+      }
+    },
+    set() {
+      throw new TypeError('Enum is readonly')
+    },
+    deleteProperty() {
+      throw new TypeError('Enum is readonly')
+    }
+  })
+}
+```
 
 ## Array
 ```js
@@ -61,6 +119,10 @@ obj = {[Symbol.toPrimitive](hint){return hint === "number" ? 1 : 10}}
 ```
 
 F: `document.all` 具有其性质
+
+## Symbol
+
+## Reflect
 
 ## Promise
 

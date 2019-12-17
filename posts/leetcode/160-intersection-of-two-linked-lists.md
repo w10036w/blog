@@ -5,7 +5,13 @@ Write a program to find the node at which the intersection of two singly linked 
 For example, the following two linked lists:
 
 best solu: there is no circle in each list
+[visualization](https://leetcode.com/problems/intersection-of-two-linked-lists/discuss/49785/Java-solution-without-knowing-the-difference-in-len!/165648)
 ```js
+/**
+ * @param {ListNode} headA
+ * @param {ListNode} headB
+ * @return {ListNode}
+ */
 var getIntersectionNode = function(headA, headB) {
   if (!headA || !headB) return null
   var a = headA
@@ -19,19 +25,6 @@ var getIntersectionNode = function(headA, headB) {
 ```
 solution 1: change to 142. cycle-ii
 ```js
-/**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
- */
-
-/**
- * @param {ListNode} headA
- * @param {ListNode} headB
- * @return {ListNode}
- */
 var getIntersectionNode = function(headA, headB) {
   if (!headA || !headB) return null
   var p1 = headA

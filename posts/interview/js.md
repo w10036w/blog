@@ -1,5 +1,8 @@
 # JS 语言基础
 ## [V8](https://github.com/qq449245884/xiaozhi/issues/2)
+JS Engine flow:
+
+js source -> parser -> abstract syntax tree -> compiler / interpreter (AOT, JIT) -> machine code
 
 ## 类型
 [基本数据类型 primitive](https://developer.mozilla.org/en-US/docs/Glossary/Primitive)：
@@ -54,28 +57,21 @@ Array.prototype.isPrototypeOf(obj)
 ```
 
 ## Number 数值
+最小的数值为：Number.MIN_VALUE，在大多数浏览器中该数值为 `5e-324`；
+最大的数值为：Number.MIN_VALUE ，在大多数浏览器中该数值为 `1.7976931348623157e+308`
 
-最小的数值为：Number.MIN_VALUE，在大多数浏览器中该数值为 5e-324；
-最大的数值为：Number.MIN_VALUE ，在大多数浏览器中该数值为 1.7976931348623157e+308
+如果某次计算的结果值超出了数值范围，就会转换成特殊的 `Infinity` 值（ -Infinity 负无穷或 Infinity 正无穷）
 
-如果某次计算的结果值超出了数值范围，就会转换成特殊的 Infinity 值（ -Infinity 负无穷或 Infinity 正无穷）
-
-可以使用 isFinite () 函数判断是否为无穷数。
+可以使用 `isFinite()` 函数判断是否为无穷数。
 
 有三个函数可以把非数值转换为数值：
 
-- Number()
-- parseInt()
-- parseFloat()
+`Number()` 可以用于任何数据类型，parseInt 和 parseFloat 专门用于把字符串转换成数值, 在转换时规则比较复杂且不够合理，所以更常用的是 parseInt () 函数
 
-Number () 可以用于任何数据类型，parseInt 和 parseFloat 专门用于把字符串转换成数值
-
-Number () 函数在转换时规则比较复杂且不够合理，所以更常用的是 parseInt () 函数
-
-parseInt () 函数在转换字符串时有几个规则
+`parseInt()` 函数在转换字符串时有几个规则
 - 它会忽略字符串前面的空格，直至找到第一个非空字符串。
-- 如果第一个字符不是数字字符或负数，parseInt () 就会返回 NaN。
-- 如果第一个字符是数字字符，parseInt 会继续解析第二个字符，知道解析完所有的字符或遇到一个非数字字符。
+- 如果**第一个字符**不是数字字符或负数，parseInt () 就会返回 NaN。
+- 如果**第一个字符**是数字字符，parseInt 会继续解析第二个字符，知道解析完所有的字符或遇到一个非数字字符。
 - 可以在转换时，指定第二个参数即转换使用的基数（即多少进制），来消除 parseInt () 在进制方面的困惑。
 
 ```js
@@ -84,10 +80,9 @@ var num2 = parseInt("10", 8);   // 8（八进制）
 var num3 = parseInt("10", 10);  // 10（十进制）
 var num4 = parseInt("10", 16);  // 16（十六进制）
 ```
+`parseFloat` 识别全部浮点格式, 忽略前导 0,会从第一个字符开始解析, 一直解析到字符尾或者无效字符. 如第二个小数点无效，后面的字符会被忽略。
 
-parseFloat 也会从第一个字符开始解析每个字符，也是一直解析到字符末尾，或者解析到遇见一个无效的浮点数字字符为止。也就是说第一个小数点是有效的，第二个就是无效的，后面的字符会被忽略。
-
-parseFloat 还有一个特点是会忽略前导的零。它只能解析十进制数值
+还有一个特点是会. 它只能解析十进制数值. 十六进制格式会被转化为 0.
 
 ## String 字符串
 字符字面量 escape value
@@ -98,7 +93,19 @@ parseFloat 还有一个特点是会忽略前导的零。它只能解析十进制
 - \r：回车
 - \f：换页
 - \：换行再续string，不一定被广泛支持，弃用
+```js
+let num = 10
+num.toString(n) // n 进制, 2 / 8 / 10 / 16
+num.toString(2) // "1010"
+```
 
+## Function
+```js
+function add(n1, n2, n3){
+  arguments[1] = {};
+  console.log(n2 === arguments[1]) // true
+}
+```
 ## ==, ===
 
 "==" 两边的类型是否相同，相同的话就比较值的大小，例如 1==2，返回 false
@@ -244,7 +251,7 @@ Dog.prototype.constructor = Dog;
 ## 常用函数实现
 
 ### String
-String.`trim`
+`String.trim()`
 ```js
 str => str.replace(/(^\s+)|(\s+$)/g, '')
 ```
@@ -261,7 +268,7 @@ if (Object.prototype.toString.call(fn) != "[object Function]") {
 ```
 Array.`map`
 ```js
-Array.prototype._map = function(fn, thisArg) {
+Array.prototype.map = function(fn, thisArg) {
   const arr = this
   let T
   if (thisArg) T = thisArg
@@ -278,7 +285,7 @@ Array.prototype._map = function(fn, thisArg) {
 Array.`reduce`
 ```js
 // if reduceRight, amend i
-Array.prototype._reduce = function(fn, initValue) {
+Array.prototype.reduce = function(fn, initValue) {
   const arr = this
   const len = arr.length
   let r = arr[0]
@@ -295,7 +302,7 @@ Array.prototype._reduce = function(fn, initValue) {
 ```
 Array.`filter`
 ```js
-Array.prototype._filter = function(fn, thisArg) {
+Array.prototype.filter = function(fn, thisArg) {
   const arr = this
   const len = arr.length
   const res = []
@@ -322,14 +329,30 @@ flat = arr => {
 ### lodash / underscore
 !!! `curry` 帮助创建 偏函数 [Partial function](https://www.liaoxuefeng.com/wiki/1016959663602400/1017454145929440)
 ```js
-const curry = (fn, ...args1) => fn.length === args1.length ? fn(...args1) : (...args2) => curry(fn, [...args1, ...args])
+// curry
+const curry = (fn, ...args1) => args1.length >= fn.length ?
+  fn(...args1) : (...args2) => curry(fn, ...[...args1, ...args2])
+
+// ES5 curry
+var curry = function (){
+  var fn = arguments[0]
+  if (typeof fn !== 'function') throw new TypeError('')
+  var slice = Array.prototype.slice
+  var args1 = slice.call(arguments, 1)
+  return args1.length>=fn.length ?
+    fn.apply(void 0, args1) :
+    function () {
+      var args2 = [fn].concat(args1, slice.call(arguments))
+      return curry.apply(void 0, args2)
+    }
+}
 
 // 调用
 const foo = (a, b, c) => a * b * c;
 curry(foo)(2, 3, 4); // -> 24
 curry(foo, 2)(3, 4); // -> 24
 curry(foo, 2, 3)(4); // -> 24
-curry(foo, 2, 3, 4)(); // -> 24
+curry(foo, 2, 3, 4); // -> 24
 
 // e.g. infinite sum, hint: arguments.length
 const sum = (a, b=0) => {
@@ -428,7 +451,6 @@ function(func, wait, options) {
 ```
 
 `EventEmitter`
-
 ```js
 // https://zhuanlan.zhihu.com/p/60324936
 class EventEmitter {

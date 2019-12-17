@@ -1,5 +1,44 @@
 # interview - React
 
+## Concept 基本原理
+react.js is a library for UI view layer via manipulating virtual dom; react-dom and react-native are the implementation for the platforms.
+
+### Virtual DOM
+通过类似 html tag 的 `JSX`, 使用 babel 创建 `vdom`, 根据虚拟dom 渲染 dom tree, 每次更新 diff vdom, 然后重新渲染.
+
+### LifeCycle / Hooks Management
+
+### `setState()`
+async, batch, trigger `update` & `rerender` (if `shouldComponentUpdate` is not optimized)
+
+在实际开发中，setState 的表现有时会不同于理想情况:
+- 在 mount 流程中调用 setState。
+- 在 setTimeout/Promise 回调中调用 setState。
+在第一种情况下，不会进入 update 流程，队列在 mount 时合并修改并 render。
+
+在第二种情况下，setState 将不会进行队列的批更新，而是直接触发一次 update 流程。
+
+这是由于 setState 的两种更新机制导致的，只有在批量更新模式中，才会是 “异步” 的。
+
+### Diff VDOM
+开销最大, 可做优化最多, 三条基本策略:
+- WebUI 中 DOM 节点跨节点的操作特别少，可以忽略不计。
+- 拥有相同类的组件会拥有相似的 DOM 结构。拥有不同类的组件会生成不同的 DOM 结构。
+- 同一层级的子节点，可以根据唯一的 ID 来区分。
+具体方法:
+- 对树进行分层比较，只对比两棵树同级别的节点。跨层级移动节点，将会导致节点删除，重新插入，无法复用。
+- 对组件进行类比较，类相同的递归 diff 子节点，不同的直接销毁重建。diff 对同一层级的子节点进行处理时，会根据 key 进行简要的复用。两棵树中存在相同 key 的节点时，只会移动节点。
+- 对比同一层级子节点时, 以新树的第一个子节点作为起点遍历新树，寻找旧树中与之相同的节点。存在则移动位置, 不存在则新建一个子节点.
+
+#### Diff 优化
+减少 update 次数, 减少非理想状况 `setState()`
+
+### React patch, Event System
+
+### Reconciliation & Render
+
+### Performance
+
 ## Q & A
 > refer to https://juejin.im/post/5dc20a4ff265da4d4e30040b
 
