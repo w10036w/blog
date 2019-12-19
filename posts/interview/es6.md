@@ -1,4 +1,4 @@
-# interview - `es6 es7` 新特性
+# interview - `es6-10` 新特性
 
 [ES6 参考书](http://es6.ruanyifeng.com/)
 
@@ -37,17 +37,27 @@ var proxy = new Proxy(target={}, handler={});
 ```js
 // all handlers
 var obj = new Proxy({}, {
-  get(target, propKey, receiver) { // 拦截: 该对象属性的读取
+  // 拦截: 该对象属性的读取
+  get(target, propKey, receiver) {
     console.log(`getting ${propKey}!`);
     return Reflect.get(target, propKey, receiver);
   },
-  set(target, propKey, value, receiver) { // 拦截: 该对象属性的
+  // 拦截: 该对象属性的设置
+  set(target, propKey, value, receiver) {
     console.log(`setting ${propKey}!`);
     return Reflect.set(target, propKey, value, receiver);
   },
-  has(target, propKey) {}, // 拦截: propKey in obj
-  deleteProperty(target, propKey){}, // 拦截: delete obj[propKey]
-  ownKeys(target)：拦截 Object.getOwnPropertyNames(proxy)、Object.getOwnPropertySymbols(proxy)、Object.keys(proxy)、for...in 循环，返回一个数组。该方法返回目标对象所有自身的属性的属性名，而 Object.keys() 的返回结果仅包括目标对象自身的可遍历属性。
+  // 拦截: propKey in obj
+  has(target, propKey) {},
+  // 拦截: delete obj[propKey]
+  deleteProperty(target, propKey){
+    // 例子: 不允许删除
+    // throw new TypeError()
+  },
+  //拦截 Object.getOwnPropertyNames(proxy)、Object.getOwnPropertySymbols(proxy)、Object.keys(proxy)、for...in 循环，返回一个数组。该方法返回目标对象所有自身的属性的属性名，而 Object.keys() 的返回结果仅包括目标对象自身的可遍历属性。
+  ownKeys(target){},
+
+  apply(){}
 });
 ```
 1. 安全枚举类型 safe enumerable type
@@ -69,6 +79,52 @@ export default function enum(object) {
     }
   })
 }
+```
+<hr>
+
+## Symbol
+
+## Function
+### name
+
+```js
+var f = function () {};
+var ff = f
+// ES5
+f.name // ""
+// ES6
+f.name // "f"
+ff.name // 'f'
+(new Function).name // "anonymous"
+function foo() {};
+foo.bind({}).name // "bound foo"
+(function(){}).bind({}).name // "bound "
+```
+
+### 参数默认值, ...rest
+- 对 `length` (函数预期传入的参数个数) 的影响: 指定默认值的参数及之后的参数都不计入, `...` 参数也不会计入。
+```js
+(function (a, b = 5, c) {}).length // 1
+(function (a, ...args) {}).length // 1
+```
+- 对 `作用域`, 一旦设置了参数的默认值，函数进行声明初始化时，参数会形成一个单独的作用域（context）。等到初始化结束，这个作用域就会消失。这种语法行为，在不设置参数默认值时，是不会出现的。
+```js
+var x = 1;
+(function f(x, y = x) {
+  console.log(y);
+})(2) // 2
+(function f(y = x) {
+  let x = 2;
+  console.log(y);
+})() // 1
+(function foo(x = x) {})() // ReferenceError: x is not defined
+// 上面代码 "x = x" 形成一个单独作用域。实际执行的是 let x = x，由于暂时性死区，这行代码会报错 ”x 未定义 “。
+(function foo(x, y = function() { x = 2; }) {
+  var x = 3;
+  y();
+  console.log(x);
+})() // 3
+x // 1
 ```
 
 ## Array
@@ -119,10 +175,6 @@ obj = {[Symbol.toPrimitive](hint){return hint === "number" ? 1 : 10}}
 ```
 
 F: `document.all` 具有其性质
-
-## Symbol
-
-## Reflect
 
 ## Promise
 

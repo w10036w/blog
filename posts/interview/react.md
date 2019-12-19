@@ -6,6 +6,25 @@ react.js is a library for UI view layer via manipulating virtual dom; react-dom 
 ### Virtual DOM
 通过类似 html tag 的 `JSX`, 使用 babel 创建 `vdom`, 根据虚拟dom 渲染 dom tree, 每次更新 diff vdom, 然后重新渲染.
 
+[参考](https://juejin.im/post/5cb66fdaf265da0384128445)
+
+![vdom](../../assets/img/interview-react-vdom.png)
+
+KEY babel transform
+```json
+{
+  "plugins": [
+    ["transform-react-jsx", {
+      "pragma": "React.createElement"
+    }]
+  ]
+}
+```
+
+`createElement()`
+
+![createElement](../../assets/img/interview-react-createelement.png)
+
 ### LifeCycle / Hooks Management
 
 ### `setState()`

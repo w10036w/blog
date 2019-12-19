@@ -16,6 +16,8 @@ const symbolTag = '[object Symbol]';
 const errorTag = '[object Error]';
 const regexpTag = '[object RegExp]';
 const funcTag = '[object Function]';
+// const nullTag = "[object Null]"
+// const undefinedTag = '"[object Undefined]"'
 
 const deepTag = [mapTag, setTag, arrayTag, objectTag, argsTag];
 
@@ -101,7 +103,7 @@ function cloneOtherType(targe, type) {
 //   circular: false (default: true)
 //   
 // }
-function clone(target, map = new WeakMap()) {
+function clone(target, hash = new WeakMap()) {
 
   // 克隆原始类型
   if (!isObject(target)) {
@@ -118,15 +120,15 @@ function clone(target, map = new WeakMap()) {
   }
 
   // 防止循环引用
-  if (map.has(target)) {
-    return map.get(target);
+  if (hash.has(target)) {
+    return hash.get(target);
   }
-  map.set(target, cloneTarget);
+  hash.set(target, cloneTarget);
 
   // 克隆set
   if (type === setTag) {
     target.forEach(value => {
-      cloneTarget.add(clone(value, map));
+      cloneTarget.add(clone(value, hash));
     });
     return cloneTarget;
   }
@@ -134,7 +136,7 @@ function clone(target, map = new WeakMap()) {
   // 克隆map
   if (type === mapTag) {
     target.forEach((value, key) => {
-      cloneTarget.set(key, clone(value, map));
+      cloneTarget.set(key, clone(value, hash));
     });
     return cloneTarget;
   }
@@ -142,10 +144,8 @@ function clone(target, map = new WeakMap()) {
   // 克隆对象和数组
   const keys = type === arrayTag ? undefined : Object.keys(target);
   forEach(keys || target, (value, key) => {
-    if (keys) {
-      key = value;
-    }
-    cloneTarget[key] = clone(target[key], map);
+    if (keys) key = value;
+    cloneTarget[key] = clone(target[key], hash);
   });
 
   return cloneTarget;

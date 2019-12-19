@@ -1,4 +1,5 @@
 # JS 语言基础
+## [语言标准制定, 演变](https://juejin.im/post/5dfa5cb86fb9a0165721db1d)
 ## [V8](https://github.com/qq449245884/xiaozhi/issues/2)
 JS Engine flow:
 
@@ -9,18 +10,11 @@ js source -> parser -> abstract syntax tree -> compiler / interpreter (AOT, JIT)
 Null Undefined Boolean String Number Symbol BigInt
 
 引用数据类型: 对象 Object
-包含 Array, Function, RegExp, Date, Math, *Map, *Set, *Array, Arguments, *Error
+包含 Array, Function, RegExp, Date, Math, *Map, *Set, Arguments, *Error, JSON, global
 
 ### 类型判断
-对基本类型 primitive 可用 `typeof`:
-
-对一个值使用 typeof 操作符可能会返回下列某个字符：
-- “undefined”：如果这个值未定义
-- “boolean”：如果这个值是布尔值
-- “number”：如果这个值是数值
-- “string”：如果这个值是字符串
-- “object”：如果这个值是 对象 或 Array 或 null
-- “function”：如果这个值是函数
+对基本类型 primitive 可用 `typeof`,  返回值列表:<br>
+`undefined number string boolean symbol bigint object function`
 
 #### 对引用数据类型 object
 `instanceof` 是查询原型链，因此不适合判断 primitive 类型。
@@ -330,8 +324,8 @@ flat = arr => {
 !!! `curry` 帮助创建 偏函数 [Partial function](https://www.liaoxuefeng.com/wiki/1016959663602400/1017454145929440)
 ```js
 // curry
-const curry = (fn, ...args1) => args1.length >= fn.length ?
-  fn(...args1) : (...args2) => curry(fn, ...[...args1, ...args2])
+const curry = (fn, ...args) => args.length >= fn.length ?
+  fn(...args) : (...args2) => curry(fn, ...args, ...args2)
 
 // ES5 curry
 var curry = function (){
@@ -452,49 +446,56 @@ function(func, wait, options) {
 
 `EventEmitter`
 ```js
-// https://zhuanlan.zhihu.com/p/60324936
 class EventEmitter {
   constructor() {
     this.listeners = {}
     // this.maxLength = 10
   }
-
-  on(type, cb) {
-    let fns = (this.listeners[type] = this.listeners[type] || [])
-    if (!fns.includes(cb)) {
-      fns.push(cb)
+  on(type, cb, prepend=false) { // addListener() + prependListener()
+    const fns = this.listeners[type] || (this.listeners[type] = [])
+    if (Array.isArray(fns) && !fns.includes(cb) && typeof cb === 'function') {
+      if (prepend) fns.unshift(cb)
+      else fns.push(cb)
     }
     return this
   }
-  // removeListener + removeAllListener
-  off(type, cb) {
-    let fns = this.listeners[type]
+  emit(type, ...args) {
+    const fns = this.listeners[type]
+    if (Array.isArray(fns)) {
+      fns.forEach(cb => cb(...args))
+    }
+    return this
+  }
+  off (type, cb) { // removeListener() + removeAllListeners()
+    const fns = this.listeners[type]
     if (Array.isArray(fns)) {
       if (typeof cb === 'function') {
-        const i = fns.indexOf(cb)
-        if (i!==-1) fns.splice(i, 1)
-      } else fns.length = 0
+        if (fns.includes(cb)) fns.splice(fns.indexOf(cb), 1)
+      }
+      else fns.length = 0
     }
     return this
   }
-
   once(type, cb) {
-    const self = this;
-    function fn() {
-      var args = Array.prototype.slice.call(arguments);
-      self.listeners.apply(null, args);
-      self.off(event, fn);
+    const self = this
+    function fn(...args) {
+      cb(args)
+      self.off(type, fn)
     }
-    this.on(event, fn)
-  }
-
-  emit(type, args) {
-    let fns = this.listeners[type]
-    if (Array.isArray(fns)) {
-      fns.forEach(fn => fn(args))
-    }
+    this.on(type, fn)
     return this
   }
+  // setMaxListeners(n) { this.maxLength = n }
+  // listeners(type) { return this.listeners[type] || [] }
+  
+  // EventEmitter.prototype.on = EventEmitter.prototype.addListener
+  // EventEmitter.prototype.off = EventEmitter.prototype.removeListener
+  
+  // 特殊事件名:
+  // 'newListener': 如监听, 每次新加事件时会触发
+  // 'removeListener': 如监听, 每次删除事件时会触发
+
+  // nodejs EventEmitter 捕获异常, 使用 domain 模块
 }
 ```
 `delegate` 事件委托
@@ -510,47 +511,137 @@ document.addEventListener('DOMContentLoaded', function() {
   })
 })
 ```
+
+### `new`, `this`, `arguments` 和 `call, apply, bind`
+
+#### `new Fn(...args)` 操作代码化演示
+
+```js
+function _new(Fn, ...args) {
+  // 1. 创建新对象
+  let obj = {}
+  // 2. 空对象的原型指向函数的面试
+  obj.__proto__ = Fn.prototype
+  // 3. 执行构造函数, 添加属性和方法
+  let res = Fn.apply(obj, args)
+  // 4. return
+  if (res && (typeof res === 'object' || typeof res === 'function'))
+    return res
+  return obj
+}
+// 解释
+function Super(age) {
+  this.age = age;
+  return { age: 2 }
+}
+let a = new Super(10);
+console.log(instance.age) // 2
+```
+
+### this 判断顺序
+1. 全局
+
+    浏览器：无论是否在严格模式下，在全局执行环境中（在任何函数体外部）this 都指向全局对象 `window`<br>
+    node 环境：无论是否在严格模式下，在全局执行环境中（在任何函数体外部），this 都是空对象 `{}`
+2. 是否有 `new`
+3. 显式绑定: 是否有 `call`, `apply`, `bind`, 注意非严格模式 / 严格模式 的情况
+4. 隐式绑定, 即作为 `Object` 方法调用, 指向该 `Object`
+5. 默认绑定
+    ```js
+    function i() { console.log(this.age) }
+    var age = 28
+    i()
+    // 严格模式抛出错误, this undefined
+    // 否则, node 下 undefined, 因为 全局 age 不在 global 下
+    // 浏览器下 28
+    ```
+
+### apply & call
+apply polyfill [参考](https://juejin.im/post/5bf6c79bf265da6142738b29)
+```js
+function gThis() { return this }
+function gFunctionCode(length) {
+  var code = 'return arguments[0][arguments[1]](';
+  for(var i = 0; i < length; i++){
+    if(i > 0) code += ',';
+    code += 'arguments[2][' + i + ']';
+  }
+  code += ')';
+  return code;
+}
+function gArguments(args) {
+  let arg = [];
+  for(let i=0; i<args.length ; i++){
+    arg[i] = 'args[' + i + ']';
+  }
+  return arg
+}
+Function.prototype.apply = function(thisArg, args) {
+  // 1.如果 `IsCallable(func)` 是 `false`, 则抛出一个 `TypeError` 异常。
+  if(typeof this !== 'function') throw new TypeError(this + ' is not a function')
+  if(typeof args === 'undefined' || args === null) args = []
+  if(!thisArg) thisArg = gThis()
+  thisArg = new Object(thisArg)
+  var __fn__ = Math.random()
+  // const fn = Symbol('fn') // ES6
+  while (thisArg[__fn__]) { __fn__ = Math.random() }
+  thisArg[__fn__] = this
+  // new Function()
+  var code = gFunctionCode(args.length);
+  var res = (new Function(code))(thisArg, __fn__, args)
+  // ES6
+  // const res = thisArg[__fn__](...args)
+  // eval()
+  // var res = eval('thisArg[__fn__]('+gArguments(args)+')')
+  delete thisArg[__fn__] // ES6: Reflect.deleteProperty(thisArg, 'fn')
+  return res
+}
+// polyfill
+Function.prototype.call = function() {
+  // apply same verification
+  var thisArg = arguments[0]
+  var args = Array.prototype.slice(arguments, 1)
+  return fn.apply(thisArg, args)
+}
+```
+
+`call = fn.call` 引发的 `this` 指向错误
+```js
+const arrayLike = { length: 0 }
+const call = [].push.call; // typeof call "function"
+call(arrayLike, 1); // call is not a function
+// because "this" inside `call` points to global "this", thus there is no `call` on window/global/globalThis.
+```
+
+### bind
 `Function.bind` see [full in MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_objects/Function/bind#Polyfill)
 ```js
 // Does not work with `new funcA.bind(thisArg, args)`
 if (!Function.prototype.bind) (function(){
   var slice = Array.prototype.slice;
-  Function.prototype.bind = function() {
-    var thatFunc = this, thatArg = arguments[0];
+  Function.prototype.bind = function(thisArg) {
+    var fn = this;
     var args = slice.call(arguments, 1);
-    if (typeof thatFunc !== 'function') {
+    if (typeof fn !== 'function') {
       // closest thing possible to the ECMAScript 5
       // internal IsCallable function
       throw new TypeError('Function.prototype.bind - ' +
         'what is trying to be bound is not callable');
     }
-    return function(){
-      var funcArgs = args.concat(slice.call(arguments))
-      return thatFunc.apply(thatArg, funcArgs);
-    };
+    var fNOP = function() {}
+    var fbound = function(){
+      var _args = args.concat(slice.call(arguments))
+      // KEY
+      return fn.apply(fNOP.prototype.isPrototypeOf(this) ? this : thisArg, _args);
+    }
+    if (this.prototype) fNOP.protype = this.prototype
+    fbound.prototype = new fNOP();
+    return fbound
   };
 })();
 ```
 
-### `new fn()` 操作代码化演示
-
-```js
-var obj = {}; // new 操作符为我们创建一个新的空对象，由此 this 重定向至新对象
-obj.__proto__ = fn.prototype; // 空对象的原型指向函数的原型
-fn.call(obj);  // 改变构造函数内部的 this 的指向
-```
-
-### `this`, `arguments` 和 `call, apply, bind`
-this 指向 错误
-```js
-const arrayLike = { length: 0 }
-const call = [].push.call; // typeof call "function"
-call(arrayLike, 1);
-console.log(arrayLike); // call is not a function
-// because "this" inside `call` points to global "this", thus there is no `call` on window/global/globalThis.
-```
-
-arguments
+`arguments`
 > https://www.cnblogs.com/yugege/p/5539020.html
 
 我们现在有这样的一个需求，有一个 people 对象，里面存着一些人名，如下：
@@ -649,12 +740,12 @@ class PubSub {
     this.subscribers = {}
   }
   subscribe(type, fn) {
-    let listeners = this.subscribers[type] || [];
+    let listeners = this.subscribers[type] || (this.subscribers[type] = [])
     listeners.push(fn);
   }
   unsubscribe(type, fn) {
     let listeners = this.subscribers[type];
-    if (!listeners || !listeners.length) return;
+    if (!Array.isArray(listeners)) return;
     this.subscribers[type] = listeners.filter(v => v !== fn);
   }
   publish(type, ...args) {
@@ -786,7 +877,7 @@ isolate->factory ()->undefined_value ()
 垃圾 = 没有被引用的对象 / 根访问不到的循环引用 (引用计数法无法清除)
 
 基础: 标记清除 (mark and sweep)
-1. 构建 “根” (gc root, window/global/globalThis)，保存引用的全局变量。
+1. 构建 "根" (gc root, window/global/globalThis)，保存引用的全局变量。
 2. 检查所有根及其子节点，标记为活动的。任何根不能到达的地方都将被标记为垃圾。
 3. 释放所有未标记到的内存块，并将该内存返回给操作系统。
 
@@ -828,7 +919,7 @@ Q: [如果我们在浏览器控制台中运行 'foo' 函数，是否会导致堆
   ```
 A: 不会.
 
-JavaScript 并发模型基于 “事件循环”。 当我们说 “浏览器是 JS 的家” 时我真正的意思是浏览器提供运行时环境来执行我们的 JS 代码。
+JavaScript 并发模型基于 "事件循环"。 当我们说 "浏览器是 JS 的家" 时我真正的意思是浏览器提供运行时环境来执行我们的 JS 代码。
 浏览器的主要组件包括 `调用堆栈`，`事件循环`，`任务队列` 和 `Web API`。 像 `setTimeout`, `setInterval` 和 `Promise` 这样的全局函数不是 JavaScript 的一部分，而是 Web API 的一部分。 JavaScript 环境的可视化形式如下所示：
 
 ![browser eventloop](../../assets/img/interview-js-qa4-eventloop.png)
@@ -861,7 +952,7 @@ Q: `redux` 问题 [参考掘金](https://juejin.im/post/5b9617835188255c781c9e2f
 A: redux 本身有哪些作用？我们先来快速的过一下 redux 的核心思想（工作流程）：
 
 - `createStore.js`: 将状态统一放在一个 state 中，由 store 来管理这个 state。
-- `combineReducers.js`: 这个 store 按照 reducer 的 “shape”（形状）创建。reducer 的作用是接收到 action 后，输出一个新的状态，对应地更新 store 上的状态。
+- `combineReducers.js`: 这个 store 按照 reducer 的 "shape"（形状）创建。reducer 的作用是接收到 action 后，输出一个新的状态，对应地更新 store 上的状态。
 - `dispatch()`: 根据 redux 的原则指导，外部改变 state 的最佳方式是通过调用 store 的 dispatch 方法，触发一个 action，这个 action 被对应的 reducer 处理，完成 state 更新。
 - `subscribe()`, `getState()å`: 可以通过 subscribe 在 store 上添加一个监听函数。每当调用 dispatch 方法时，会执行所有的监听函数。
 - `applyMiddleware()`, 可以添加中间件（中间件是干什么的我们后面讲）处理副作用。
