@@ -1,7 +1,22 @@
 # Leetcode JS
+
+算法主要是以下几种：
+1. 基础技巧：分治、二分、贪心
+1. 排序算法：快速排序、归并排序、计数排序
+1. 搜索算法：回溯、递归、深度优先遍历，广度优先遍历，二叉搜索树等
+1. 图论：最短路径、最小生成树
+1. 动态规划：背包问题、最长子序列
+数据结构，主要有如下几种：
+1. 数组与链表：单 / 双向链表栈与队列
+1. 哈希表
+1. 堆：最大堆 ／ 最小堆
+1. 树与图：最近公共祖先、并查集
+1. 字符串：前缀树（字典树） ／ 后缀树
+
 ## Array
 - [1. Two Sum](leetcode/1-two-sum.md)
 - [11. Container With Most Water](leetcode/11-container-with-most-water.md)
+- [13. Roman to Integer](leetcode/13-roman-to-integer.md)
 - [15. 3Sum](leetcode/15-3sum.md)
 - [18. 4sum](leetcode/18-4sum.md)
 - [28. Implement strStr()](leetcode/28-implement-strstr.md)
@@ -31,6 +46,7 @@
 - [60. Permutation Sequence](leetcode/60-permutation-sequence.md)
 - [77. Combinations](leetcode/771-jewel-and-stones.md)
 - [78. Subsets](leetcode/78-subsets.md)
+- [79. Word Search](leetcode/79-word-search.md)
 - [401. Binary Watch](leetcode/401-binary-watch.md)
 - [784. Letter Case Permutation](leetcode/784-letter-case-permuatation.md)
 
@@ -39,6 +55,9 @@
 - [141. Linked List Cycle](leetcode/141-linked-list-cycle.md)
 - [142. Linked List Cycle II](leetcode/142-linked-list-cycle-ii.md)
 - [160. Intersection of Two Linked Lists](leetcode/160-intersection-of-two-linked-lists.md)
+
+## Stack
+- [20. Valid Parentheses](leetcode/20-valid-parentheses.md)
 
 ## Tree
 - [94. Binary Tree Inorder Traversal](leetcode/94-binary-tree-inorder-traversal.md)
@@ -69,4 +88,4 @@
 - [Reverse Integer](leetcode/reverseinteger.md)
 
 ## Reference
-- [JS-paopao2](https://github.com/paopao2/leetcode-js)
+1. [JS-paopao2](https://github.com/paopao2/leetcode-js)

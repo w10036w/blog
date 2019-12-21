@@ -56,6 +56,8 @@ async, batch, trigger `update` & `rerender` (if `shouldComponentUpdate` is not o
 
 ### Reconciliation & Render
 
+### Fiber
+
 ### Performance
 
 ## Q & A
