@@ -93,6 +93,20 @@ num.toString(n) // n 进制, 2 / 8 / 10 / 16
 num.toString(2) // "1010"
 ```
 
+### slice() vs substring() vs substr()
+
+> https://www.jianshu.com/p/223dbcea7a76
+
+- `substring(start=0,end=last)`
+  
+  返回指定下标间的字符，下标必须为正整数, 一旦有负或非数字就被当成0
+- `substr(start=0,length=length)`
+  
+  返回从指定下标开始的长度为 length 的字符，start 可以为负数, length 非正数会被当成 0
+- `slice(start=0,end=last)`
+  
+  返回指定下标间的字符，可以为负数, `start>end` 时会返回 `''`
+
 ## Function
 ```js
 function add(n1, n2, n3){

@@ -21,6 +21,7 @@
 - [18. 4sum](leetcode/18-4sum.md)
 - [28. Implement strStr()](leetcode/28-implement-strstr.md)
 - [31. Next Permutation](leetcode/31-next-permutation.md)
+- [66. Plus One](leetcode/66-plus-one.md)
 - [287. Find the Duplicate Number](leetcode/287-find-the-duplicate-number.md)
 - [349. Intersection of Two Arrays](leetcode/349-intersection-of-two-arrays.md)
 
@@ -45,8 +46,11 @@
 - [47. Permutations II](leetcode/47-permutations-ii.md)
 - [60. Permutation Sequence](leetcode/60-permutation-sequence.md)
 - [77. Combinations](leetcode/771-jewel-and-stones.md)
-- [78. Subsets](leetcode/78-subsets.md)
-- [79. Word Search](leetcode/79-word-search.md)
+- [78. Subsets](leetcode/78-subsets.md) !!
+- [79. Word Search](leetcode/79-word-search.md) !!!
+- [90. Subsets II](leetcode/90-subsets-ii.md)
+- [93. Restore IP Addresses](leetcode/93-restore-ip-address.md)
+- [131. Palindrome Partitioning](leetcode/131-palindrome-partitioning.md)
 - [401. Binary Watch](leetcode/401-binary-watch.md)
 - [784. Letter Case Permutation](leetcode/784-letter-case-permuatation.md)
 
@@ -86,6 +90,11 @@
 - [Longest Substring without Repeating Characters](leetcode/longest-substring-without-repeating-characters.md)
 - [Zig Zag Conversion](leetcode/algozigzagconversion.md)
 - [Reverse Integer](leetcode/reverseinteger.md)
+
+## SKIP or BAD
+- [38. Count and Say](leetcode/38-count-and-say.md)
+- [58. Length of Last Word](leetcode/58-length-of-last-word.md)
+- [89. Gray Code(None)]()
 
 ## Reference
 1. [JS-paopao2](https://github.com/paopao2/leetcode-js)
