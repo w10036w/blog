@@ -2,7 +2,7 @@
 
 ## 各大学官网链接
 - [NUS](http://www.nus.edu.sg/admissions/graduate-studies/)
-- [NTU](https://spms.ntu.edu.sg/MathematicalSciences/Graduate/Pages/)Admission-Requirements.aspx
+- [NTU](https://spms.ntu.edu.sg/MathematicalSciences/Graduate/Pages/Admission-Requirements.aspx)
 - [SMU](https://www.smu.edu.sg/programmes/postgraduate)
 
 ## 基础知识
