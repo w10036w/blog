@@ -81,6 +81,7 @@
 
 ## 后端知识面试整理
 - [消息队列](https://www.jianshu.com/p/85d3d9908a78)
+- [数据库 普通索引和唯一索引](https://www.jianshu.com/p/195c77ee7f93)
 - [设计模式](https://www.jianshu.com/p/cc6a7341289e)
 - [JVM](https://www.jianshu.com/p/7ce417286608)
 - java HashMap

@@ -52,7 +52,9 @@
 - [90. Subsets II](leetcode/90-subsets-ii.md)
 - [93. Restore IP Addresses](leetcode/93-restore-ip-address.md)
 - [112. Path Sum](leetcode/112-path-sum.md)
+- [129. Sum Root to Leaf Numbers](leetcode/129-sum-root-to-leaf-numbers.md)
 - [131. Palindrome Partitioning](leetcode/131-palindrome-partitioning.md)
+- [216. Combination Sum III](leetcode/216-combination-sum-iii.md)
 - [401. Binary Watch](leetcode/401-binary-watch.md)
 - [784. Letter Case Permutation](leetcode/784-letter-case-permuatation.md)
 
@@ -96,7 +98,8 @@
 ## SKIP or BAD
 - [38. Count and Say](leetcode/38-count-and-say.md)
 - [58. Length of Last Word](leetcode/58-length-of-last-word.md)
-- [89. Gray Code(None)]()
+- [89. Gray Code (meaningless)](https://leetcode.com/problems/gray-code)
+- [595. Big Countries (MySQL)](https://leetcode.com/problems/big-countries)
 
 ## Reference
 1. [JS-paopao2](https://github.com/paopao2/leetcode-js)

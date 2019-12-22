@@ -484,15 +484,11 @@ function forEach(obj, fn) {
     }
   }
 }
-
-作者：若川
-链接：https://juejin.im/post/5df349b5518825123751ba66
-来源：掘金
-著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 ```
 
 `EventEmitter`
 ```js
+// notice: chain functions: on, emit, off, once
 class EventEmitter {
   constructor() {
     this.listeners = {}
@@ -517,16 +513,16 @@ class EventEmitter {
     const fns = this.listeners[type]
     if (Array.isArray(fns)) {
       if (typeof cb === 'function') {
-        if (fns.includes(cb)) fns.splice(fns.indexOf(cb), 1)
-      }
-      else fns.length = 0
+        const i = fns.indexOf(cb)
+        if (i>-1) fns.splice(i, 1)
+      } else fns.length = 0
     }
     return this
   }
   once(type, cb) {
     const self = this
     function fn(...args) {
-      cb(args)
+      cb(...args)
       self.off(type, fn)
     }
     this.on(type, fn)
