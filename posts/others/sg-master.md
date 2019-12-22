@@ -1,9 +1,9 @@
 # 新加坡研究生攻略
 
 ## 各大学官网链接
-- NUS http://www.nus.edu.sg/admissions/graduate-studies/
-- NTU https://spms.ntu.edu.sg/MathematicalSciences/Graduate/Pages/Admission-Requirements.aspx
-- SMU https://www.smu.edu.sg/programmes/postgraduate
+- [NUS](http://www.nus.edu.sg/admissions/graduate-studies/)
+- [NTU](https://spms.ntu.edu.sg/MathematicalSciences/Graduate/Pages/)Admission-Requirements.aspx
+- [SMU](https://www.smu.edu.sg/programmes/postgraduate)
 
 ## 基础知识
 一般授课型的研究生学制为 2 年，多数中国学生可在 1 到 1 年半内完成学业，研究型学制为 3 年，多数中国学生可以 2 年内完成学业，顺利毕业，比在国内读研究生 3 年的学习时间短，大大节约了时间成本。
