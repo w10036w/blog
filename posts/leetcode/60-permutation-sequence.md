@@ -57,7 +57,7 @@ var getPermutation = function(n, k) {
   return res.join('')
 };
 ```
-backtrack
+recursive
 ```js
 var getPermutation = function(n, k) {
   const arr = '123456789'.split('').slice(0, n)
@@ -66,15 +66,15 @@ var getPermutation = function(n, k) {
     fact[i] = arr[i]*fact[i-1]
   }
   let res = ''
-  bs(n, k)
+  recur(n, k)
   return res
-  function bs(n, k) {
+  function recur(n, k) {
     if (k === 1||k===0) return res += arr.join('')
     const div = fact[n-2]
     let i = n
     while(--i*div>=k);
     res += arr.splice(i, 1)
-    bs(n-1, k-i*div)
+    recur(n-1, k-i*div)
   }
 }
 ```

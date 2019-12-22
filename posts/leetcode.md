@@ -1,12 +1,12 @@
 # Leetcode JS
 
-算法主要是以下几种：
+[算法](algorithms/index.md) 如下
 1. 基础技巧：分治、二分、贪心
-1. 排序算法：快速排序、归并排序、计数排序
-1. 搜索算法：回溯、递归、深度优先遍历，广度优先遍历，二叉搜索树等
-1. 图论：最短路径、最小生成树
-1. 动态规划：背包问题、最长子序列
-数据结构，主要有如下几种：
+2. 排序算法：快速排序、归并排序、计数排序
+3. 搜索算法：回溯、递归、深度优先遍历，广度优先遍历，二叉搜索树等
+4. 图论：最短路径、最小生成树
+5. 动态规划：背包问题、最长子序列
+[数据结构](data-structure.zh.md) 如下
 1. 数组与链表：单 / 双向链表栈与队列
 1. 哈希表
 1. 堆：最大堆 ／ 最小堆
@@ -36,6 +36,7 @@
 ## Hash Table / Dict
 - [36. Valid Sudoku](leetcode/36-valid-sudoku.md)
 - [49. Group Anagrams](leetcode/49-group-anagrams.md)
+- [211. Add and Search Word - Data structure design](leetcode/211-add-and-search-word.md)
 - [720. Longest Word in Dictionary](leetcode/720-longest-word-in-dict.md)
 
 ## [Backtracking / Deep First Search (DFS)](algorithms/backtracking.md)
@@ -50,6 +51,7 @@
 - [79. Word Search](leetcode/79-word-search.md) !!!
 - [90. Subsets II](leetcode/90-subsets-ii.md)
 - [93. Restore IP Addresses](leetcode/93-restore-ip-address.md)
+- [112. Path Sum](leetcode/112-path-sum.md)
 - [131. Palindrome Partitioning](leetcode/131-palindrome-partitioning.md)
 - [401. Binary Watch](leetcode/401-binary-watch.md)
 - [784. Letter Case Permutation](leetcode/784-letter-case-permuatation.md)

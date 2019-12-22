@@ -7,3 +7,8 @@
 ## Lazy Load
 - resouces in a page: listen to scroll
 - routes: `code splitting` / `React.lazy + Suspense` / 3rd libs such as react-loadable
+
+## Error Handling
+
+### Sentry
+> https://juejin.im/post/5dba5a39e51d452a2378348a

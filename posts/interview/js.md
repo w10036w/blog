@@ -221,8 +221,8 @@ function Animal(name, type) {
 Animal.prototype.shout = function () { return this.name + ' shout' }
 // 3.
 function Dog(name, type) {
-Animal.call(this, name, type);
-this.sound = 'bow';
+  Animal.call(this, name, type);
+  this.sound = 'bow';
 }
 // 4. Link prototype chains to inherit parent class functions
 Dog.prototype = Object.create(Animal.prototype);
@@ -234,27 +234,22 @@ Dog.prototype.constructor = Dog;
 块级作用域: let, const, if, function 等
 
 暂时性死区
+```js
+var name = 'B';
+function name() {}
+function log() {
+ console.log(name);
+ // let name = 'A';
+}
+log(); // B
+/*
+变量提升，声明但不赋值
+函数提升，声明且赋值，优先级比变量高
+在函数中使用let或const声明变量，如声明前使用，会报变量not defind，暂时性锁区
+*/
+```
 
 `window, document`: window 对象是指浏览器打开的窗口。document 对象是 HTML 文档对象的一个只读引用，window 对象的一个属性
-
-### 高度/宽度
-> https://segmentfault.com/a/1190000010746091
-
-1. `document.documentElement.clientWidth / clientHeight`: 屏幕可视区域的宽高, 不含滚动条和工具条
-2. `window.innerWidth / innerHeight`: 可视区域的宽高
-3. `window.outerWidth / outerHeight`: `innerWidth` 加上相应的工具条和滚动条窗口
-4. `screen.availWidth / availHeight`: 屏幕的可用宽高, 如 mac 下顶部状态工具栏高 23px, `availHeight` = monitorResolution - 23px
-
-以下为 DOMElement 所拥有
-
-5. `clientWidth / clientHeight`: 内容的宽高
-6. `offsetHeight / offsetWidth`: e.g. `document.body.offsetHeight`, DOM 元素本身的宽高, 如长段文字会超出屏幕
-7. `offsetLeft / offsetTop`: 所有 HTML 元素拥有 offsetLeft 和 offsetTop 属性来返回元素的 X 和 Y 坐标
-   1. 相对于已定位元素的后代元素和一些其他元素（表格单元），这些属性返回的坐标是相对于父元素
-   2. 一般元素，则是相对于文档，返回的是文档坐标
-   3. `offsetParent` 指其相对的父元素, `null` 表示是一般元素, Left/Top 为相对文档坐标.
-8. `scrollWidth / scrollHeight`: 元素的内容区域加上内边距，在加上任何溢出内容的尺寸.<br>没有溢出时 = `client*`, 溢出时 = `offset*`
-9. `scrollLeft & scrollTop`: 元素的滚动条的位置, 修改其让元素中的内容滚动
 
 ## 常用函数实现
 
@@ -458,6 +453,44 @@ function(func, wait, options) {
 };
 ```
 
+迭代器 (自 axios)
+```js
+/**
+ * @param {Object|Array} obj The object to iterate
+ * @param {Function} fn The callback to invoke for each item
+ */
+function forEach(obj, fn) {
+  // Don't bother if no value provided
+  // 判断 null 和 undefined 直接返回
+  if (obj === null || typeof obj === 'undefined') return;
+  // Force an array if not already something iterable
+  // 如果不是对象，放在数组里。
+  if (typeof obj !== 'object') { obj = [obj] }
+  // 是数组 则用for 循环，调用 fn 函数。参数类似 Array.prototype.forEach 的前三个参数。
+  if (isArray(obj)) {
+    // Iterate over array values
+    for (var i = 0, l = obj.length; i < l; i++) {
+      fn.call(null, obj[i], i, obj);
+    }
+  } else {
+    // Iterate over object keys
+    // 用 for in 遍历对象，但 for in 会遍历原型链上可遍历的属性。
+    // 所以用 hasOwnProperty 来过滤自身属性了。
+    // 其实也可以用Object.keys来遍历，它不遍历原型链上可遍历的属性。
+    for (var key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        fn.call(null, obj[key], key, obj);
+      }
+    }
+  }
+}
+
+作者：若川
+链接：https://juejin.im/post/5df349b5518825123751ba66
+来源：掘金
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
 `EventEmitter`
 ```js
 class EventEmitter {
@@ -528,8 +561,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 ### `new`, `this`, `arguments` 和 `call, apply, bind`
 
-#### `new Fn(...args)` 操作代码化演示
-
+#### `new` & `Object.create()`
+`new Fn(...args)` 操作代码化演示
 ```js
 function _new(Fn, ...args) {
   // 1. 创建新对象
@@ -550,6 +583,22 @@ function Super(age) {
 }
 let a = new Super(10);
 console.log(instance.age) // 2
+```
+Object.create()
+```js
+if (typeof Object.create !== "function") {
+  Object.create = function (proto, propertiesObject) {
+    if (typeof proto !== 'object' && typeof proto !== 'function') {
+      throw new TypeError('Object prototype may only be an Object: ' + proto);
+    } else if (proto === null) {
+      throw new Error("This browser's implementation of Object.create is a shim and doesn't support 'null' as the first argument.");
+    }
+    if (typeof propertiesObject != 'undefined') throw new Error("This browser's implementation of Object.create is a shim and doesn't support a second argument.");
+    function F() {}
+    F.prototype = proto;
+    return new F();
+  };
+}
 ```
 
 ### this 判断顺序
@@ -648,7 +697,9 @@ if (!Function.prototype.bind) (function(){
       // KEY
       return fn.apply(fNOP.prototype.isPrototypeOf(this) ? this : thisArg, _args);
     }
+    // assign fn's prototype to fNOP
     if (this.prototype) fNOP.protype = this.prototype
+    // use ctor to fulfill prototype chain
     fbound.prototype = new fNOP();
     return fbound
   };
@@ -879,7 +930,7 @@ console.log('macro2')
 理解 `Promise` 的注册时机和执行时机
 注意: `Promise.resolve()` (resolve 无 value) 按 A+ 实现时为 `完全同步代码` (return UNDEFINED), 但在 webkit 上实现为新建一个 `Promise` (resolved and return undefined), 因此会影响任务的注册和执行时机
 > 核心原因是第一次 new Promise 的时候，他接着入栈了一个 undefined value，导致需要多执行一次的 undefined 的 then 回调。  
-isolate->factory ()->undefined_value ()
+`isolate->factory ()->undefined_value ()`
 
 #### setTimeout
 `setTimeout` 在控制台会返回一个 id.
@@ -909,6 +960,33 @@ isolate->factory ()->undefined_value ()
 - 脱离 DOM 的引用 (可使用 WeakMap 避免)
 
 ### 依赖注入
+
+## 库源码分析
+### lodash
+> 参考 [学习 lodash 源码整体架构，打造属于自己的函数式编程类库](https://juejin.im/post/5d767e1d6fb9a06b032025ea)
+
+主要学习了 runInContext() 导出_ / lodash 函数使用 baseCreate 方法原型继承 LodashWrapper 和 LazyWrapper，mixin 挂载方法到 lodash.prototype、后文用结合例子解释 `lodash.prototype.value(wrapperValue)` 和 `Lazy.prototype.value(lazyValue)` 惰性求值的源码具体实现。
+
+### axios
+> 参考 [学习 axios 源码整体架构，打造属于自己的请求库](https://juejin.im/post/5df349b5518825123751ba66)
+
+![axios](../../assets/img/interview-js-axios.png)
+
+1. 为什么 axios 既可以当函数调用，也可以当对象使用，比如 axios({})、axios.get。
+  
+    答：axios 本质是 `函数`，赋值了一些 `别名方法`，比如 get、post 方法，可被调用，最终调用的还是 Axios.prototype.request 函数。
+2. 简述 axios 调用流程。
+
+    答：实际是调用的 Axios.prototype.request 方法，最终返回的是 promise 链式调用，实际请求是在 dispatchRequest 中派发的。
+3. 有用过拦截器吗？原理是怎样的？
+
+    答：用过，用 axios.interceptors.request.use 添加请求成功和失败拦截器函数，用 axios.interceptors.response.use 添加响应成功和失败拦截器函数。在 Axios.prototype.request 函数组成 promise 链式调用时，Interceptors.protype.forEach 遍历请求和响应拦截器添加到真正发送请求 dispatchRequest 的两端，从而做到请求前拦截和响应后拦截。拦截器也支持用 Interceptors.protype.eject 方法移除。
+4. 有使用 axios 的取消功能吗？是怎么实现的？
+
+    答：用过，通过传递 config 配置 cancelToken 的形式，来取消的。判断有传 cancelToken，在 promise 链式调用的 dispatchRequest 抛出错误，在 adapter 中 request.abort() 取消请求，使 promise 走向 rejected，被用户捕获取消信息。
+5. 为什么支持浏览器中发送请求也支持 node 发送请求？
+
+    答：`axios.defaults.adapter` 默认配置中根据环境判断是浏览器还是 node 环境，使用对应的适配器。适配器支持自定义。
 
 ## QA
 

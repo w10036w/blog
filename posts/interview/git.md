@@ -1,4 +1,5 @@
 # interview - git
+> https://www.jianshu.com/p/38832b41143d
 
 ```sh
 # remote
@@ -18,10 +19,13 @@ git checkout master # move to a branch
 git rebase # 分支变基
 git rebase–interactive # 交互式分支变基
 
-# status & changes check
+# status & check
 git status # 查看当前本地状态
 git show <hash> # show changes in one commit, if nothing as hash, show last commit changes
-git diff # show current uncommitted local changes 查看尚未暂存的更新
+git diff # 查看本地 unstaged changes
+git diff --staged #or git diff --cached 查看本地 staged changes
+git blame # 文件逐行追溯
+git clean # 清除工作区未跟踪文件
 
 ## remove local changes
 git checkout -- <file> # 丢弃工作区上某文件修改
@@ -58,10 +62,11 @@ git fetch —all
 
 # 还原单个文件
 git checkout origin/master [filename]
-git reset [hash] [filename]
+git reset <hash> <filename> # 重置改变分支 “游标” 指向
+git revert # 反转提交
 
-# Push to a new remote branch
-git push --set-upstream origin [branch]
+# submit changes
+git push --set-upstream origin <branch> # Push to a new remote branch
 
 # 清理远程repo：（e.g.清除前缀ch.deploy的）
 git branch -r | awk -F/ '/\/ch.deploy/{print $2}' | xargs -I {} git push origin :{}

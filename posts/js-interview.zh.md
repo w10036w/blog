@@ -76,6 +76,16 @@
 - css / dom / js 尽量扁平
 - CSS3 动画 + GPU 加速
 
+## 系统内核
+- [零拷贝](https://www.jianshu.com/p/2581342317ce) + [NIO channel](https://www.jianshu.com/p/a869c406e0ce)
+
+## 后端知识面试整理
+- [消息队列](https://www.jianshu.com/p/85d3d9908a78)
+- [设计模式](https://www.jianshu.com/p/cc6a7341289e)
+- [JVM](https://www.jianshu.com/p/7ce417286608)
+- java HashMap
+- [SQL 锁](https://www.jianshu.com/p/8403206e8e8d)
+
 ## Yarn & NPM
 
 > 参考 https://juejin.im/post/5da9c6b0e51d4524d67486e2

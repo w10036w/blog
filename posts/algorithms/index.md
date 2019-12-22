@@ -1,13 +1,15 @@
 # Algo Rank
 
-1. DFS
+1. DFS (backtracking)
 2. BFS
 3. Matching Parenthesis problem
-4. Using Hash Tables
+4. Hash Tables
 5. Variables/Pointers manipulation
 6. reverse linked list (duplicates , removing duplicates)
-7. sorting fundamentals (quicksort, mergesort,bubblesort techniques ,
-   runtime of a sort,time space complexity)
+7. Sort (quicksort, mergesort, bubblesort techniques,
+   runtime of a sort, time space complexity)
 8. Recursion
 9. custom data structures (object oriented programming)
 10. Binary search
+11. Dijkstra
+12. Prim
