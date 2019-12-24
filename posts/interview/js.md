@@ -317,7 +317,7 @@ Array.prototype.filter = function(fn, thisArg) {
   return res
 }
 ```
-Array.`flat`
+Array.`flat` / Array.`flatten`
 ```js
 flat = arr => {
   var res = []
@@ -402,6 +402,27 @@ var throttle = function(fn, wait){
   }
 }
 ```
+高级 throttle: 定时器+时间戳, 第一次和最后一次都会触发
+```js
+function throttle(fn, wait) {
+  let pre = 0;
+  let timer = null;
+  return function (...args) {
+    let now = Date.now()
+    if (now - pre > wait) {
+      clearTimeout(timer);
+      timer = null;
+      pre = now
+      fn.apply(this, args);
+    } else if (!timer) {
+      timer = setTimeout(() => {
+        fn.apply(this, args);
+      }, wait);
+    }
+  }
+}
+```
+
 **underscore.`throttle`**
 > 在某段时间内，不管触发了多少次回调，都只认第一次，并在计时结束时给予响应。
 
@@ -452,7 +473,6 @@ function(func, wait, options) {
   return throttled;
 };
 ```
-
 迭代器 (自 axios)
 ```js
 /**
@@ -482,6 +502,10 @@ function forEach(obj, fn) {
         fn.call(null, obj[key], key, obj);
       }
     }
+    // better
+    // Object.keys(obj).forEach(key => {
+    //   fn.call(void 0, obj[key], key, obj)
+    // })
   }
 }
 ```
@@ -553,6 +577,114 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   })
 })
+```
+数组乱序: 从最后一个元素始 随机选一个元素,交换
+```js
+function disorder(arr) {
+  const l = arr.length
+  let i = l
+  while (--i>=0) {
+    const rand = l*Math.random()|0
+    let tmp = arr[i]
+    arr[i] = arr[rand]
+    arr[rand] = tmp
+  }
+  return arr
+}
+```
+Promise 化 ajax
+```js
+function myXHR(method, url, data) {
+  var requset = new XMLHttpRequest();
+  return new Promise((resolve, reject) => {
+    requset.onreadystatechange = function () {
+      if (requset.readyState === 4) {
+        if (requset.status === 200) resolve(requset.responseText)
+        else reject(requset.status)
+      }
+    }
+    requset.open(method, url);
+    requset.send(data);
+  });
+}
+
+var p = myXHR('GET', 'url');
+p.then(responseText => {
+  console.log(responseText);
+}).catch(status => {
+  console.log(new Error(status));
+})
+```
+[图片懒加载](https://github.com/ConardLi/awesome-coding-js/blob/master/JavaScript/%E5%9B%BE%E7%89%87%E6%87%92%E5%8A%A0%E8%BD%BD.md)
+## 监听图片高度
+图片，用一个其他属性存储真正的图片地址：
+
+```html
+  <img src="loading.gif" data-src="https://cdn.pixabay.com/photo/2015/09/09/16/05/forest-931706_1280.jpg" alt="">
+  <img src="loading.gif" data-src="https://cdn.pixabay.com/photo/2014/08/01/00/08/pier-407252_1280.jpg" alt="">
+```
+通过图片`offsetTop`和`window`的`innerHeight`，`scrollTop`判断图片是否位于可视区域。
+```js
+// 用自执行函数包裹
+var imgs = document.getElementsByTagName("img");
+var n = 0; //存储图片加载到的位置，避免每次都从第一张图片开始遍历
+lazyload(); //页面载入完毕加载可是区域内的图片
+// 节流函数，保证每200ms触发一次
+function throttle(fn, time) {
+  let timer;
+  return function (...args) {
+    if (!timer) {
+      timer = setTimeout(() => {
+        timer = null
+        fn(...args)
+      }, time);
+    }
+  }
+}
+// if needed, removeListener in the end
+var throttled = throttle(lazyload, 200)
+window.addEventListener('scroll', throttled)
+function lazyload() { //监听页面滚动事件
+  var seeHeight = window.innerHeight; //可见区域高度
+  // document.documentElement 是整个 <html></html>
+  var scrollTop = document.documentElement.scrollTop || document.body.scrollTop; 
+  //滚动条距离顶部高度  
+  for (var i = n; i < img.length; i++) {
+    // console.log(img[i].offsetTop, seeHeight, scrollTop);
+    if (img[i].offsetTop < seeHeight + scrollTop) {
+      if (img[i].getAttribute("src") == "loading.gif") {
+        img[i].src = img[i].getAttribute("data-src");
+      }
+      n = i + 1;
+    }
+  }
+}
+```
+
+## IntersectionObserver
+
+> IntersectionObserver接口 (从属于Intersection Observer API) 提供了一种异步观察目标元素与其祖先元素或顶级文档视窗(viewport)交叉状态的方法。祖先元素与视窗(viewport)被称为根(root)。
+
+`Intersection Observer`可以不用监听`scroll`事件，做到元素一可见便调用回调，在回调里面我们来判断元素是否可见。
+
+```js
+if (IntersectionObserver) {
+  let lazyImageObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry, index) => {
+      let lazyImage = entry.target;
+      // 如果元素可见
+      if (entry.intersectionRatio > 0) {
+        if (lazyImage.getAttribute("src") == "loading.gif") {
+          lazyImage.src = lazyImage.getAttribute("data-src");
+        }
+        lazyImageObserver.unobserve(lazyImage)
+      }
+    })
+  })
+  for (let i = 0; i < img.length; i++) {
+    lazyImageObserver.observe(img[i]);
+  }
+}
 ```
 
 ### `new`, `this`, `arguments` 和 `call, apply, bind`

@@ -12,7 +12,7 @@
 
 ### [集线器、交换机、路由器功能原理入门](http://www.52im.net/thread-1629-1-1.html)
 ### [TCP (必看)](http://www.52im.net/thread-1107-1-1.html) 三次握手
-以太网数据包（packet）的大小是固定的，最初是 1518 字节，后来增加到 1522 字节。其中， 1500 字节是负载（payload），22 字节是头信息（head）。IP 数据包在以太网数据包的负载里面，它也有自己的头信息，最少需要 20 字节; TCP 头信息也是 20 字节, 所以 TCP 数据包的负载实际为 1400 字节左右.
+以太网数据包（packet）的大小 (MTU, `Maximum Transmission Unit`，最大传输单元) 是固定的，最初是 1518 字节，后来增加到 1522 字节。其中， 1500 字节是负载（payload），22 字节是头信息（head）。IP 数据包在以太网数据包的负载里面，它也有自己的头信息，最少需要 20 字节; TCP 头信息也是 20 字节, 所以 TCP 数据包的负载实际为 1400 字节左右.
 
 TCP 包有编号 SEQ, 例如发送方发送 seq=1, length=100bytes, 客户端返回 ACK=101, 发送方第二次返回 seq=101, length=xxx, 用以防止丢包; 如丢一个包, 客户端返回服务端的 ACK 序号不会增长, 发送方在收到 3 次连续重复 ACK 或 未收到 ACK 直至超时, 即确认丢包并重发.
 
@@ -95,6 +95,7 @@ wireshark 抓包 TLS RSA 通信图示
 [SSL/TLS](https://segmentfault.com/a/1190000002554673)
 
 TLS 握手步骤 (client-hello, server-hello, (cert verify with CA & OCSP), cipher-spec-exchanged)
+> [类似链接](https://segmentfault.com/a/1190000010947472)
 
 ![tls handshake](../../assets/img/interview-protocols-ssl-handshake-rsa.png)
 
@@ -102,11 +103,11 @@ TLS 握手步骤 (client-hello, server-hello, (cert verify with CA & OCSP), ciph
    1. `SSL version 协议版本`
    2. `supported ciphers 支持的加密`
    3. `supported compression 支持的压缩方法`
-   4. `random`
+   4. `random1`
 2. `server-hello`: 服务器收到并存储 clientHello.random, 然后发给客户端
    1. `server cert 服务器证书`: 含 `public key`, 如果此证书无公钥, 还会发 `server key exchange`，
    2. `cipher suite 加密方法`: 服务器与客户端兼容的方法, 非对称加密/双钥加密 RSA/DSA/Diffie-Hellman/ECC 椭圆加密, 如版本不兼容则关闭该连接
-   3. `random`
+   3. `random2`
    4. `cert request` (optional): 如果是非常重要的信息, 服务端会向客户端发送 , 要求客户端提供证书(如银行 usb 密钥)
    5. `server-hello-done`
 3. `client-key-exchange`: 如果服务端发送 `cert request`, 客户端需要发送自己的证书使其验证; 之后客户端验证服务器返回的证书
@@ -117,7 +118,7 @@ TLS 握手步骤 (client-hello, server-hello, (cert verify with CA & OCSP), ciph
   
     以上验证步骤，需要全部通过。否则就会显示警告. 检查通过后, 生成 `master secret`. (PRF 为伪随机函数 pseudorandom function, PRF)
 
-    `master_secret = PRF(pre_master_secret,"master secret",clientHello.random+serverHello.random)`
+    `master_secret = PRF(pre_master_secret,"master secret",clientHello.random1+serverHello.random2)`
 
     之后发送给服务端如下内容
      1. `encrypted-random` ( `pre_master_secret`, 48byte, protocol_version+random[46] ): 用协商的 `cipher suite` + `server public key` 加密
@@ -129,6 +130,11 @@ TLS 握手步骤 (client-hello, server-hello, (cert verify with CA & OCSP), ciph
    1. `change-cipher-spec`
    2. `encrypted-server-finished`: Encrypted Handshake Message
 5. 如双方都能正确解密并验证, 通道建立.
+
+#### CA 证书
+![CA](../../assets/img/interview-protocols-ca.png)
+
+证书中包含：网站的基本信息、网站的公钥、CA 的名字等信息（详细请看 X.509），然后 CA 根据这几个内容生成摘要（digest），再对摘要用 CA 的私钥加密，加密后的结果即数字签名，最后将数字签名也放入到证书中。那么当系统收到一个证书后，先用公钥解密，解得开说明对方是由权威 CA 签发的，然后再根据证书的信息生成摘要，跟解密出来的摘要对比。
 
 #### 吊销检查
 目前写进国际标准的吊销状态检查协议有两种: 1.CRL, 2. OCSP

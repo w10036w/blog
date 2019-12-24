@@ -9,6 +9,23 @@
 - `String.fromCodePoint()`: 弥补 `String.fromCharCode()`(从 Unicode 码点返回对应字符，但是这个方法不能识别码点大于 `0xFFFF` 的字符), 识别全部 Unicode, 和 `codePointAt()` 互反;
 - `String.raw()`: 不对 `\n` 等转义字符转义(如换行等), 原样返回
 
+### unicode
+```js
+'\u0061' // 'a'
+'\u{6F}' // 'o'
+"\u{20BB7}" // "𠮷"
+let hello = 123; hell\u{6F}===123 // !!!
+'\u{1F680}' === '\uD83D\uDE80'
+'z' === '\z' ==='\172' === '\x7A' === '\u007A' === '\u{7A}'
+```
+
+### 字符串遍历 (可识别 UTF-16, for loop 不可以)
+```js
+for (let codePoint of 'foo') {
+  console.log(codePoint) // "f", "o", "o"
+}
+```
+
 ## Object
 Object.freeze / Object.isFrozen
 
@@ -38,6 +55,7 @@ var proxy = new Proxy(target={}, handler={});
 // all handlers
 var obj = new Proxy({}, {
   // 拦截: 该对象属性的读取
+  // !! 如果一个属性不可配置（configurable）且不可写（writable），则 Proxy 不能修改该属性，否则通过 Proxy 对象访问该属性会报错。
   get(target, propKey, receiver) {
     console.log(`getting ${propKey}!`);
     return Reflect.get(target, propKey, receiver);
@@ -54,10 +72,27 @@ var obj = new Proxy({}, {
     // 例子: 不允许删除
     // throw new TypeError()
   },
-  //拦截 Object.getOwnPropertyNames(proxy)、Object.getOwnPropertySymbols(proxy)、Object.keys(proxy)、for...in 循环，返回一个数组。该方法返回目标对象所有自身的属性的属性名，而 Object.keys() 的返回结果仅包括目标对象自身的 可遍历 属性。
+  // 拦截 Proxy 实例作为函数调用的操作
+  // proxy(...args)、proxy.call(object, ...args)、proxy.apply(...)
+  apply(target, object, args){},
+  // 拦截 Proxy 实例作为构造函数调用的操作, new proxy(...args)
+  construct(target, args) {},
+  // 拦截 Object.defineProperty(proxy, propKey, propDesc), Object.defineProperties(proxy, propDescs)
+  // 返回一个布尔值
+  defineProperty(target, propKey, propDesc) {},
+  //拦截 Object.getOwnPropertyNames(proxy)、Object.getOwnPropertySymbols(proxy)、Object.keys(proxy)、for...in 循环，返回一个数组。
+  // 该方法返回目标对象所有自身的属性的属性名，而 Object.keys() 的返回结果仅包括目标对象自身的 可遍历 属性。
   ownKeys(target){},
-
-  apply(){}
+  // -------------------------------------------
+  // 拦截 Object.setPrototypeOf(proxy, proto)，返回一个布尔值。
+  // 如果目标对象是函数，那么还有两种额外操作可以拦截。
+  setPrototypeOf(target, proto) {},
+  // 拦截 Object.preventExtensions(proxy)，返回一个布尔值。
+  preventExtensions(target) {},
+  // 拦截 Object.getPrototypeOf(proxy)，返回一个对象。
+  getPrototypeOf(target) {},
+  // 拦截 Object.isExtensible(proxy)，返回一个布尔值
+  isExtensible(target){},
 });
 ```
 1. 安全枚举类型 safe enumerable type
@@ -197,27 +232,3 @@ F: `document.all` 具有其性质
 - Promise 的 then 返回 Promise.reject() 会中断链式调用
 - Promise 的 resolve 若是传入值而非函数，会发生值穿透的现象
 - Promise 的 `catch, then`,return 的都是一个新的 `Promise`(在 Promise 没有被中断的情况下)
-
-Promise 化 ajax
-```js
-function myXHR(method, url, data) {
-  var requset = new XMLHttpRequest();
-  return new Promise((resolve, reject) => {
-    requset.onreadystatechange = function () {
-      if (requset.readyState === 4) {
-        if (requset.status === 200) resolve(requset.responseText)
-        else reject(requset.status)
-      }
-    }
-    requset.open(method, url);
-    requset.send(data);
-  });
-}
-
-var p = myXHR('GET', 'url');
-p.then(responseText => {
-  console.log(responseText);
-}).catch(status => {
-  console.log(new Error(status));
-})
-```
