@@ -6,7 +6,7 @@ react.js is a library for UI view layer via manipulating virtual dom; react-dom 
 ### Virtual DOM
 通过类似 html tag 的 `JSX`, 使用 babel 创建 `vdom`, 根据虚拟dom 渲染 dom tree, 每次更新 diff vdom, 然后重新渲染.
 
-[参考](https://juejin.im/post/5cb66fdaf265da0384128445)
+[参考](https://juejin.im/post/5cb66fdaf265da0384128445) !!!
 
 ![vdom](../../assets/img/interview-react-vdom.png)
 
@@ -38,6 +38,9 @@ async, batch, trigger `update` & `rerender` (if `shouldComponentUpdate` is not o
 在第二种情况下，setState 将不会进行队列的批更新，而是直接触发一次 update 流程。
 
 这是由于 setState 的两种更新机制导致的，只有在 **批量更新模式** 中，才会是 “异步” 的。
+
+直接传递对象的 `setState({ ... }, () => {})` 会被合并成一次
+使用函数传递 `setState(prev => ({}), () => {})` 不会被合并
 
 ### Diff VDOM ( O(n^3) -> O(n) )
 > 参考[知乎](https://zhuanlan.zhihu.com/p/20346379)

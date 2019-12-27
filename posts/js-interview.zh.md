@@ -16,6 +16,17 @@
 ## CSS + HTML
 
 ### CSS
+- BFC (Block Formatting Context) 块级格式化上下文, 触发条件
+  - 根元素或其它包含它的元素
+  - 浮动元素 (元素的 float 不是 none)
+  - 绝对定位元素 (元素具有 position 为 absolute 或 fixed)
+  - 内联块 (元素具有 display: inline-block)
+  - 表格单元格 (元素具有 display: table-cell，HTML 表格单元格默认属性)
+  - 表格标题 (元素具有 display: table-caption, HTML 表格标题默认属性)
+  - 具有 overflow 且值不是 visible 的块元素
+  - 弹性盒（flex 或 inline-flex）
+  - display: flow-root
+  - column-span: all
 - `box model 盒模型`: 页面在渲染时，DOM 元素所采用的布局模型，一个元素占用的空间大小由几个部分组成，内容 (content)、内边距 (padding)，边框 (border) 和外边距 (margin)。可以通过 box-sizing 来进行设置，其中 IE 盒模型的 content 包含了 padding 和 border，这是区别于 W3C 标准盒模型的地方。
 - 各种边界奇葩现象，margin 上下的合并
 - display: block, inline*, flex, grid, table*, contents, none, initial, inherit, run-in, list-item
@@ -95,9 +106,37 @@
 
 > 参考 https://juejin.im/post/5da9c6b0e51d4524d67486e2
 
+- [综合前端知识集锦](https://juejin.im/post/5ae95f17f265da0b93481dec)
+
 一些题目
 - [ ] https://github.com/dwqs/blog/issues/17
 - [ ] https://juejin.im/post/5dac5d82e51d45249850cd20
 
 - [ ] https://juejin.im/post/5dc20a4ff265da4d4e30040b
 - [x] https://juejin.im/post/5db556376fb9a0207a6ddce7
+
+## Q & A
+
+### 从输入 URL 到页面加载发生了什么
+1. 浏览器查找当前 URL 缓存
+2. DNS 逐层查找缓存解析 URL 对应的 IP
+3. 路由, 网关寻址, CDN 层分发, 缓存
+4. 根据 IP 建立 TCP 连接, 逐层加头拆头
+5. HTTP 握手, HTTPS 握手, 应用层协议确认
+6. HTTP 发起请求
+7. 服务器处理请求，浏览器接收 HTTP 响应, 合并包
+8. 浏览器解析 html, 加载 link, js 资源, 构建 DOM 树 (DOMContentLoaded), 加载图片等资源, 构建渲染树, 渲染页面, 加载完毕 (onload)
+9. 根据脚本执行各种异步任务如 ServiceWorker
+10. 关闭 TCP 连接（四次挥手）
+
+### 你有什么想问我的
+
+- 公司常用的技术栈是什么？
+- 你们如何测试代码？
+- 你们如何解决线上故障？
+- 你们如何准备故障恢复？是否有完善的发布机制？
+- 公司是否有技术分享交流活动？有的话，多久一次呢？
+- 一次迭代的流程是怎么样的？从 PRD 评审开始到发布这一整个流程。
+- 公司技术团队的架构和人员组成？
+- 有公司级别的学习资源吗？比如电子书订阅或者在线课程？
+- 你们认为和竞品相比有什么优势？

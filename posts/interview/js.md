@@ -1,9 +1,17 @@
 # JS 语言基础
 ## [语言标准制定, 演变](https://juejin.im/post/5dfa5cb86fb9a0165721db1d)
-## [V8](https://github.com/qq449245884/xiaozhi/issues/2)
+
+## [JSCore](https://ming1016.github.io/2018/04/21/deeply-analyse-javascriptcore/)
+
+### [V8](https://github.com/qq449245884/xiaozhi/issues/2)
+- hidden class infer 隐藏类型推断
+- inline cache 缓存之前查找地址的结果
+
 JS Engine flow:
 
 js source -> parser -> abstract syntax tree -> compiler / interpreter (AOT, JIT) -> machine code
+
+<hr>
 
 ## 类型
 [基本数据类型 primitive](https://developer.mozilla.org/en-US/docs/Glossary/Primitive)：
@@ -33,6 +41,17 @@ class PrimitiveNumber {
 }
 console.log(111 instanceof PrimitiveNumber) // true
 ```
+polyfill `instanceof`
+```js
+function _instanceof(target, origin) {
+  const proto = target.__proto__;
+  if (proto) {
+    if (origin.prototype === proto) return true;
+    else return _instanceof(proto, origin)
+  } else return false
+}
+```
+
 实现较全的 `getType()`
 ```js
 function getType(obj) {
@@ -78,6 +97,25 @@ var num4 = parseInt("10", 16);  // 16（十六进制）
 
 还有一个特点是会. 它只能解析十进制数值. 十六进制格式会被转化为 0.
 
+浮点数运算不精确原因为 IEEE 754
+> 二进制数 = 符号位 (+-1) \* 阶码真值 (阶码-127) \* 尾数
+1. 双精度: 64 位, 1 符号 + 11 整数位/指数码/2^11 + 52 小数位/尾数 (JS)
+2. 单精度: 32 位, 1 符号 + 08 整数位/指数码/2^8 + 23 小数位/尾数
+JS / 双精度注意事项
+- 阶码有正负 如 2^4, 2^-4, 因此表示范围为 `-1023~1023`(2^10-1)
+- 除 0 外, 尾数必始于 1 所以省略第一位
+- 最大最小值范围为 -2^1023 ~ +2^1023
+- 2^23 = 8388608, 2^52=4503599627370496, 16位, 意味着最多能有16位有效数字, 确保的精度为15~16位
+- 2^53-1 = Number.MAX_SAFE_INTEGER
+
+原生解决方案
+```js
+// 0.1 = 2^-4 * 1.1(0011)
+let a = 0.1+0.2 // 0.30000000000000004
+a.toFixed(5) // 0.30000, 不完全解决方案
+parseFloat(a.toFixed(5)) // 0.3
+```
+
 ## String 字符串
 字符字面量 escape value
 - \n：换行
@@ -92,6 +130,11 @@ let num = 10
 num.toString(n) // n 进制, 2 / 8 / 10 / 16
 num.toString(2) // "1010"
 ```
+### 原型方法 String.raw()
+
+### 和 UTF-16 有关的新方法 `codePointAt(), normalize()`
+
+### 新方法 `includes(), startsWith(), endsWith(), repeat(), padStart(), padEnd(), trimStart(), trimEnd(), matchAll()`
 
 ### slice() vs substring() vs substr()
 
@@ -105,7 +148,38 @@ num.toString(2) // "1010"
   返回从指定下标开始的长度为 length 的字符，start 可以为负数, length 非正数会被当成 0
 - `slice(start=0,end=last)`
   
-  返回指定下标间的字符，可以为负数, `start>end` 时会返回 `''`
+  返回指定下标间的字符，可 为负, `start>end` 时会返回 `''`
+
+## Template 模板
+### tagged template 标签模板
+```js
+let a = 5;
+let b = 10;
+tag`Hello ${ a + b } world ${ a * b }`;
+// 等同于
+tag(['Hello ', ' world ', ''], 15, 50);
+```
+
+`标签模板` 的一个重要应用，就是过滤 HTML 字符串，防止用户输入恶意内容。
+```js
+let message =
+  SaferHTML`<p>${sender} has sent you a message.</p>`;
+
+function SaferHTML(templateData) {
+  let s = templateData[0];
+  for (let i = 1; i < arguments.length; i++) {
+    let arg = String(arguments[i]);
+    // Escape special characters in the substitution.
+    s += arg.replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+    // Don't escape special characters in the template.
+    s += templateData[i];
+  }
+  return s;
+}
+```
+模板字符串的限制: \ 转义符, 如 `\u`, `\x`
 
 ## Function
 ```js
@@ -228,6 +302,17 @@ function Dog(name, type) {
 Dog.prototype = Object.create(Animal.prototype);
 // 5. target the constructor to itself
 Dog.prototype.constructor = Dog;
+
+// 原型链上的属性
+function Person(){}
+Person.prototype.friend = [];
+Person.prototype.name = '';
+var a = new Person();
+a.friend[0] = 'Ana';
+a.name = 'Bob';
+var b = new Person();
+console.log(b.friend) // Ana
+console.log(b.name) // ''
 ```
 
 ## 作用域 + 基本变量
@@ -235,17 +320,16 @@ Dog.prototype.constructor = Dog;
 
 暂时性死区
 ```js
-var name = 'B';
-function name() {}
+var name = 'B'; // 变量提升，声明但不赋值
+function name() {} // 函数提升，声明且赋值，优先级比变量高
 function log() {
- console.log(name);
- // let name = 'A';
+ console.log(name); // 输出 'B'
+ // let name = 'A'; // 在函数中使用let或const声明变量，如声明前使用，会报变量not defind，暂时性锁区
 }
-log(); // B
-/*
-变量提升，声明但不赋值
-函数提升，声明且赋值，优先级比变量高
-在函数中使用let或const声明变量，如声明前使用，会报变量not defind，暂时性锁区
+/* 相当于
+var name
+name = function () {} // 函数优先级更高, 而且不管其和 var name 的顺序如何,一定覆盖变量声明
+name = 'B' // 变量赋值在之后, 覆盖函数声明提升
 */
 ```
 
@@ -509,7 +593,30 @@ function forEach(obj, fn) {
   }
 }
 ```
-
+`bigInt Sum` 大数相加
+```js
+/**
+ * @param {string} a
+ * @param {string} b
+ * @return {string}
+ */
+function sum(a, b) {
+  var l = Math.max(a.length, b.length)
+  a = a.padStart(l, 0)
+  b = b.padStart(l, 0)
+  var i = l, plus1 = 0, r = '', tmp
+  while (--i>-1) {
+    tmp = Number(a[i]) + Number(b[i]) + plus1
+    if (tmp>9) {
+      tmp = tmp-10
+      plus1 = 1
+    } else plus1 = 0
+    r = tmp + r
+  }
+  if (plus1===1) r = 1+r
+  return r
+}
+```
 `EventEmitter`
 ```js
 // notice: chain functions: on, emit, off, once
@@ -662,7 +769,7 @@ function lazyload() { //监听页面滚动事件
 ```
 
 ## IntersectionObserver
-
+> !!!<br>
 > IntersectionObserver接口 (从属于Intersection Observer API) 提供了一种异步观察目标元素与其祖先元素或顶级文档视窗(viewport)交叉状态的方法。祖先元素与视窗(viewport)被称为根(root)。
 
 `Intersection Observer`可以不用监听`scroll`事件，做到元素一可见便调用回调，在回调里面我们来判断元素是否可见。
@@ -710,7 +817,7 @@ function Super(age) {
   return { age: 2 }
 }
 let a = new Super(10);
-console.log(instance.age) // 2
+console.log(a.age) // 2
 ```
 Object.create()
 ```js
@@ -751,7 +858,7 @@ if (typeof Object.create !== "function") {
 apply polyfill [参考](https://juejin.im/post/5bf6c79bf265da6142738b29)
 ```js
 function gThis() { return this }
-function gFunctionCode(length) {
+function gFn(length) {
   var code = 'return arguments[0][arguments[1]](';
   for(var i = 0; i < length; i++){
     if(i > 0) code += ',';
@@ -778,8 +885,7 @@ Function.prototype.apply = function(thisArg, args) {
   while (thisArg[__fn__]) { __fn__ = Math.random() }
   thisArg[__fn__] = this
   // new Function()
-  var code = gFunctionCode(args.length);
-  var res = (new Function(code))(thisArg, __fn__, args)
+  var res = (new Function(gFn(args.length)))(thisArg, __fn__, args)
   // ES6
   // const res = thisArg[__fn__](...args)
   // eval()
@@ -826,7 +932,7 @@ if (!Function.prototype.bind) (function(){
       return fn.apply(fNOP.prototype.isPrototypeOf(this) ? this : thisArg, _args);
     }
     // assign fn's prototype to fNOP
-    if (this.prototype) fNOP.protype = this.prototype
+    if (this.prototype) fNOP.prototype = this.prototype
     // use ctor to fulfill prototype chain
     fbound.prototype = new fNOP();
     return fbound
@@ -1025,24 +1131,18 @@ async function a1 () {
 async function a2 () {
   console.log('a2')
 }
-
 console.log('macro1')
-
 setTimeout(() => {
   console.log('setTimeout')
 }, 0)
-
 Promise.resolve().then(() => {
   console.log('promise1')
 })
-
 a1()
-
 let promise2 = new Promise((resolve) => {
   resolve('promise2.then')
   console.log('promise2')
 })
-
 promise2.then((res) => {
   console.log(res)
   Promise.resolve().then(() => {
@@ -1167,6 +1267,7 @@ function request(urls, maxNumber, callback) {
 
 }
 ```
+
 Q: `redux` 问题 [参考掘金](https://juejin.im/post/5b9617835188255c781c9e2f)
 
 A: redux 本身有哪些作用？我们先来快速的过一下 redux 的核心思想（工作流程）：

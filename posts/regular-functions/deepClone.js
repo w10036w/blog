@@ -43,10 +43,14 @@ function getType(target) {
 function getInit(target) {
   const Ctor = target.constructor;
   return new Ctor();
+  // if use this
+  // return Object.create(Object.getPrototypeOf(target))
+  // getInit(new Map()) // return a non-entry Map
 }
 
 function cloneSymbol(targe) {
   return Object(Symbol.prototype.valueOf.call(targe));
+  // or return Symbol(targe.description)
 }
 
 function cloneReg(targe) {

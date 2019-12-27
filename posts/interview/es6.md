@@ -232,3 +232,38 @@ F: `document.all` 具有其性质
 - Promise 的 then 返回 Promise.reject() 会中断链式调用
 - Promise 的 resolve 若是传入值而非函数，会发生值穿透的现象
 - Promise 的 `catch, then`,return 的都是一个新的 `Promise`(在 Promise 没有被中断的情况下)
+
+## Generator
+
+## [for in vs for of](https://www.jianshu.com/p/c43f418d6bf0)
+### for in 对象用
+通常用 `for in` 来遍历对象的键名
+- 可以遍历到对象的原型方法及继承自原型链上的属性/方法, 如果不想遍历原型方法和属性的话，可以在循环内部判断一下, `hasOwnPropery` 方法可以判断某属性是否是该对象的实例属性
+- 如用来遍历数组, 则会返回非期望结果, 如以下会多返回 `method`, `name`
+  ```js
+  Array.prototype.method=function(){
+  　　console.log(this.length);
+  }
+  var myArray=[1,2,4,5,6,7]
+  myArray.name="数组"
+  for (var index in myArray) {
+    console.log(myArray[index]); // 返回 name, method
+  }
+  ```
+
+### for of 迭代器用
+`for of` 适用遍历数 / 数组对象 / 字符串 /map/set 等拥有迭代器对象的集合。但是不能遍历对象，因为没有迭代器对象。与 `forEach()` 不同的是，它可以正确响应 break、continue 和 return 语句
+
+所有拥有 `Symbol.iterator` 的对象被称为可迭代的。可迭代对象的概念几乎贯穿于整门语言之中，不仅是 `for of` 循环，还有 Map 和 Set 构造函数、解构赋值，以及新的展开操作符。
+
+`for of` 循环首先调用集合的 `Symbol.iterator 方法`，紧接着返回一个 `新的迭代器对象`。迭代器对象可以是任意具有.next () 方法的对象; `for-of` 循环将重复调用这个方法，每次循环调用一次。
+```js
+var zeroesForeverIterator = {
+  [Symbol.iterator]: function () {
+   return this;
+  },
+  next: function () {
+    return { done: false, value: 0 };
+  }
+};
+```

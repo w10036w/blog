@@ -55,6 +55,7 @@
 - [129. Sum Root to Leaf Numbers](leetcode/129-sum-root-to-leaf-numbers.md)
 - [131. Palindrome Partitioning](leetcode/131-palindrome-partitioning.md)
 - [216. Combination Sum III](leetcode/216-combination-sum-iii.md)
+- [306. Additive Number](leetcode/306-additive-number.md)
 - [401. Binary Watch](leetcode/401-binary-watch.md)
 - [784. Letter Case Permutation](leetcode/784-letter-case-permuatation.md)
 
@@ -62,6 +63,7 @@
 - [21. Merge Two Sorted Lists](leetcode/21-merge-two-sorted-lists.md)
 - [141. Linked List Cycle](leetcode/141-linked-list-cycle.md)
 - [142. Linked List Cycle II](leetcode/142-linked-list-cycle-ii.md)
+- [146. LRU Cache](leetcode/146-lru-cache.md)
 - [160. Intersection of Two Linked Lists](leetcode/160-intersection-of-two-linked-lists.md)
 
 ## Stack

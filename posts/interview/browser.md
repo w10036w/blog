@@ -55,9 +55,24 @@ DOM -> CSSOM -> Render Tree -> Layout -> Paint -> Composite
   - CSS `position（relative、fixed、sticky、absolute）`, `opacity < 1`, `filter`, `mask`, `mix-blend-mode` 不为 `normal`, `transform` 非 `none`, `backface-visibility: hidden`, `reflection`, `column-count` 值不为 auto, `column-width` 属性且值不为 auto, `overflow` 不为 `visible`
   - 当前有对于 `opacity`, `transform`, `fliter`, `backdrop-filter` 应用动画
 
-`重绘(repaint)`: **绘制阶段**, 改变每个元素外观时所触发的浏览器行为，比如颜色，背景等样式发生了改变而进行的重新构造新外观的过程。重构不会引发页面的重新布局，不一定伴随着回流
+`重绘(repaint, redraw)`: **绘制阶段**, 改变每个元素外观时所触发的浏览器行为，比如颜色，背景等样式发生了改变而进行的重新构造新外观的过程。重构不会引发页面的重新布局，不一定伴随着回流
 
-`回流(reflow)`: **构建布局阶段**, 浏览器为了重新渲染页面的需要而进行的重新计算元素的几何大小和位置的，他的开销是非常大的，回流可以理解为渲染树需要重新进行计算，一般最好触发元素的重构，避免元素的回流；比如通过通过添加类来添加 css 样式，而不是直接在 DOM 上设置，当需要操作某一块元素时候，最好使其脱离文档流，这样就不会引起回流了，比如设置 position：absolute 或者 fixed，或者 display：none，等操作结束后在显示。
+`回流, 重排(reflow)`: **构建布局阶段**, 浏览器为了重新渲染页面的需要而进行的重新计算元素的几何大小和位置的，他的开销是非常大的，回流可以理解为渲染树需要重新进行计算，一般最好触发元素的重构，避免元素的回流；比如通过通过添加类来添加 css 样式，而不是直接在 DOM 上设置，当需要操作某一块元素时候，最好使其脱离文档流，这样就不会引起回流了，比如设置 position：absolute 或者 fixed，或者 display：none，等操作结束后在显示。
+
+触发重排的条件：任何页面布局和几何属性的改变都会触发重排：
+- 页面渲染初始化 (无法避免)
+- 添加或删除可见的 DOM 元素
+- 元素位置的改变，或者使用动画
+- 元素尺寸的改变 —— 大小，外边距，边框
+- 浏览器窗口尺寸的变化
+- 填充内容的改变，比如文本的改变或图片大小改变而引起的计算值宽度和高度的改变
+
+重排必定会引发重绘，但重绘不一定会引发重排。
+
+作者：谢小飞
+链接：https://juejin.im/post/5df1e312f265da33d039d06d
+来源：掘金
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 
 ## 浏览器缓存
 > https://www.geekjc.com/post/5d37f67480c18e4071ccc440
@@ -106,15 +121,160 @@ jsonp在页面上引入不同域上的 js 脚本文件实现请求不同域上�
 5. 使用 `window.name` 来进行跨域
 window对象有个name属性，该属性有个特征：即在一个窗口(window)的生命周期内,窗口载入的所有的页面都是共享一个window.name的，每个页面对window.name都有读写的权限，window.name是持久存在一个窗口载入过的所有页面中的，并不会因新页面的载入而进行重置。
 
+## 安全
+### CSRF 攻击
+前端构造一个恶意页面，请求 JSONP 接口，收集服务端的敏感信息。如果 JSONP 接口还涉及一些敏感操作或信息（比如登录、删除等操作），那就更不安全了。
+
+**解决方法**：验证 JSONP 的调用来源（Referer），服务端判断 Referer 是否是白名单，或者部署随机 Token 来防御。
+
+### XSS 漏洞
+不严谨的 content-type 导致的 XSS 漏洞，想象一下 JSONP 就是你请求 `http://youdomain.com?callback=douniwan`, 然后返回 `douniwan({ data })`，那假如请求 `http://youdomain.com?callback=<script>alert(1)</script>` 不就返回 `<script>alert(1)</script>({ data }`) 了吗，如果没有严格定义好 `Content-Type（ Content-Type: application/json`，再加上**没有过滤 callback 参数**，直接当 html 解析了，就是一个赤裸裸的 XSS 了。
+
+**解决方法**：严格定义 `Content-Type: application/json`，然后严格过滤 `callback` 后的参数并且限制长度（进行字符转义，例如 <换成 & lt，> 换成 & gt）等，这样返回的脚本内容会变成文本格式，脚本将不会执行。
+
+### 服务器被黑，返回一串恶意执行的代码
+可以将执行的代码转发到服务端进行校验 JSONP 内容校验，再返回校验结果。
+
 ## 跨页面通讯
 - [`BroadcastChannel()`](https://developer.mozilla.org/en-US/docs/Web/API/Broadcast_Channel_API): `.postMessage()`, `.onmessage()`, `.close()`
 - `ServiceWorker`
 - `WebSocket` (可无痕模式用)
 - `locatStorage` + `window.onstorage`
 - `IndexedDB / cookies / Worker` + `setInterval()`
-- window.open + window.postMessage
+- window.open + [window.postMessage](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage)
 
-## WebSocket
+### 跨页面通信代码实现
+`WebWorker`
+```js
+// main.js
+if(window.Worker) {
+  var myWorker = new Worker('http://xxx.com/worker.js');
+  // 发送消息
+  first.onchange = function() {
+      myWorker.postMessage([first.value, second.value]);
+      console.log("Message posted to worker");
+  }
+  second.onchange = function() {
+    myWorker.postMessage([first.value,second.value]);
+    console.log('Message posted to worker');
+  }
+  // 主线程 监听onmessage以响应worker回传的消息
+  myWorker.onmessage = function (e) {
+    var textContent = e.data;
+    console.log("message received from worker");  
+  }
+}
+// worker.js
+// 内置 self 对象, 代表子线程本身, worker内部要加载其他脚本,可通过importScripts()方法
+window.onmessage = function(e) {
+  console.log("message received from main script");
+  var workerResult = "Result: " + (e.data[0] * e.data[1]);
+  console.log("posting message\back to main script");
+  postMessage(workerResult);
+}
+```
+`ServiceWorker`
+```js
+if('serviceWorker' in window.navigator) {
+  // 对于多个不同scope的多个Service Worker,我们也可以给指定的Service Worker发送消息
+  navigator.serviceWorker.register('./sw1.js', { scope:'./sw1'})
+    .then(function(reg) {
+      console.log('success', reg);
+      return new Promise((resolve, reject) => {
+        const interval = setInterval(function() {
+          if(reg.active) {
+            clearInterval(interval);
+            resolve(reg.active);
+          }
+        }, 1000);
+      }).then(sw => sw.postMessage("page -> sw1");)
+    })
+  navigator.serviceWorker.register('./sw2.js', { scope:'./sw2'})
+    .then(function(reg) {
+      console.log('success', reg);
+      return new Promise((resolve, reject) => {
+        const interval = setInterval(function() {
+          if(reg.active) {
+            clearInterval(interval);
+            resolve(reg.active);
+          }
+        }, 1000);
+      }).then(sw => sw.postMessage("page -> sw2"))
+    });
+    navigator.serviceWorker.addEventListener('message', function (event) {
+      console.log(event.data);
+      // 接受数据，并填充在 DOM 中
+      document.getElementById('showArea').value = event.data ;
+    });
+}
+
+// sw1.js
+self.addEventListener("message", function(event) {
+  console.log("sw1.js " + event.data);
+  event.source.postMessage('sw1.js -> page');
+});
+
+// sw2.js
+self.addEventListener("message", function(event) {
+  console.log("sw2.js " + event.data)
+  event.source.postMessage('sw2.js -> page');
+});
+```
+`postMessage`
+```js
+// 子 -> 父
+// 子 (iframe) 发送
+window.parent && window.parent.postMessage(0, '*')
+// 父 -> 子
+// 父 发送
+var iframeWin = document.getElementById("iframe1").contentWindow;
+// 向该窗口发送消息
+iframeWin.postMessage('ok', 'http://w10036w.github.io')
+
+// 接收方
+window.addEventListener('message', (e) => {
+  console.log(e.data); // object posted
+}, false);
+```
+
+### postMessage
+```js
+// sender
+otherWindow.postMessage(message, targetOrigin, [transfer]);
+// reciever
+window.addEventListener("message", receiveMessage, false) ;
+function receiveMessage(event) {
+  var origin= event.origin;
+  console.log(event);
+}
+```
+#### otherWindow
+窗口的一个引用，比如 iframe 的 contentWindow 属性，执行 window.open 返回的窗口对象，或者是命名过的或数值索引的 window.frames.
+#### message
+auto serialized by structured clone algorithm, 无需自己序列化
+#### targetOrigin
+通过窗口的 origin 属性来指定哪些窗口能接收到消息事件，指定后只有对应 origin 下的窗口才可以接收到消息，设置为通配符 "*" 表示可以发送到任何窗口，但通常处于安全性考虑不建议这么做。如果想要发送到与当前窗口同源的窗口，可设置为 "/"
+#### transfer
+是一串和 message 同时传递的 **Transferable** 对象，这些对象的所有权将被转移给消息的接收方，而发送一方将不再保有所有权.
+
+![postmessage](../../assets/img/interview-browser-postmessage-event.png)
+
+### [serviceWorker vs webWorker](https://stackoverflow.com/questions/38632723/what-can-service-workers-do-that-web-workers-cannot)
+> 参考 https://bitsofco.de/web-workers-vs-service-workers-vs-worklets/
+
+`web worker`
+- **不阻塞主线程**, 运行在后台的单独线程
+- 多 worker 对一 tab, 生命周期和对应 tab 相同
+- 访问权限: 只能加载同源 js, 无需 UI, 不能操作 DOM, 无 `alert()`, `confirm()` 等, 无法读本地文件 (可通过 fileReader 转成二进制读取), 能加载网络文件, 能使用 `WebSocket`, `IndexedDB` 等接口
+- 用途: 发送 `网络请求`, 统计埋点, 执行复杂的数据操作后通过 `postMessage` 传递给 js 主线程.
+
+`service worker`
+- 增强**离线或基于网络连接状态变化的用户体验**
+- 一 worker 对多 tab, 生命周期独立
+- 支持消息推送和后台同步 API.
+- 用途: 离线 web 应用, 如离线存储; 浏览器和网络的代理服务器; 
+
+### WebSocket
 > https://zhuanlan.zhihu.com/p/23386938
 
 H5新协议, 在单个 TCP 连接上建立客户端到服务端的全双工通信 (Full Duplex, 单工通信只能 A->B, 半双工可A->B或B->A, 不能同时进行), 这就意味着服务器端可以主动推送数据到客户端. 一开始借助 http 请求 (一次握手) 完成.
@@ -131,21 +291,16 @@ ws.readyState // current status
 ```
 
 ## DNS 原理
-
 DNS (Domain Name System, 域名系统)，作为域名和 IP 地址相互映射的一个分布式数据库。
 
-当浏览器访问一个域名的时候，需要解析一次 DNS，获得对应域名的 ip 地址。在解析过程中，按照`浏览器缓存`、`系统缓存`、`路由器缓存`、`ISP(运营商)DNS缓存`、`根域名服务器`、`顶级域名服务器`、`主域名服务器`的顺序，逐步读取缓存，直到拿到 IP 地址。
+当浏览器访问一个域名的时候，需要解析一次 DNS，获得对应域名的 ip 地址。在解析过程中，按照<br>
+`浏览器缓存`、`系统缓存`、`路由器缓存`、`ISP(运营商)DNS缓存` (自下而上查缓存)<br>
+`根域名服务器`、`顶级域名服务器`、`主域名服务器` (自上而下, 查到即存上行各级缓存)<br>
+的顺序，逐步读取缓存，直到拿到 IP 地址。
 
 ### 总结
 如果浏览器最近将一个域名解析为 IP 地址，所属的操作系统将会缓存，下一次 DNS 解析时间可以低至 0-1ms。 如果结果不在系统本地缓存，则需要读取路由器的缓存，则解析时间的最小值大约为 15ms。如果路由器缓存也不存在，则需要读取 ISP（运营商）DNS 缓存，一般像 taobao.com、baidu.com 这些常见的域名，读取 ISP（运营商）DNS 缓存需要的时间在 80-120ms，如果是不常见的域名，平均需要 200-300ms。一般的网站在运营商这里都能查询的到，所以普遍来说 DNS Prefetch 可以给一个域名的 DNS 解析过程带来 15-300ms 的提升，尤其是一些大量引用很多其他域名资源的网站，提升效果就更加明显了。
 <hr>
-
-## [serviceWorker vs webWorker](https://stackoverflow.com/questions/38632723/what-can-service-workers-do-that-web-workers-cannot)
-> 参考 https://bitsofco.de/web-workers-vs-service-workers-vs-worklets/
-
-`web worker` 目的是**不阻塞主线程的平行运行**, 多对一(tab), 生命周期和对应 tab 相同, 是后台运行的单独线程, 无需 UI 即可完成任务, 如发送 `网络请求`. 可执行复杂的数据操作后通过 `postMessage` 传递给 js 主线程.
-
-`service worker` 目的是**离线或基于网络连接状态变化的用户体验**, 一对多(tab), 独立生命周期, 作为 `各 web 应用, 浏览器和网络` 的代理服务器. 其同样支持消息推送和后台同步 API.
 
 ## link
 

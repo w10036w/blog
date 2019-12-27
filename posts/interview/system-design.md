@@ -18,3 +18,5 @@
 - 确保上述的可行性和性能, LRUcache
 - 如资源有限, 需要过期一部分短链接, 查上述 LRUcache 即可
 - 如需防攻击, IP 限制个数, 监测整个系统限流
+
+## [Feed 流](https://zhuanlan.zhihu.com/p/30226315)
