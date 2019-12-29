@@ -11,6 +11,18 @@ JS Engine flow:
 
 js source -> parser -> abstract syntax tree -> compiler / interpreter (AOT, JIT) -> machine code
 
+### [内存分配](http://www.conardli.top/blog/article/JS%E8%BF%9B%E9%98%B6/%E4%BD%A0%E7%9C%9F%E7%9A%84%E6%8E%8C%E6%8F%A1%E5%8F%98%E9%87%8F%E5%92%8C%E7%B1%BB%E5%9E%8B%E4%BA%86%E5%90%97%EF%BC%88%E4%B8%80%EF%BC%89%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html)
+原始类型 放 `栈内存`
+- 存储的值大小固定
+- 空间较小
+- 可以直接操作其保存的变量，运行效率高
+- 由系统自动分配存储空间
+
+引用类型 放 `堆内存`
+- 存储的值大小不定，可动态调整
+- 空间较大，运行效率低
+- 无法直接操作其内部存储，使用引用地址读取
+- 通过代码进行分配空间
 <hr>
 
 ## 类型
@@ -19,6 +31,17 @@ Null Undefined Boolean String Number Symbol BigInt
 
 引用数据类型: 对象 Object
 包含 Array, Function, RegExp, Date, Math, *Map, *Set, Arguments, *Error, JSON, global
+
+### null vs undefined
+`null` 表示被赋值过的对象，刻意把一个对象赋值为 `null`, 故意表示其为空，不应有值。
+
+转换为数值时值为 0.
+
+undefined
+
+表示 “缺少值”，即此处应有一个值，但还没有定义, 转换为数值时值为 NaN.
+
+动态类型语言，成员除了表示存在的空值外，还有可能根本就不存在（因为存不存在只在运行期才知道）. 这就是 `undefined` 的意义所在。对于 JAVA 这种强类型语言，如果有 "undefined" 这种情况, 就会直接编译失败，所以在它不需要一个这样的类型.
 
 ### 类型判断
 对基本类型 primitive 可用 `typeof`,  返回值列表:<br>
@@ -97,16 +120,21 @@ var num4 = parseInt("10", 16);  // 16（十六进制）
 
 还有一个特点是会. 它只能解析十进制数值. 十六进制格式会被转化为 0.
 
-浮点数运算不精确原因为 IEEE 754
-> 二进制数 = 符号位 (+-1) \* 阶码真值 (阶码-127) \* 尾数
+浮点数运算不精确原因为 IEEE 754 [(convertor)](http://www.binaryconvert.com/convert_double.html)
+> 二进制数 = 符号位 (+-1) (sign) \* 阶码真值 (阶码-127) (exponent) \* 尾数 (significant / fraction)
 1. 双精度: 64 位, 1 符号 + 11 整数位/指数码/2^11 + 52 小数位/尾数 (JS)
 2. 单精度: 32 位, 1 符号 + 08 整数位/指数码/2^8 + 23 小数位/尾数
 JS / 双精度注意事项
-- 阶码有正负 如 2^4, 2^-4, 因此表示范围为 `-1023~1023`(2^10-1)
-- 除 0 外, 尾数必始于 1 所以省略第一位
-- 最大最小值范围为 -2^1023 ~ +2^1023
-- 2^23 = 8388608, 2^52=4503599627370496, 16位, 意味着最多能有16位有效数字, 确保的精度为15~16位
-- 2^53-1 = Number.MAX_SAFE_INTEGER
+- `指数 / 阶码 有正负` 如 2^4, 2^-4, 因此表示范围为 `-1023~1023`(2^10-1), 偏移量为 1023
+- 除 0 外, 尾数必始于 1 所以 `尾数省略了第一位 1`
+- `最大值最小值` 与指数部分有关, 因为此时尾数必为 `1.111111...`; `指数` 最大最小值范围为 `-2^1023 ~ +2^1023`, 因此最大值为 `0b1.111111...(约等于1.9{15})*2^1023 = Number.MAX_VALUE`
+- `精确度` 与有效数字/尾数 `位数` 有关, 2^(52+1)=9007199254740992, 16位, 意味着最多能有16位有效数字, 确保的精度为 `15~16` 位, 因此在表示整数时, 最大精确 "安全值" 为 2^53-1 = Number.MAX_SAFE_INTEGER
+
+```js
+// 用 hex 表示的各位数 转换
+0 = 0x0000000000000000
+1 = 0x3FF0000000000000
+```
 
 原生解决方案
 ```js
@@ -130,11 +158,6 @@ let num = 10
 num.toString(n) // n 进制, 2 / 8 / 10 / 16
 num.toString(2) // "1010"
 ```
-### 原型方法 String.raw()
-
-### 和 UTF-16 有关的新方法 `codePointAt(), normalize()`
-
-### 新方法 `includes(), startsWith(), endsWith(), repeat(), padStart(), padEnd(), trimStart(), trimEnd(), matchAll()`
 
 ### slice() vs substring() vs substr()
 
@@ -404,6 +427,13 @@ Array.prototype.filter = function(fn, thisArg) {
 Array.`flat` / Array.`flatten`
 ```js
 flat = arr => {
+  // if allow reduce
+  return arr.reduce((acc, cur) => {
+    if (Array.isArray(cur)) acc.push(...flat(cur))
+    else acc.push(cur)
+    return acc
+  }, [])
+  // not allowed
   var res = []
   arr.forEach(e => {
     if (Array.isArray(e)) res.push(...flat(e))
@@ -417,8 +447,9 @@ flat = arr => {
 !!! `curry` 帮助创建 偏函数 [Partial function](https://www.liaoxuefeng.com/wiki/1016959663602400/1017454145929440)
 ```js
 // curry
-const curry = (fn, ...args) => args.length >= fn.length ?
-  fn(...args) : (...args2) => curry(fn, ...args, ...args2)
+curry = (fn, ...args) => args.length>=fn.length
+  ? fn(...args)
+  : (...args2) => curry(fn, ...args, ...args2)
 
 // ES5 curry
 var curry = function (){
@@ -613,7 +644,7 @@ function sum(a, b) {
     } else plus1 = 0
     r = tmp + r
   }
-  if (plus1===1) r = 1+r
+  if (plus1===1) r = '1'+r
   return r
 }
 ```
@@ -972,7 +1003,33 @@ function addMethod(object, name, fn) {
 }
 ```
 
-### 观察者模式 发布订阅模式 
+polyfill `requestAnimationFrame`
+
+[reference](https://gist.github.com/paulirish/1579671)
+```js
+(function () {
+  var lastTime = 0;
+  var vendors = ['ms', 'moz', 'webkit', 'o'];
+  for (var x=0; x<vendors.length && !window.requestAnimationFrame; ++x) {
+    window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame';
+    window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame']
+      || window[vendors[x] + 'CancelRequestAnimationFrame'];
+  }
+  if (!window.requestAnimationFrame)
+    window.requestAnimationFrame = function (callback, element) {
+      var now = window.performance ? performance.now() : +new Date
+      var nextTime = Math.max(now, lastTime+16)
+      return setTimeout(function () {
+        callback(lastTime=nextTime)
+      }, nextTime-now);
+    };
+  if (!window.cancelAnimationFrame)
+    window.cancelAnimationFrame = clearTimeout
+    };
+}());
+```
+
+### 观察者模式 发布订阅模式
 > 参考[知乎链接](https://zhuanlan.zhihu.com/p/60324936)
 
 观察者模式
@@ -1278,6 +1335,30 @@ A: redux 本身有哪些作用？我们先来快速的过一下 redux 的核心�
 - `subscribe()`, `getState()å`: 可以通过 subscribe 在 store 上添加一个监听函数。每当调用 dispatch 方法时，会执行所有的监听函数。
 - `applyMiddleware()`, 可以添加中间件（中间件是干什么的我们后面讲）处理副作用。
 - `compose.js`, `bindActionCreators,hs`: 工具函数
+
+Q: 实现 `a == 1 && a == 2 && a == 3`
+
+A:
+```js
+// [Symbol.toPrimitive] / toString / valueOf
+a = {
+  i: 1,
+  toString() { return this.i++ },
+  valueOf() { return this.i++ },
+  [Symbol.toPrimitive]() { return this.i++ },
+}
+// Proxy
+a = new Proxy({}, {
+  i: 1,
+  get() {
+    return () => this.i++
+  }
+})
+// rewrite []
+// 数组的 toString 接口默认调用数组的 join 方法，重写 join 方法
+a=[1,2,3];
+a.join=a.shift
+```
 
 Q: `React` 组件实例对象结构
 

@@ -15,8 +15,8 @@
 '\u{6F}' // 'o'
 "\u{20BB7}" // "𠮷"
 let hello = 123; hell\u{6F}===123 // !!!
-'\u{1F680}' === '\uD83D\uDE80'
-'z' === '\z' ==='\172' === '\x7A' === '\u007A' === '\u{7A}'
+'\u{1F680}'==='\uD83D\uDE80'
+'z'==='\z' ==='\172'==='\x7A'==='\u007A'==='\u{7A}'
 ```
 
 ### 字符串遍历 (可识别 UTF-16, for loop 不可以)
@@ -26,10 +26,21 @@ for (let codePoint of 'foo') {
 }
 ```
 
+### 原型方法 String.raw()
+
+### 和 UTF-16 有关的新方法 `codePointAt(), normalize()`
+
+### 新方法 `includes(), startsWith(), endsWith(), repeat(), padStart(), padEnd(), trimStart(), trimEnd(), matchAll()`
+
 ## Object
 Object.freeze / Object.isFrozen
 
 Object.seal / Object.isSealed: 密封一个对象，阻止添加新属性并将所有现有属性标记为不可配置。当前属性的值只要可写就可以改变。
+
+拓展方法
+```js
+Ojbect.preventExtensions(o) // 禁止拓展
+```
 
 ## Class
 
@@ -46,78 +57,324 @@ Object.seal / Object.isSealed: 密封一个对象，阻止添加新属性并将�
 - 修改某些操作的默认行为，等同于在语言层面做出修改，所以属于一种 “元编程”（meta programming），即对编程语言进行编程。
 - 在目标对象之前架设一层 “拦截”，外界对该对象的访问，都必须先通过这层拦截，因此提供了一种机制，可以对外界的访问进行过滤和改写.
 
-基本用法 basic usage
+### 基本用法 basic usage
 ```js
-var proxy = new Proxy(target={}, handler={});
-```
-
-```js
-// all handlers
-var obj = new Proxy({}, {
-  // 拦截: 该对象属性的读取
-  // !! 如果一个属性不可配置（configurable）且不可写（writable），则 Proxy 不能修改该属性，否则通过 Proxy 对象访问该属性会报错。
+p = new Proxy(target={}, handler={
+  // 拦截: 对象属性的读取
+  // !! 注意 target 对象属性设置, 如果一个属性不可配置（configurable）且不可写（writable），则 Proxy 不能修改该属性，否则通过 Proxy 对象访问该属性会报错。
   get(target, propKey, receiver) {
     console.log(`getting ${propKey}!`);
     return Reflect.get(target, propKey, receiver);
   },
   // 拦截: 该对象属性的设置
+  // receiver 一般情况下是 p (Proxy 实例) 本身
   set(target, propKey, value, receiver) {
     console.log(`setting ${propKey}!`);
     return Reflect.set(target, propKey, value, receiver);
   },
-  // 拦截: propKey in obj
+  // 拦截: propKey in obj, 但不拦截 for...in, 不对迭代生效
   has(target, propKey) {},
-  // 拦截: delete obj[propKey]
+  // 拦截: delete obj[propKey], Reflect.deleteProperty(target, prop)
   deleteProperty(target, propKey){
-    // 例子: 不允许删除
+    // 例: 不允许删除
     // throw new TypeError()
   },
-  // 拦截 Proxy 实例作为函数调用的操作
+  // 拦截: p 作为函数调用的操作
   // proxy(...args)、proxy.call(object, ...args)、proxy.apply(...)
   apply(target, object, args){},
-  // 拦截 Proxy 实例作为构造函数调用的操作, new proxy(...args)
-  construct(target, args) {},
-  // 拦截 Object.defineProperty(proxy, propKey, propDesc), Object.defineProperties(proxy, propDescs)
-  // 返回一个布尔值
+  // 拦截: new, p 作为构造函数调用的操作
+  // 必须返回对象 (引用类型), 否则 TypeError
+  construct(target, args, newTarget) {
+    return new target(...args) // 默认行为
+  },
+  // 拦截 Object.defineProperty, Object.defineProperties
+  // 优先度低于 writable, configurable
+  // 返回 boolean, false 意味添加属性无法生效
   defineProperty(target, propKey, propDesc) {},
-  //拦截 Object.getOwnPropertyNames(proxy)、Object.getOwnPropertySymbols(proxy)、Object.keys(proxy)、for...in 循环，返回一个数组。
+  //拦截 Object.keys(proxy), for...in, Object.getOwnPropertyNames(proxy), Object.getOwnPropertySymbols(proxy) 循环，返回一个数组。
   // 该方法返回目标对象所有自身的属性的属性名，而 Object.keys() 的返回结果仅包括目标对象自身的 可遍历 属性。
   ownKeys(target){},
-  // -------------------------------------------
-  // 拦截 Object.setPrototypeOf(proxy, proto)，返回一个布尔值。
+  
+  // ------------------- 非常用 --------------------
+  // 拦截 Object/Reflect.getPrototypeOf(p), Object.prototype.isPrototypeOf(), Object.prototype.__proto__, instanceof
+  // 返回一个对象。
+  getPrototypeOf(target) {},
+  // 拦截 Object.setPrototypeOf(proxy, proto)，
+  // 返回一个布尔值。
   // 如果目标对象是函数，那么还有两种额外操作可以拦截。
   setPrototypeOf(target, proto) {},
-  // 拦截 Object.preventExtensions(proxy)，返回一个布尔值。
+  // 拦截 Object.preventExtensions(proxy)
+  // 返回一个布尔值。
   preventExtensions(target) {},
-  // 拦截 Object.getPrototypeOf(proxy)，返回一个对象。
-  getPrototypeOf(target) {},
-  // 拦截 Object.isExtensible(proxy)，返回一个布尔值
+  // 拦截 Object.isExtensible(proxy)
+  // 返回一个布尔值
   isExtensible(target){},
+  // 拦截 Object.getOwnPropertyDescriptor() (返回 defineProperty 的配置)
+  // 返回 属性描述对象 或者 undefined
+  getOwnPropertyDescriptor(target, key){
+    if (key[0]==='_') return;
+    return Object.getOwnPropertyDescriptor(target, key);
+  },
 });
 ```
-1. 安全枚举类型 safe enumerable type
+
+### 用法举例
+> 参考 [ES6-Proxy 与数据劫持](https://segmentfault.com/a/1190000019198822), [抱歉，学会 Proxy 真的可以为所欲为](https://zhuanlan.zhihu.com/p/35080324)
+
+安全枚举类型, 用作 state machine action type
 ```js
 export default function enum(object) {
   return new Proxy(object, {
-    get(target, prop) {
-      if (target[prop]) {
-        return Reflect.get(target, prop)
-      } else {
-        throw new ReferenceError(`Unknown enum '${prop}'`)
-      }
+    get(target, prop) { // 读取不存在属性时报错
+      if (target[prop]) return Reflect.get(target, prop)
+      throw new ReferenceError(`Unknown enum '${prop}'`)
     },
-    set() {
+    set() { // 不能动态改变
       throw new TypeError('Enum is readonly')
     },
-    deleteProperty() {
+    deleteProperty() { // 不能删除
       throw new TypeError('Enum is readonly')
     }
   })
 }
 ```
+测试, 断言, 如监听函数调用情况
+```js
+function spy(spyFn) {
+  spyFn.toBeCalledTimes = 0
+  spyFn.lastCalledWith = undefined
+  return new Proxy(spyFn, {
+    apply(target, thisArg, argumentsList) {
+      target.toBeCalledTimes += 1
+      target.lastCalledWith = argumentsList.join(', ')
+    }
+  })
+}
+// 使用
+spyApplyColor = spy(applyColor)
+colors.forEach(color => spyApplyColor(color))
+// 测试
+expect(callback.toBeCalledTimes).toBe(colors.length)
+expect(callback.lastCalledWith).toBe(colors[1])
+```
+
+数组
+```js
+let arr = [1,2,3,4]
+let p=new Proxy(arr, {
+  get(target, prop, receiver) {
+    // 浏览器下无问题, 不需要判断
+    // Node.js 下 过滤
+    // Symbol(nodejs.util.inspect.custom)
+    // Symbol(Symbol.toStringTag)
+    // Symbol(Symbol.iterator)
+    if (typeof prop!=='symbol') {
+      let index = Number(prop);
+      if (index<0) prop = String(target.length + index);
+    }
+    return Reflect.get(target, prop, receiver);
+  },
+  set(target, prop, value) {
+    if (typeof prop!=='symbol' && !isNaN(Number(prop)))
+      console.log(`set arr[${prop}]=${value}`)
+    target[prop] = value
+    return true
+  }
+})
+p.push(5) // arr[4]=5
+console.log(p, p[-1]) // [ 1, 2, 3, 4, 5 ] 5
+```
+表单校验
+```js
+let person = {
+    name: 'xiaoming',
+    age: 30
+}
+let handler = {
+    set (target, key, value, receiver) {
+      if (key==='name' && typeof value!=='string') {
+        throw new TypeError('姓名是字符串')
+      }
+      if (key==='age') {
+        if (typeof value!=='number'||value!==value<<0) throw new Error('年龄是正整数')
+        if (value<0||value>150) throw new RangeError('年龄范围0-150')
+      }
+      return Reflect.set(target, key, value, receiver)
+    }
+}
+let boy = new Proxy(person, handler)
+boy.name = 'xiaohong' // OK
+boy.age = '18' // 报错  用户年龄必须是数字类型
+```
+对嵌套属性的支持
+```js
+let obj = {
+  info: {
+    name: 'eason',
+    blogs: ['webpack', 'babel', 'cache']
+  }
+}
+let handler = {
+  get (target, key, receiver) {
+    console.log('get', key)
+    // 递归创建并返回
+    if (typeof target[key]==='object' && target[key]!==null) {
+      return new Proxy(target[key], handler)
+    }
+    return Reflect.get(target, key, receiver)
+  },
+  set (target, key, value, receiver) {
+    console.log('set', key, value)
+    return Reflect.set(target, key, value, receiver)
+  }
+}
+let proxy = new Proxy(obj, handler)
+// 以下两句都能够进入 set
+proxy.info.name = 'Zoe'
+proxy.info.blogs.push('proxy')
+```
+
+### 没有 proxy 时 Object.defineProperty / Object.defineProperties
+```js
+// with its default value
+Object.defineProperty(obj='target', prop='keyOrSymbol', descriptor={
+  // whether is picked by Object.assign(), ...;
+  // for non-Symbols, whether it is picked in for..in and Object.keys()
+  enumerable: false,
+  // can be deleted or its attributes can be changed, throw TypeError
+  // cannot be reassigned
+  // if true, can reassign enumerable
+  configurable: false,
+  // if false, the prop value cannot be changed, in strict mode throw TypeError 'prop is read-only'
+  // cannot be reassigned
+  writable: false,
+  value: undefined,
+  get() {},
+  set() {},
+})
+```
+区别
+- `definedProperty` 的作用是劫持一个对象的属性，劫持属性的 `getter` 和 `setter` 方法，在对象的属性发生变化时进行特定的操作。而 Proxy 劫持的是整个对象。
+- Proxy 会返回一个代理对象，我们只需要操作新对象即可，而 Object.defineProperty  只能遍历对象属性直接修改。
+- `definedProperty` 不支持数组，更准确的说是不支持数组的各种 API。而 Proxy 可以支持数组的各种 API。
+- 兼容性, Proxy 无法 polyfill
+
+Vue3.0 应用
+![vue3 proxy](../../assets/img/interview-vue-reactive.png)
+
 <hr>
 
 ## Symbol
+
+```js
+// create
+a = Symbol('new') // new Symbol
+Symbol({ a:1 }); // Symbol([object Object]), .toString()
+new Symbol('new') // Uncaught TypeError: Symbol is not a constructor
+Symbol.for('1')===Symbol.for('1') // create same symbol
+
+// enum
+obj = {
+  key:'value',
+  [Symbol('name')]:'symbol'
+}
+Object.getOwnPropertyNames(obj); // ["key"]
+Object.keys(obj); // ["key"]
+for (var i in obj) { console.log(i) } // key
+Object.getOwnPropertySymbols(obj) // [Symbol(name)]
+Reflect.ownKeys(obj) // ['key', Symbol(name)]
+```
+### 重要新增 symbol 属性
+
+#### `Symbol.iterator`
+```js
+// 是否能遍历 + 使用 for...of (可遍历意味可展开)
+const myIterable = {
+  *[Symbol.iterator]() {
+    yield 1;
+    yield 2;
+    yield 3;
+  }
+};
+[...myIterable] // [1, 2, 3]
+for (let v of myIterable) { console.log(v) } // 1, 2, 3
+```
+
+#### `Symbol.toPrimitive`
+```js
+let obj = {
+  [Symbol.toPrimitive](hint) {
+    switch (hint) {
+      case 'number': // 需要转换为数值
+        return 123;
+      case 'string': // 需要转换为 string
+        return 'str';
+      case 'default': // 可以转成数值, 也可以转成 string
+        return 'default';
+      default:
+        throw new Error();
+     }
+   }
+};
+2 * obj // 246
+3 + obj // '3default'
+obj == 'default' // true
+String(obj) // 'str'
+```
+
+#### `Symbol.toStringTag`
+影响 `Object.prototype.toString.call(o)` 的结果
+```js
+({[Symbol.toStringTag]: 'Foo'}.toString()) // 'Foo'
+class Collection {
+  get [Symbol.toStringTag]() {
+    return 'xxx';
+  }
+}
+let x = new Collection();
+Object.prototype.toString.call(x) // "[object xxx]"
+```
+
+### 应用
+- 因 JSON中不能保存 `Symbol`, 可用以防止 `xss`
+  ```js
+    // JSON
+  let expectedTextButGotJSON = {
+    type: 'div',
+    props: {
+      dangerouslySetInnerHTML: {
+        __html: '/* put your exploit here */'
+      },
+    },
+  };
+  let message = { text: expectedTextButGotJSON };
+  <p>{message.text}</p>
+  ```
+- React 判断有效 `ReactElement`
+  ```js
+  var REACT_ELEMENT_TYPE =
+  (typeof Symbol==='function' && Symbol.for && Symbol.for('react.element')) ||
+  0xeac7;
+  ReactElement.isValidElement = function (object) {
+    return typeof object==='object' && object!==null && object.$$typeof===REACT_ELEMENT_TYPE;
+  };
+  ```
+- 因其不可枚举, 可用作私有属性, 如 `[Symbol.toPrimitive]`, `[Symbol.Iterator]`
+  ```js
+  const privateField = Symbol();
+  class myClass {
+    constructor(){
+      this[privateField] = '';
+    }
+    getField(){
+      return this[privateField];
+    }
+    setField(val){
+      this[privateField] = val;
+    }
+  }
+  ```
+- 防属性/键值碰撞
 
 ## Function
 ### name
@@ -162,6 +419,8 @@ var x = 1;
 x // 1
 ```
 
+## JS Collection 集合
+> [初学者应该了解的数据结构：Array、HashMap 与 List](https://juejin.im/post/5b3731b36fb9a00e5326f087#heading-21)
 ## Array
 ```js
 .from(arrayLike) // convert arrayLike to array
@@ -174,15 +433,15 @@ Reflect.ownKeys(obj).length ≥ Object.getOwnPropertyNames(obj).length ≥ Objec
 
 `Proxy` 可以实现很多以前只有魔改 JS 引擎底层才能实现的效果，请找出下面是利用 Proxy 实现了的神奇效果：
 
-A. 原型就是自己的对象 —— Object.getPrototypeOf(obj) === obj // true
+A. 原型就是自己的对象 —— Object.getPrototypeOf(obj)===obj // true
 
 B. 任意属性都存在的对象 ——  "任意名字的属性" in obj // true
 
 C. 任意值都是它的实例的对象，甚至 null 和 undefined  ——  undefined instanceof obj // true
 
-D. 用 Object.prototype.toString() 检测出来的对象类型是 haha 的对象  —— Object.prototype.toString.call(obj) === "[object haha]" // true 
+D. 用 Object.prototype.toString() 检测出来的对象类型是 haha 的对象  —— Object.prototype.toString.call(obj)==="[object haha]" // true
 
-E. 一元加后的值与加 0 后的值分别恒等于两个不同的数字  ——  比如 +obj 始终 === 1，但 obj + 0 始终等于 === 10
+E. 一元加后的值与加 0 后的值分别恒等于两个不同的数字  ——  比如 +obj 始终===1，但 obj + 0 始终等于===10
 
 F. 亦假又亦真的对象  ——  if (obj) {alert("执行不到")} 但 if (obj.length) {alert("能执行到")}
 
@@ -206,7 +465,7 @@ obj = {[Symbol.toStringTag]: "haha"}
 ```
 E:
 ```js
-obj = {[Symbol.toPrimitive](hint){return hint === "number" ? 1 : 10}} 
+obj = {[Symbol.toPrimitive](hint){return hint==="number" ? 1 : 10}} 
 ```
 
 F: `document.all` 具有其性质
@@ -235,9 +494,9 @@ F: `document.all` 具有其性质
 
 ## Generator
 
-## [for in vs for of](https://www.jianshu.com/p/c43f418d6bf0)
-### for in 对象用
-通常用 `for in` 来遍历对象的键名
+## [for...in vs for of](https://www.jianshu.com/p/c43f418d6bf0)
+### 对象用 for...in
+通常用 `for...in` 来遍历对象的键名
 - 可以遍历到对象的原型方法及继承自原型链上的属性/方法, 如果不想遍历原型方法和属性的话，可以在循环内部判断一下, `hasOwnPropery` 方法可以判断某属性是否是该对象的实例属性
 - 如用来遍历数组, 则会返回非期望结果, 如以下会多返回 `method`, `name`
   ```js
@@ -251,12 +510,12 @@ F: `document.all` 具有其性质
   }
   ```
 
-### for of 迭代器用
+### 迭代器用 for...of
 `for of` 适用遍历数 / 数组对象 / 字符串 /map/set 等拥有迭代器对象的集合。但是不能遍历对象，因为没有迭代器对象。与 `forEach()` 不同的是，它可以正确响应 break、continue 和 return 语句
 
 所有拥有 `Symbol.iterator` 的对象被称为可迭代的。可迭代对象的概念几乎贯穿于整门语言之中，不仅是 `for of` 循环，还有 Map 和 Set 构造函数、解构赋值，以及新的展开操作符。
 
-`for of` 循环首先调用集合的 `Symbol.iterator 方法`，紧接着返回一个 `新的迭代器对象`。迭代器对象可以是任意具有.next () 方法的对象; `for-of` 循环将重复调用这个方法，每次循环调用一次。
+`for...of` 循环首先调用集合的 `Symbol.iterator 方法`，紧接着返回一个 `新的迭代器对象`。迭代器对象可以是任意具有.next () 方法的对象; `for...of` 循环将重复调用这个方法，每次循环调用一次。
 ```js
 var zeroesForeverIterator = {
   [Symbol.iterator]: function () {

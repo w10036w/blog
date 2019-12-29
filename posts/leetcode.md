@@ -37,6 +37,7 @@
 - [36. Valid Sudoku](leetcode/36-valid-sudoku.md)
 - [49. Group Anagrams](leetcode/49-group-anagrams.md)
 - [211. Add and Search Word - Data structure design](leetcode/211-add-and-search-word.md)
+- [387. First Unique Character in a String](leetcode/387-first-unique-char-in-string.md)
 - [720. Longest Word in Dictionary](leetcode/720-longest-word-in-dict.md)
 
 ## [Backtracking / Deep First Search (DFS)](algorithms/backtracking.md)
@@ -81,6 +82,7 @@
 - [62. Unique Paths](leetcode/62-unique-paths.md)
 - [63. Unique Paths II](leetcode/63-unique-paths-ii.md)
 - [70. Climbing Stairs](leetcode/70-climbing-stairs.md)
+- [121. Best Time to Buy and Sell Stock](leetcode/121-best-time-to-buy-and-sell-stock.md)
 - [343. Integer Break](leetcode/343-integer-break.md)
 
 ## Uncategoried

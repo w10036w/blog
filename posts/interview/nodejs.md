@@ -1,5 +1,9 @@
 # interview - nodejs
 
+## [cross JS / C++ Boundary](https://blog.insiderattack.net/crossing-the-js-c-boundary-advanced-nodejs-internals-part-1-cb52957758d8)
+
+## [Worker from v10.5.0](https://blog.insiderattack.net/deep-dive-into-worker-threads-in-node-js-e75e10546b11)
+
 ## Message Queue 消息队列
 > [参考1](https://juejin.im/post/5dd8cd7ae51d4523501f7331)
 

@@ -3,6 +3,11 @@
 ## Concept 基本原理
 react.js is a library for UI view layer via manipulating virtual dom; react-dom and react-native are the implementation for the platforms.
 
+## 纯函数
+- 相同的输入产生相同的输出（不能在内部使用 Math.random,Date.now 这些方法影响输出）
+- 输出不能和输入值以外的任何东西有关（不能调用 API 获得其他数据）
+- 函数内部不能影响函数外部的任何东西（不能直接改变传入的引用变量），即不会突变
+
 ### Virtual DOM
 通过类似 html tag 的 `JSX`, 使用 babel 创建 `vdom`, 根据虚拟dom 渲染 dom tree, 每次更新 diff vdom, 然后重新渲染.
 
@@ -40,7 +45,30 @@ async, batch, trigger `update` & `rerender` (if `shouldComponentUpdate` is not o
 这是由于 setState 的两种更新机制导致的，只有在 **批量更新模式** 中，才会是 “异步” 的。
 
 直接传递对象的 `setState({ ... }, () => {})` 会被合并成一次
+
 使用函数传递 `setState(prev => ({}), () => {})` 不会被合并
+
+因此
+```js
+componentDidMount() {
+  this.setState({ index: this.state.index + 1 }, () => {
+    console.log(this.state.index);
+  })
+  this.setState({ index: this.state.index + 1 }, () => {
+    console.log(this.state.index);
+  })
+  // 1, 1
+}
+componentDidMount() {
+  this.setState(preState => ({ index: preState.index + 1 }), () => {
+    console.log(this.state.index);
+  })
+  this.setState(preState => ({ index: preState.index + 1 }), () => {
+    console.log(this.state.index);
+  })
+  // 2, 2
+}
+```
 
 ### Diff VDOM ( O(n^3) -> O(n) )
 > 参考[知乎](https://zhuanlan.zhihu.com/p/20346379)
@@ -57,6 +85,7 @@ async, batch, trigger `update` & `rerender` (if `shouldComponentUpdate` is not o
 #### Diff 优化
 - 减少 update 次数, 减少非理想状况的 `setState()`
 - 减少跨层级移动节点, 尽量平行移动
+- 使用合适的 key
 
 `forceUpdate` 调用后将会直接进入 componentWillUpdate 阶段，无法拦截，因此在实际项目中应该弃用。
 
@@ -65,6 +94,9 @@ async, batch, trigger `update` & `rerender` (if `shouldComponentUpdate` is not o
 ### Reconciliation & Render
 
 ### Fiber
+> [参考司徒正美](https://zhuanlan.zhihu.com/p/37095662) <br>
+> [理解 React Fiber 架构](https://libin1991.github.io/2019/07/01/%E7%90%86%E8%A7%A3-React-Fiber-%E6%9E%B6%E6%9E%84/)
+> [React16 源码之 React Fiber 架构](https://github.com/HuJiaoHJ/blog/issues/7#)
 
 ### Performance
 

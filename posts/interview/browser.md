@@ -128,12 +128,24 @@ window对象有个name属性，该属性有个特征：即在一个窗口(window
 **解决方法**：验证 JSONP 的调用来源（Referer），服务端判断 Referer 是否是白名单，或者部署随机 Token 来防御。
 
 ### XSS 漏洞
-不严谨的 content-type 导致的 XSS 漏洞，想象一下 JSONP 就是你请求 `http://youdomain.com?callback=douniwan`, 然后返回 `douniwan({ data })`，那假如请求 `http://youdomain.com?callback=<script>alert(1)</script>` 不就返回 `<script>alert(1)</script>({ data }`) 了吗，如果没有严格定义好 `Content-Type（ Content-Type: application/json`，再加上**没有过滤 callback 参数**，直接当 html 解析了，就是一个赤裸裸的 XSS 了。
+不严谨的 `content-type` 导致的 XSS 漏洞，想象一下 JSONP 就是你请求 `http://youdomain.com?callback=douniwan`, 然后返回 `douniwan({ data })`，那假如请求 `http://youdomain.com?callback=<script>alert(1)</script>` 不就返回 `<script>alert(1)</script>({ data }`) 了吗，如果没有严格定义好 `Content-Type（ Content-Type: application/json`，再加上**没有过滤 callback 参数**，直接当 html 解析了，就是一个赤裸裸的 XSS 了。
 
 **解决方法**：严格定义 `Content-Type: application/json`，然后严格过滤 `callback` 后的参数并且限制长度（进行字符转义，例如 <换成 & lt，> 换成 & gt）等，这样返回的脚本内容会变成文本格式，脚本将不会执行。
 
 ### 服务器被黑，返回一串恶意执行的代码
 可以将执行的代码转发到服务端进行校验 JSONP 内容校验，再返回校验结果。
+
+### XSS 和 CSRF 区别
+XSS 跨站脚本攻击（Cross Site Scripting)，为了不和层叠样式表 CSS 混淆，故将跨站脚本攻击缩写为 XSS。恶意攻击者往 Web 页面里插入恶意 Script 代码，当用户浏览该页之时，嵌入其中 Web 里面的 Script 代码会被执行，从而达到恶意攻击用户的目的。
+
+CSRF 跨站请求伪造（Cross-site request forgery），是伪造请求，冒充用户在站内的正常操作。我们知道，绝大多数网站是通过 cookie 等方式辨识用户身份，再予以授权的。所以要伪造用户的正常操作，最好的方法是通过 XSS 或链接欺骗等途径，让用户在本机（即拥有身份 cookie 的浏览器端）发起用户所不知道的请求。
+
+区别：
+- 原理不同，CSRF 是利用网站 A 本身的漏洞，去请求网站 A 的 api
+- XSS 是向目标网站注入 JS 代码，然后执行 JS 里的代码。
+- CSRF 需要用户先登录目标网站获取 cookie，而 XSS 不需要登录
+- CSRF 的目标是用户，XSS 的目标是服务器
+- XSS 是利用合法用户获取其信息，而 CSRF 是伪造成合法用户发起请求
 
 ## 跨页面通讯
 - [`BroadcastChannel()`](https://developer.mozilla.org/en-US/docs/Web/API/Broadcast_Channel_API): `.postMessage()`, `.onmessage()`, `.close()`
@@ -165,13 +177,15 @@ if(window.Worker) {
   }
 }
 // worker.js
-// 内置 self 对象, 代表子线程本身, worker内部要加载其他脚本,可通过importScripts()方法
-window.onmessage = function(e) {
+// 内置 self 对象, 代表子线程本身
+self.onmessage = function(e) {
   console.log("message received from main script");
   var workerResult = "Result: " + (e.data[0] * e.data[1]);
   console.log("posting message\back to main script");
   postMessage(workerResult);
 }
+// worker内部要加载其他脚本,可通过 importScripts() 方法
+self.importScripts('foo.js');
 ```
 `ServiceWorker`
 ```js
@@ -302,6 +316,21 @@ DNS (Domain Name System, 域名系统)，作为域名和 IP 地址相互映射�
 如果浏览器最近将一个域名解析为 IP 地址，所属的操作系统将会缓存，下一次 DNS 解析时间可以低至 0-1ms。 如果结果不在系统本地缓存，则需要读取路由器的缓存，则解析时间的最小值大约为 15ms。如果路由器缓存也不存在，则需要读取 ISP（运营商）DNS 缓存，一般像 taobao.com、baidu.com 这些常见的域名，读取 ISP（运营商）DNS 缓存需要的时间在 80-120ms，如果是不常见的域名，平均需要 200-300ms。一般的网站在运营商这里都能查询的到，所以普遍来说 DNS Prefetch 可以给一个域名的 DNS 解析过程带来 15-300ms 的提升，尤其是一些大量引用很多其他域名资源的网站，提升效果就更加明显了。
 <hr>
 
+## script
+
+### 异步加载 defer async
+`defer`
+
+`<script>` 标签打开 defer 属性，脚本就会异步加载。渲染引擎遇到这一行命令，就会开始下载外部脚本，但不会等它下载和执行，而是直接执行后面的命令。
+
+defer 和 async 的区别在于: defer 要等到整个页面在内存中正常渲染结束，才会执行；
+
+async 一旦下载完，渲染引擎就会中断渲染，执行这个脚本以后，再继续渲染。defer 是 “渲染完再执行”，async 是 “下载完就执行”。
+
+如果有多个 defer 脚本，会按照它们在页面出现的顺序加载。
+
+多个 async 脚本是不能保证加载顺序的。
+
 ## link
 
 - DNS 预加载 `dns-prefetch`
@@ -350,6 +379,65 @@ DNS (Domain Name System, 域名系统)，作为域名和 IP 地址相互映射�
   > `rel=prefetch` 为将来的页面提供了一种低优先级的资源预加载方式，而 `rel=subresource` 为当前页面提供了一种高优先级的资源预加载。
 
 ## 常用事件/变量/函数
+### 操作 DOM
+> 参考 [从 DOM 说起](https://juejin.im/post/58f558efac502e006c3e5c97)
+
+添加 DOMElement
+```js
+ParentNode.append(...nodesOrDOMStrings) // returns undefined
+Node.appendChild(node) // return appended node
+```
+大量 DOM 操作, 事件绑定
+
+`createDocumentFragment()` + 分片 + `rAF` + 事件代理 (Fiber DOM 丐版)
+```js
+(() => {
+  const ndContainer = document.getElementById('js-list');
+  if (!ndContainer) return
+  const total = 30000;
+  const batchSize = 10; // 每批插入的节点次数，越大越卡
+  const batchCount = total / batchSize; // 需要批量处理多少次
+  let batchDone = 0;  // 已经完成的批处理个数
+
+  function appendItems() {
+    const fragment = document.createDocumentFragment();
+    for (let i = 0; i < batchSize; i++) {
+      const ndItem = document.createElement('li');
+      ndItem.innerText = (batchDone * batchSize) + i + 1;
+      fragment.appendChild(ndItem); // or ParentNode.append()
+    }
+    // 每次批处理只修改 1 次 DOM
+    ndContainer.appendChild(fragment); // or ParentNode.append()
+    batchDone++;
+    doBatchAppend();
+  }
+  function doBatchAppend() {
+    if (batchDone < batchCount) window.requestAnimationFrame(appendItems);
+  }
+  // kickoff
+  doBatchAppend();
+  ndContainer.addEventListener('click', function (e) {
+    const target = e.target;
+    if (target && target.tagName === 'LI') {
+      alert(target.innerHTML);
+    }
+  });
+})();
+```
+
+BFS 广度优先遍历 DOM, 输出 \`nodeName.${node.className}\`
+```js
+function bfs(node) {
+  var q = [node]
+  while (q.length!==0) {
+    var n = q.shift()
+    console.log(n.nodeName, '.'+n.className)
+    if (n.children.length) q.push(...n.children) // better than childNodes()
+  }
+}
+bfs(document.querySelector('body'))
+```
+
 ### 高度/宽度
 > https://segmentfault.com/a/1190000010746091
 
@@ -370,7 +458,7 @@ DNS (Domain Name System, 域名系统)，作为域名和 IP 地址相互映射�
 9. `scrollLeft & scrollTop`: 元素的滚动条的位置, 修改其让元素中的内容滚动
 
 ### 移动浏览器
-#### 手机 平板 判断
+手机 平板 判断
 ```js
 var deviceFix = function() {
   var pixelRatio = window.devicePixelRatio;
@@ -382,7 +470,7 @@ var deviceFix = function() {
   // etc.
 }
 ```
-#### 方向变化
+方向变化
 > https://davidwalsh.name/orientation-change
 JS 处理
 ```js
