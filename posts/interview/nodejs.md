@@ -1,5 +1,11 @@
 # interview - nodejs
 
+## 高性能核心
+- 单线程, 无线程调度 (thread scheduling) 开销, 多进程内存开销较大
+- 异步 IO, 主线程不阻塞
+
+linux 在使用 CFS 调度器的情况下，其调度开销大约为 O (logm), 其中 m 为活跃上下文数，其大约等同于活跃的客户端数，因此每次线程遇到 IO 阻塞时，都会进行调度从而产生 O (logm) 的开销。这在 QPS 较大的情况下是一笔不小的开销。
+
 ## [cross JS / C++ Boundary](https://blog.insiderattack.net/crossing-the-js-c-boundary-advanced-nodejs-internals-part-1-cb52957758d8)
 
 ## [Worker from v10.5.0](https://blog.insiderattack.net/deep-dive-into-worker-threads-in-node-js-e75e10546b11)

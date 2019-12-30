@@ -457,6 +457,24 @@ bfs(document.querySelector('body'))
 8. `scrollWidth / scrollHeight`: 元素的内容区域加上内边距，在加上任何溢出内容的尺寸.<br>没有溢出时 = `client*`, 溢出时 = `offset*`
 9. `scrollLeft & scrollTop`: 元素的滚动条的位置, 修改其让元素中的内容滚动
 
+> Element.getBoundingClientRect()方法返回元素的大小及其相对于视口的位置, 判断元素是否当前视窗可视
+
+返回值是一个 DOMRect 对象，这个对象是由该元素的 getClientRects() 方法返回的一组矩形的集合，即：是与该元素相关的 CSS 边框集合 。
+
+DOMRect 对象包含了一组用于描述边框的只读属性——left、top、right和bottom，单位为像素。除了 width 和 height 外的属性都是相对于视口的左上角位置而言的。
+```js
+//译者注：DOMRect 是 TextRectangle或 ClientRect 的别称，他们是相同的。
+// x: 0
+// y: -516.3636474609375
+// width: 1080.9090576171875
+// height: 4983.72119140625
+// top: -516.3636474609375
+// right: 1080.9090576171875
+// bottom: 4467.3575439453125
+// left: 0
+var rect = obj.getBoundingClientRect();
+```
+
 ### 移动浏览器
 手机 平板 判断
 ```js

@@ -22,6 +22,7 @@
 - [28. Implement strStr()](leetcode/28-implement-strstr.md)
 - [31. Next Permutation](leetcode/31-next-permutation.md)
 - [66. Plus One](leetcode/66-plus-one.md)
+- [122. Best Time to Buy and Sell Stock II](leetcode/122-best-time-to-buy-and-sell-stock-ii.md)
 - [287. Find the Duplicate Number](leetcode/287-find-the-duplicate-number.md)
 - [349. Intersection of Two Arrays](leetcode/349-intersection-of-two-arrays.md)
 
@@ -64,8 +65,8 @@
 - [21. Merge Two Sorted Lists](leetcode/21-merge-two-sorted-lists.md)
 - [141. Linked List Cycle](leetcode/141-linked-list-cycle.md)
 - [142. Linked List Cycle II](leetcode/142-linked-list-cycle-ii.md)
-- [146. LRU Cache](leetcode/146-lru-cache.md)
-- [160. Intersection of Two Linked Lists](leetcode/160-intersection-of-two-linked-lists.md)
+- [146. LRU Cache](leetcode/146-lru-cache.md) !!!
+- [160. Intersection of Two Linked Lists](leetcode/160-intersection-of-two-linked-lists.md) !!!
 
 ## Stack
 - [20. Valid Parentheses](leetcode/20-valid-parentheses.md)
@@ -78,11 +79,12 @@
 
 ## DP
 - [32. Longest Valid Parentheses](leetcode/32-longest-valid-parentheses.md)
-- [53. Maximum Subarray](leetcode/53-maximum-subarray.md)
-- [62. Unique Paths](leetcode/62-unique-paths.md)
+- [53. Maximum Subarray !!](leetcode/53-maximum-subarray.md)
+- [62. Unique Paths !!](leetcode/62-unique-paths.md)
 - [63. Unique Paths II](leetcode/63-unique-paths-ii.md)
 - [70. Climbing Stairs](leetcode/70-climbing-stairs.md)
 - [121. Best Time to Buy and Sell Stock](leetcode/121-best-time-to-buy-and-sell-stock.md)
+- [309. Best Time to Buy and Sell Stock with Cooldown !!!](leetcode/309-best-time-to-buy-and-sell-stock-with-cooldown.md)
 - [343. Integer Break](leetcode/343-integer-break.md)
 
 ## Uncategoried

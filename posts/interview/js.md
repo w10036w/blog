@@ -67,11 +67,12 @@ console.log(111 instanceof PrimitiveNumber) // true
 polyfill `instanceof`
 ```js
 function _instanceof(target, origin) {
-  const proto = target.__proto__;
-  if (proto) {
-    if (origin.prototype === proto) return true;
-    else return _instanceof(proto, origin)
-  } else return false
+  let proto = target.__proto__;
+  while (proto) {
+    if (origin.prototype === proto) return true
+    proto = proto.__proto__
+  }
+  return false
 }
 ```
 
@@ -785,10 +786,11 @@ window.addEventListener('scroll', throttled)
 function lazyload() { //监听页面滚动事件
   var seeHeight = window.innerHeight; //可见区域高度
   // document.documentElement 是整个 <html></html>
-  var scrollTop = document.documentElement.scrollTop || document.body.scrollTop; 
+  var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
   //滚动条距离顶部高度  
   for (var i = n; i < img.length; i++) {
-    // console.log(img[i].offsetTop, seeHeight, scrollTop);
+    // or use
+    // img[i].getBoundingClientRect().top <= window.innerHeight
     if (img[i].offsetTop < seeHeight + scrollTop) {
       if (img[i].getAttribute("src") == "loading.gif") {
         img[i].src = img[i].getAttribute("data-src");
@@ -929,7 +931,7 @@ Function.prototype.call = function() {
   // apply same verification
   var thisArg = arguments[0]
   var args = Array.prototype.slice(arguments, 1)
-  return fn.apply(thisArg, args)
+  return this.apply(thisArg, args)
 }
 ```
 
@@ -1133,13 +1135,13 @@ ob.publish('add', 1);
 
 我们前文提到过 JS 引擎线程和 GUI 渲染线程是互斥的关系，浏览器为了能够使 宏任务和 DOM 任务有序的进行，会在一个 `宏任务` 执行结果后，在下一个 `宏任务` 执行前， GUI渲染线程开始工作，对页面进行渲染。
 
-**主代码块，setTimeout，setInterval 等，都属于宏任务**
+** `<script>` 主代码块, `setTimeout`, `setInterval`, `setImmediate`, `I/O`, `UI 渲染`，都属于宏任务**
 <hr>
-宏任务结束后，会执行渲染，然后执行下一个 宏任务，而微任务可以理解成在当前 宏任务执行后立即执行的任务。
+因此宏任务结束后，(此时浏览器会执行渲染) 然后执行下一个 宏任务，而微任务可以理解成在当前 宏任务执行后立即执行的任务。
 
 也就是说，当宏任务执行完，会在**渲染前**，将执行期间所产生的所有微任务都执行完。
 
-**Promise，process.nextTick 等，属于 微任务。**
+**`process.nextTick`, `Promise`, `MutationObserver` 等，属于 微任务。**
 
 ```js
 document.body.style = 'background:blue'
