@@ -61,6 +61,10 @@
 - [401. Binary Watch](leetcode/401-binary-watch.md)
 - [784. Letter Case Permutation](leetcode/784-letter-case-permuatation.md)
 
+## Binary Search
+- [33. Search in Rotated Sorted Array](leetcode/33-search-in-rotated-sorted-arry.md)
+- [109. Convert Sorted List to Binary Search Tree](leetcode/109-convert-sorted-list-to-bst.md)
+
 ## LinkedList
 - [21. Merge Two Sorted Lists](leetcode/21-merge-two-sorted-lists.md)
 - [141. Linked List Cycle](leetcode/141-linked-list-cycle.md)

@@ -26,11 +26,58 @@ KEY babel transform
 }
 ```
 
-`createElement()`
+`createElement()`, 数据结构如下
 
 ![createElement](../../assets/img/interview-react-createelement.png)
+```ts
+// ReactElement
+{
+  $$typeof: REACT_ELEMENT_TYPE,
+  type,
+  key,
+  ref,
+  props,
+  _owner: owner,
+}
+```
+`React.Component`
+```js
+function Component(props, context, updater) {
+  this.props = props;
+  this.context = context;
+  // If a component has string refs, we will assign a different object later.
+  this.refs = emptyObject;
+  // We initialize the default updater but the real one gets injected by the
+  // renderer.
+  this.updater = updater || ReactNoopUpdateQueue;
+}
+Component.prototype.isReactComponent = {};
+Component.prototype.setState = function(partialState, callback) {
+  this.updater.enqueueSetState(this, partialState, callback, 'setState');
+};
+Component.prototype.forceUpdate = function(callback) {
+  this.updater.enqueueForceUpdate(this, callback, 'forceUpdate');
+};
+```
+`ReactDOM`
+```js
+const ReactDOM: Object = {
+  createPortal,
+  findDOMNode(
+    componentOrElement: Element | ?React$Component<any, any>,
+  ): null | Element | Text {},
+  hydrate(element: React$Node, container: DOMContainer, callback: ?Function) {
+    return legacyRenderSubtreeIntoContainer(null, element, container, true, callback,);
+  },
+  render(element: React$Element<any>, container: DOMContainer, callback: ?Function,) {
+    return legacyRenderSubtreeIntoContainer(null, element, container, false, callback,);
+  },
+  // ...
+};
+```
 
 ### LifeCycle / Hooks Management
+![lifecycle](../../assets/img/interview-react-lifecycle.png)
 
 ### `setState()`
 async, batch, trigger `update` & `rerender` (if `shouldComponentUpdate` is not optimized)
@@ -91,12 +138,148 @@ componentDidMount() {
 
 ### React patch, Event System
 
-### Reconciliation & Render
-
 ### Fiber
+> [英文架构分析](https://github.com/acdlite/react-fiber-architecture)
+
+Fiber 代表一种工作量单位 (unit of work) / 时间切片 (time slicing).
+
+> A Fiber is work on a Component that needs to be done or was done. There can be more than one (but at most two, current and alternate) per component. (Component._reactInternalFiber)
+current fiber will be replaced by alternate after update
+
+关键属性 (省略部分i)
+```ts
+type Fiber = { // 双向链表结构
+  tag: TypeOfWork,
+  key: null | string, // Unique identifier of this child.
+  type: any,   // The function/class/module associated with this fiber
+  stateNode: any,  // local state associated with the fiber
+  
+  /* the Fiber that the result of this fiber process should be merged to */
+  return: Fiber|null,         //  parent node
+  child: Fiber|null,          //  first child node
+  sibling: Fiber|null,        //  sibling node
+
+  // Input is the data coming into process this fiber. Arguments. Props.
+  pendingProps: any, // This type will be more specific once we overload the tag.
+  memoizedProps: any, // The props used to create the output.
+  
+  // A queue of state updates and callbacks.
+  updateQueue: UpdateQueue<any> | null,
+  memoizedState: any, // The state used to create the output
+
+  // Effect
+  effectTag: TypeOfSideEffect,
+  nextEffect: Fiber|null,   // next node in singly linked list of effects
+  firstEffect: Fiber|null,
+  lastEffect: Fiber|null,   // head & tail fiber with side-effect within this subtree  
+
+  alternate: Fiber|null,  // pooled version of a fiber
+  mode: TypeOfMode,
+  // A linked-list of contexts that this fiber depends on
+  firstContextDependency: ContextDependency<mixed> | null,
+}
+enum TypeOfWork {
+  IndeterminateComponent=0, // Before we know whether it is functional or class
+  FunctionalComponent=1,
+  ClassComponent=2,         // inherit from React Component
+  HostRoot=3,     // Root of a host tree by ReactDOM/ReactNative.render().
+  HostPortal=4,     // A subtree. Could be an entry point to a different renderer.
+  HostComponent=5,     // injected by host environment, e.g. DOM in browser
+  HostText=6,
+  CoroutineComponent=7,
+  CoroutineHandlerPhase=8,
+  YieldComponent=9,
+  Fragment=10,
+  Mode=11,
+}
+// TypeOfSideEffect
+export const NoEffect = /*              */ 0b00000000000;
+export const PerformedWork = /*         */ 0b00000000001;
+// You can change the rest (and add more).
+export const Placement = /*             */ 0b00000000010;
+export const Update = /*                */ 0b00000000100;
+export const PlacementAndUpdate = /*    */ 0b00000000110;
+export const Deletion = /*              */ 0b00000001000;
+export const ContentReset = /*          */ 0b00000010000;
+export const Callback = /*              */ 0b00000100000;
+export const DidCapture = /*            */ 0b00001000000;
+export const Ref = /*                   */ 0b00010000000;
+export const Snapshot = /*              */ 0b00100000000;
+// Update & Callback & Ref & Snapshot
+export const LifecycleEffectMask = /*   */ 0b00110100100;
+// Union of all host effects
+export const HostEffectMask = /*        */ 0b00111111111;
+export const Incomplete = /*            */ 0b01000000000;
+export const ShouldCapture = /*         */ 0b10000000000;
+enum Priority {
+  NoWork=0, // No work is pending.
+  SynchronousPriority=1, // For controlled text inputs. Synchronous side-effects.
+  TaskPriority=2, // including animation (by requestAnimationFrame), Completes at the end of the current tick.
+  HighPriority=3, // completed by requestIdleCallback, Interaction that needs to complete pretty soon to feel responsive
+  LowPriority=4, // can be delayed, such as data fetching, or result from updating stores.
+  OffscreenPriority=5, // Won't be visible but do the work in case it becomes visible.
+}
+```
+
+#### 特点
+- 把未完成的工作中可中断的任务拆分, Cooperative scheduling
+- 对正在做的工作确定并根据情况变化调整优先级
+- 复用已完成的单位, 或重做
+- 丢弃不需要再做的任务
+- 增量渲染, 可控更新
+- 父子任务间切换
+- 不同类型的更新有优先级
+- 并发
+
+### Reconciliation & Render
+![reconciler](../../assets/img/interview-react-reconciler.png)
+
+> [React16 源码之 React Fiber 架构](https://github.com/HuJiaoHJ/blog/issues/7#)<br>
 > [参考司徒正美](https://zhuanlan.zhihu.com/p/37095662) <br>
 > [理解 React Fiber 架构](https://libin1991.github.io/2019/07/01/%E7%90%86%E8%A7%A3-React-Fiber-%E6%9E%B6%E6%9E%84/)
-> [React16 源码之 React Fiber 架构](https://github.com/HuJiaoHJ/blog/issues/7#)
+
+以下为引用内容
+
+把渲染更新过程拆分成多个子任务，每次只做一小部分，做完看是否还有剩余时间，如果有继续下一个任务；如果没有，挂起当前任务，将时间控制权交给主线程，等主线程不忙的时候在继续执行。 这种策略叫做 Cooperative Scheduling（合作式调度），操作系统常用任务调度策略之一。
+
+合作式调度主要就是用来分配任务的，当有更新任务来的时候，不会马上去做 Diff 操作，而是先把当前的更新送入一个 Update Queue 中，然后交给 Scheduler 去处理，Scheduler 会根据当前主线程的使用情况去处理这次 Update。
+
+为了实现这种特性，使用了 `requestIdleCallback` API。对于不支持这个 API 的浏览器，用 ReactScheduler
+
+在上面我们已经知道浏览器是一帧一帧执行的，在两个执行帧之间，主线程通常会有一小段空闲时间，requestIdleCallback 可以在这个空闲期（Idle Period）调用空闲期回调（Idle Callback），执行一些任务。
+
+- 低优先级任务由 requestIdleCallback 处理；
+- 高优先级任务，如动画相关的由 requestAnimationFrame 处理；
+- requestIdleCallback 可以在多个空闲期调用空闲期回调，执行任务；
+- requestIdleCallback 方法提供 deadline，即任务执行限制时间，以切分任务，避免长时间执行，阻塞 UI 渲染而导致掉帧；
+
+这个方案看似确实不错，但是怎么实现可能会遇到几个问题：
+
+- 如何拆分成子任务？
+- 一个子任务多大合适？
+- 怎么判断是否还有剩余时间？
+- 有剩余时间怎么去调度应该执行哪一个任务？
+- 没有剩余时间之前的任务怎么办？
+
+接下里整个 Fiber 架构就是来解决这些问题的。
+
+react 本身为了提高页面渲染性能，推出了一些最佳实践
+
+1. vdom 减少对 dom 的直接操作
+2. 无状态组件 减少组件内部状态和复杂度
+3. shouldComponentUpdate 减少 diff 的次数
+4. immutable 减少 diff 的成本
+
+#### 补充
+操作系统常用任务调度策略：先来先服务（FCFS）调度算法、短作业（进程）优先调度算法（SJ/PF）、最高优先权优先调度算法（FPF）、高响应比优先调度算法（HRN）、时间片轮转法（RR）、多级队列反馈法。
+
+#### React runtime instances
+1. DOM
+1. Elements
+2. Instances (generate from elements, fiber tree inside)
+   - fiber tree (current context)
+   - workInProgress tree (temp, snapshot to be updated)
+   - effect list (temp, merged side effect list from workInProgress)
 
 ### Performance
 

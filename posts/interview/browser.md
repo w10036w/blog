@@ -69,10 +69,16 @@ DOM -> CSSOM -> Render Tree -> Layout -> Paint -> Composite
 
 重排必定会引发重绘，但重绘不一定会引发重排。
 
-作者：谢小飞
-链接：https://juejin.im/post/5df1e312f265da33d039d06d
-来源：掘金
-著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+浏览器一帧内的工作
+
+![one frame](../../assets/img/interview-browser-frame.png)
+- 处理用户的交互
+- JS 解析执行 (按宏任务微任务)
+- 帧开始。窗口尺寸变更，页面滚去等的处理
+- rAF(requestAnimationFrame)
+- 布局
+- 绘制
+
 
 ## 浏览器缓存
 > https://www.geekjc.com/post/5d37f67480c18e4071ccc440

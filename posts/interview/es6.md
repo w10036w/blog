@@ -475,6 +475,7 @@ F: `document.all` 具有其性质
 [实现](https://github.com/forthealllight/promise-achieve/blob/master/myPromise.js)<br>
 [实现2](https://juejin.im/post/5b83cb5ae51d4538cc3ec354)
 
+![promise](../../assets/img/interview-es6-promise.png)
 实现要点
 - status = 'pending' | 'resolved' | 'rejected';
 - value = undefined, reason = undefined, 分别在 resolve / reject 后赋值给参数

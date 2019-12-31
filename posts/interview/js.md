@@ -212,29 +212,22 @@ function add(n1, n2, n3){
   console.log(n2 === arguments[1]) // true
 }
 ```
-## ==, ===
-
+## ==, ===, Object.is()
 "==" 两边的类型是否相同，相同的话就比较值的大小，例如 1==2，返回 false
  判断的是否是 null 和 undefined，是的话就返回 true
  判断的类型是否是 String 和 Number，是的话，把 String 类型转换成 Number，再进行比较
 判断其中一方是否是 Boolean，是的话就把 Boolean 转换成 Number，再进行比较
 如果其中一方为 Object，且另一方为 String、Number 或者 Symbol，会将 Object 转换成字符串，再进行比较
-
-因此
-
 ```js
 []==![] // [] -> 0, ![] -> false -> 0
 {a: 1} == "[object Object]") //true
-
 Object.is(NaN, NaN) // true
 Object.is(+0, -0) // false
 
 ```
 
 ## 计算
-
 ### 位运算符 (bitwise operator)
-
 [我们要不要在 JS 使用二进制位运算？](https://juejin.im/entry/57317b2679df540060d5d6c2)
 首先对性能基本没有负面影响, 纯数字计算更快, 但只能对 Number 使用
 
@@ -1246,6 +1239,20 @@ console.log('macro2')
 - 闭包
 - 脱离 DOM 的引用 (可使用 WeakMap 避免)
 
+补充: 三色标记法
+
+传统 Mark-Sweep 的一个改进，它是一个并发的 GC 算法。
+1. 首先创建三个集合：白、灰、黑。
+1. 将所有对象放入白色集合中。
+1. 然后从根节点开始遍历所有对象（注意这里并不递归遍历），把遍历到的对象从白色集合放入灰色集合。
+1. 之后遍历灰色集合，将灰色对象引用的对象从白色集合放入灰色集合，之后将此灰色对象放入黑色集合
+1. 重复 4 直到灰色中无任何对象
+1. 通过 write-barrier 检测对象有变化，重复以上操作
+1. 收集所有白色对象（垃圾）
+
+这个算法可以实现 “on-the-fly”，也就是在程序执行的同时进行收集，并不需要暂停整个程序。
+但可能程序中的垃圾产生的速度会大于垃圾收集的速度，这样会导致程序中的垃圾越来越多无法被收集掉。
+
 ### 依赖注入
 
 ## 库源码分析
@@ -1360,6 +1367,17 @@ a = new Proxy({}, {
 // 数组的 toString 接口默认调用数组的 join 方法，重写 join 方法
 a=[1,2,3];
 a.join=a.shift
+```
+
+Q: `add(1)==1 && add(1)(2)==3 && add(1)(2)(3)==6`
+
+A:
+```js
+add = a => {
+  var fn = b => add(a + b)
+  fn.toString = () => a
+  return fn
+}
 ```
 
 Q: `React` 组件实例对象结构
