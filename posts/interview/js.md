@@ -259,6 +259,7 @@ console.log(3 & 1)    // 1
 ```js
 console.log(~~ 6.83)    // 6
 console.log(6.83 >> 0)  // 6
+console.log(6.83 >> 1)  // 3 /2 后取整
 console.log(6.83 << 0)  // 6
 console.log(6.83 | 0)   // 6, 或随机数取整
 // >>>不可对负数取整

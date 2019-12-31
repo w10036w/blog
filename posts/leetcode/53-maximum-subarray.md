@@ -78,7 +78,7 @@ var maxSubArray = function(nums) {
 }
 function maxSubArr(nums, l, r) {
   if (l===r) return nums[l]
-  var mid=(l+r)>>>1, suml=0, sumr=0, maxl=-Infinity, maxr=-Infinity
+  var mid=(l+r)>>1, suml=0, sumr=0, maxl=-Infinity, maxr=-Infinity
   for (var i=mid; i>=l; i--) {
     suml+=nums[i]
     maxl=Math.max(maxl, suml)

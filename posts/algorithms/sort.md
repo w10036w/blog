@@ -64,14 +64,34 @@ function quickSort(arr, l=0, r=arr.length-1) {
 - 若左右数组有一个为空，那么此时另一个数组一定大于temp中的所有元素，直接将其所有元素加入temp
 ```js
 
+// best
+function mergeSort(arr, l=0, r=arr.length-1) {
+  if (l>=r) return arr; // !!! not return nothing
+  var m=(l+r)>>1
+  mergeSort(arr, l, m)
+  mergeSort(arr, m+1, r)
+  merge(arr, l, m, r)
+  return arr
+}
+function merge(arr, l, m, r) {
+  var tmp=[], il=l, ir=m+1, i=0
+  while (il<=m && ir<=r) {
+    if (arr[il]<arr[ir]) tmp[i++]=arr[il++]
+    else tmp[i++]=arr[ir++]
+  }
+  while(il<=m) tmp[i++]=arr[il++]
+  while(ir<=r) tmp[i++]=arr[ir++]
+  i=0
+  for(var j=l; j<=r; j++) arr[j]=tmp[i++]
+}
 // easy, space-consuming
 function mergeSort(arr) {
   if (arr.length < 2) {
     return arr;
   }
-  const mid = Math.floor(arr.length / 2);
-  const arr1 = arr.slice(0, mid);
-  const arr2 = arr.slice(mid);
+  const m = arr.length>>1;
+  const arr1 = arr.slice(0, m);
+  const arr2 = arr.slice(m);
   return merge(mergeSort(arr1), mergeSort(arr2));
 }
 function merge(arr1, arr2) {
@@ -81,31 +101,6 @@ function merge(arr1, arr2) {
     else temp.push(arr2.shift())
   }
   return [...temp, ...arr1, ...arr2]
-}
-
-// best
-function mergeSort(arr, l=0, r=arr.length-1, tmp=[]) {
-  if (l<r) {
-    const m = (l+r)/2>>0
-    mergeSort(arr, l, m, tmp)
-    mergeSort(arr, m+1, r, tmp)
-    merge(arr, l, r, tmp)
-  }
-  return arr
-}
-function merge(arr, l, r, tmp) {
-  const m = (l+r)/2>>0
-  let i = 0, il = l, ir = m+1 // indexLeft, indexRight
-  while (il<=m && ir<=r) {
-    if (arr[il] < arr[ir]) tmp[i++] = arr[il++]
-    else tmp[i++] = arr[ir++]
-  }
-  while (il<=m) tmp[i++] = arr[il++]
-  while (ir<=r) tmp[i++] = arr[ir++]
-  i = 0
-  for (let ia=l; ia<=r; ia++) { // indexArr
-    arr[ia] = tmp[i++]
-  }
 }
 ```
 
