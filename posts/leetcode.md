@@ -19,11 +19,12 @@
 - [13. Roman to Integer](leetcode/13-roman-to-integer.md)
 - [15. 3Sum](leetcode/15-3sum.md)
 - [18. 4sum](leetcode/18-4sum.md)
-- [23. Merge k Sorted Lists](leetcode/23-merge-k-sorted-lists.md)
 - [28. Implement strStr()](leetcode/28-implement-strstr.md)
 - [31. Next Permutation](leetcode/31-next-permutation.md)
 - [66. Plus One](leetcode/66-plus-one.md)
+- [88. Merge Sorted Array](leetcode/88-merge-sorted-array.md)
 - [122. Best Time to Buy and Sell Stock II](leetcode/122-best-time-to-buy-and-sell-stock-ii.md)
+- [189. Rotate Array](leetcode/189-rotate-array.md)
 - [287. Find the Duplicate Number](leetcode/287-find-the-duplicate-number.md)
 - [349. Intersection of Two Arrays](leetcode/349-intersection-of-two-arrays.md)
 - [670. Maximum Swap](leetcode/670-maximum-swap.md)
@@ -34,6 +35,7 @@
 - [26. Remove Duplicates from Sorted Array](leetcode/26-remove-duplicates-from-sorted-array.md)
 - [27. Remove Element](leetcode/27-remove-element.md)
 - [206. Reverse Linked List](leetcode/206-reverse-linked-list.md)
+- [344. Reverse String](leetcode/344-reverse-string.md)
 
 ## Sort
 - [75. Sort Colors](leetcode/75-sort-colors.md)
@@ -41,11 +43,12 @@
 ## Hash Table / Dict
 - [36. Valid Sudoku](leetcode/36-valid-sudoku.md)
 - [49. Group Anagrams](leetcode/49-group-anagrams.md)
+- [205. Isomorphic Strings](leetcode/205-isomorphic-strings.md)
 - [211. Add and Search Word - Data structure design](leetcode/211-add-and-search-word.md)
 - [387. First Unique Character in a String](leetcode/387-first-unique-char-in-string.md)
 - [720. Longest Word in Dictionary](leetcode/720-longest-word-in-dict.md)
 
-## [Backtracking / Deep First Search (DFS)](algorithms/backtracking.md)
+## DFS (Deep First Search)+[Backtracking](algorithms/backtracking.md)
 - [22. Generate Parentheses](leetcode/22-generate-parentheses.md)
 - [39. Combination Sum](leetcode/39-combination-sum.md)
 - [40. Combination Sum II](leetcode/40-combination-sum-ii.md)
@@ -61,16 +64,13 @@
 - [129. Sum Root to Leaf Numbers](leetcode/129-sum-root-to-leaf-numbers.md)
 - [131. Palindrome Partitioning](leetcode/131-palindrome-partitioning.md)
 - [216. Combination Sum III](leetcode/216-combination-sum-iii.md)
-- [306. Additive Number](leetcode/306-additive-number.md)
+- [306. Additive Number](leetcode/306-additive-number.md) !!
 - [401. Binary Watch](leetcode/401-binary-watch.md)
 - [784. Letter Case Permutation](leetcode/784-letter-case-permuatation.md)
 
-## Binary Search
-- [33. Search in Rotated Sorted Array](leetcode/33-search-in-rotated-sorted-arry.md)
-- [109. Convert Sorted List to Binary Search Tree](leetcode/109-convert-sorted-list-to-bst.md)
-
 ## LinkedList
 - [21. Merge Two Sorted Lists](leetcode/21-merge-two-sorted-lists.md)
+- [23. Merge k Sorted Lists](leetcode/23-merge-k-sorted-lists.md)
 - [141. Linked List Cycle](leetcode/141-linked-list-cycle.md)
 - [142. Linked List Cycle II](leetcode/142-linked-list-cycle-ii.md)
 - [143. Reorder List](leetcode/143-reorder-list.md) !!!
@@ -82,6 +82,22 @@
 
 ## Tree
 - [94. Binary Tree Inorder Traversal](leetcode/94-binary-tree-inorder-traversal.md)
+- [102. Binary Tree Level Order Traversal](leetcode/102-binary-tree-level-order-traversal.md)
+- [103. Binary Tree Zigzag Level Order Traversal](leetcode/103-binary-tree-zigzag-level-order-traversal.md) !!!
+- [104. Maximum Depth of Binary Tree](leetcode/104-maximum-depth-of-binary-tree.md)
+- [107. Binary Tree Level Order Traversal II](leetcode/107-binary-tree-level-order-traversal-ii.md)
+- [111. Minimum Depth of Binary Tree](leetcode/111-minimum-depth-of-binary-tree.md)
+- [199. Binary Tree Right Side View](leetcode/199-binary-tree-right-side-view.md)
+- [226. Invert Binary Tree](leetcode/226-invert-binary-tree.md)
+- [236. Lowest Common Ancestor of a Binary Tree](leetcode/236-lowest-common-ancestor-of-a-binary-tree.md) !!!
+- [314. Binary Tree Vertical Order Traversal](leetcode/314-binary-tree-vertical-order-traversal.md)
+- [572. Subtree of Another Tree](leetcode/572-substree-of-another-tree.md)
+- [637. Average of Levels in Binary Tree](leetcode/637-average-of-levels-in-binary-tree.md)
+
+## Binary Search
+- [33. Search in Rotated Sorted Array](leetcode/33-search-in-rotated-sorted-arry.md)
+- [109. Convert Sorted List to Binary Search Tree](leetcode/109-convert-sorted-list-to-bst.md)
+- [235. Lowest Common Ancestor of a Binary Search Tree](leetcode/235-lowest-common-ancestor-of-a-binary-search-tree.md)
 
 ## RegExp
 - [771. Jewels and Stones](leetcode/771-jewel-and-stones.md)
@@ -104,6 +120,7 @@
 - [17. Letter Combinations of a Phone Number](leetcode/17-letter-combinations-of-a-phone-number.md)
 - [416. Partition Equal Subset Sum](leetcode/419-partition-equal-subset-sum.md)
 - [980. Unique Paths III (yet)](leetcode/980-unique-paths-iii.md)
+- [1057. Campus Bikes](leetcode/1057-campus-bikes.md)
 
 ## Archived
 - [Add 2 Numbers](leetcode/add2numbers.md)
@@ -116,6 +133,8 @@
 - [58. Length of Last Word](leetcode/58-length-of-last-word.md)
 - [89. Gray Code (meaningless)](https://leetcode.com/problems/gray-code)
 - [595. Big Countries (MySQL)](https://leetcode.com/problems/big-countries)
+- [812. Largest Triangle Area (google)](leetcode/812-largest-triangle-area.md)
 
 ## Reference
 1. [JS-paopao2](https://github.com/paopao2/leetcode-js)
+2. [JS-azl](https://github.com/azl397985856/leetcode)
