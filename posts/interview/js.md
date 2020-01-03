@@ -711,6 +711,7 @@ document.addEventListener('DOMContentLoaded', function() {
   })
 })
 ```
+
 数组乱序: 从最后一个元素始 随机选一个元素,交换
 ```js
 function disorder(arr) {
@@ -748,6 +749,11 @@ p.then(responseText => {
   console.log(new Error(status));
 })
 ```
+
+
+TODO
+- [ ] 实现完全二叉树
+
 [图片懒加载](https://github.com/ConardLi/awesome-coding-js/blob/master/JavaScript/%E5%9B%BE%E7%89%87%E6%87%92%E5%8A%A0%E8%BD%BD.md)
 ## 监听图片高度
 图片，用一个其他属性存储真正的图片地址：

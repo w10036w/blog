@@ -59,17 +59,46 @@ DOM -> CSSOM -> Render Tree -> Layout -> Paint -> Composite
 
 `回流, 重排(reflow)`: **构建布局阶段**, 浏览器为了重新渲染页面的需要而进行的重新计算元素的几何大小和位置的，他的开销是非常大的，回流可以理解为渲染树需要重新进行计算，一般最好触发元素的重构，避免元素的回流；比如通过通过添加类来添加 css 样式，而不是直接在 DOM 上设置，当需要操作某一块元素时候，最好使其脱离文档流，这样就不会引起回流了，比如设置 position：absolute 或者 fixed，或者 display：none，等操作结束后在显示。
 
-触发重排的条件：任何页面布局和几何属性的改变都会触发重排：
+### 何时触发回流和重绘
+#### 何时发生回流
 - 页面渲染初始化 (无法避免)
 - 添加或删除可见的 DOM 元素
-- 元素位置的改变，或者使用动画
-- 元素尺寸的改变 —— 大小，外边距，边框
-- 浏览器窗口尺寸的变化
-- 填充内容的改变，比如文本的改变或图片大小改变而引起的计算值宽度和高度的改变
+- 元素的位置变化，或者使用动画
+- 元素的尺寸变化（包括外边距、内边框、边框大小、高度和宽度等）
+- 内容 (文本, 图片) 变化, 引起的计算值宽度和高度的改变
+- 浏览器的窗口尺寸变化, 因为回流是根据视口的大小来计算元素的位置和大小
 
-重排必定会引发重绘，但重绘不一定会引发重排。
+#### 何时发生重绘（回流一定会触发重绘）
+当页面中元素样式的改变并不影响它在文档流中的位置时（例如：color、background-color、visibility 等），浏览器会将新样式赋予给元素并重新绘制它，这个过程称为重绘。
+有时即使仅仅回流一个单一的元素，它的父元素以及任何跟随它的元素也会产生回流。现代浏览器会对频繁的回流或重绘操作进行优化，浏览器会维护一个队列，把所有引起回流和重绘的操作放入队列中，如果队列中的任务数量或者时间间隔达到一个阈值的，浏览器就会将队列清空，进行一次批处理，这样可以把多次回流和重绘变成一次。你访问以下属性或方法时，浏览器会立刻清空队列：
 
-浏览器一帧内的工作
+- clientWidth、clientHeight、clientTop、clientLeft
+- offsetWidth、offsetHeight、offsetTop、offsetLeft
+- scrollWidth、scrollHeight、scrollTop、scrollLeft
+- width、height
+- getComputedStyle()
+- getBoundingClientRect()
+
+以上属性和方法都需要返回最新的布局信息，因此浏览器不得不清空队列，触发回流重绘来返回正确的值。因此，我们在修改样式的时候，**最好避免使用上面列出的属性，他们都会刷新渲染队列。** 如果要使用它们，最好将值缓存起来。
+### 如何避免触发回流和重绘
+CSS
+
+- 避免使用 table 布局。
+- 尽可能在 DOM 树的最末端改变 class。
+- 避免设置多层内联样式。
+- 将动画效果应用到 position 属性为 absolute 或 fixed 的元素上
+- 避免使用 CSS 表达式（例如：calc()）
+- CSS3 硬件加速（GPU 加速）
+
+JavaScript
+
+- 避免频繁操作样式，最好一次性重写 style 属性，或者将样式列表定义为 class 并一次性更改 class 属性
+- 避免频繁操作 DOM，创建一个 documentFragment，在它上面应用所有 DOM 操作，最后再把它添加到文档中
+- 也可以先为元素设置 display: none，操作结束后再把它显示出来。因为在 display 属性为 none 的元素上进行的 DOM 操作不会引发回流和重绘
+- 避免频繁读取会引发回流 / 重绘的属性，如果确实需要多次使用，就用一个变量缓存起来
+- 对具有复杂动画的元素使用绝对定位，使它脱离文档流，否则会引起父元素及后续元素频繁回流
+
+### 浏览器一帧内的工作
 
 ![one frame](../../assets/img/interview-browser-frame.png)
 - 处理用户的交互
@@ -78,7 +107,6 @@ DOM -> CSSOM -> Render Tree -> Layout -> Paint -> Composite
 - rAF(requestAnimationFrame)
 - 布局
 - 绘制
-
 
 ## 浏览器缓存
 > https://www.geekjc.com/post/5d37f67480c18e4071ccc440
@@ -535,7 +563,7 @@ CSS Media Queries
 <hr>
 
 ## 性能优化 performance
-- DNS 预解析: dns-prefetch
+- DNS 预解析: dns-prefetch, 各种 link
 - 浏览器缓存: html 协商缓存, css/js/img 强缓存 + hash (cache-control + etag)
 - 使用 http2: 多路复用, 压缩 head
 - 预加载等 `Link` 特性 (preload, prefetch, subresouce)

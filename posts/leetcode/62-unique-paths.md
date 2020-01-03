@@ -24,16 +24,14 @@ Follow up: [63. Unique Paths II](https://leetcode.com/problems/unique-paths-ii/)
  * @return {number}
  */
 var uniquePaths = function(m, n) {
-    if (m===1 || n===1) return 1
-  let M = (new Array(m)).fill([])
-  let i = 0
-  let j = 0
-  while(++i<m) {
-    while(++j<n) {
+  if(m===1||n===1) return 1
+  var dp=[]
+  for(var i=0;i<m;i++) {
+    dp[i]=[]
+    for(var j=0;j<n;j++) {
       M[i][j] = (M[i-1][j]||1) + (M[i][j-1]||1)
     }
-    j = 0 // ! DON'T forget reset j in the end
   }
   return M[m-1][n-1]
-};
+}
 ```

@@ -14,56 +14,69 @@ Input: ")()())"
 Output: 4
 Explanation: The longest valid parentheses substring is "()()"
 ```
-Solution DP
+
+## Solution
+黏连型 DP [参考](https://blog.csdn.net/accepthjp/article/details/52439449)
+
+dp[i] 表示以 i 为结尾的最长合法 **连续长度**，默认为0, 只有在 s[i]===')' 时变化
+
+如果 `s[i-1-dp[i-1]]=='('`，说明当前位置可以和 i-1-dp[i-1] 位置匹配，dp[i]=dp[i-1]+2;
+
+然后还要加上匹配位置之前的最长长度 dp [i]+=dp [i-dp [i]];
 
 ```js
-// refer to https://blog.csdn.net/accepthjp/article/details/52439449
-/**
- * dp[i] represents the longest string length that ends with s[i]
- * if s[i] === '(' continue
- *   the previous lenght is dp[i], so x = s[i - dp[i-1] -1 ] means '...x(length = dp[i-1])i', if x === '(', then dp[i] = dp[i-1]+2
- * whatever the previous result is, remember to sum the result of 0...i-dp[i]
- */
-var longestValidParentheses = function(s) {
-  let l = s.length
-  if (l<=1) return 0
-  let res = 0
-  let dp = new Array(l).fill(0)
-  let i = 0
+var longestValidParentheses=function(s) {
+  var l=s.length, dp=new Array(l).fill(0), i=0
   while (++i<l) {
-    if (s[i]==='(') continue; // skip '(' because it is always 0
-    if (s[i-1-dp[i-1]] == '(') dp[i] = dp[i-1]+2
-    if (i>=dp[i]) dp[i] += dp[i-dp[i]]
-    res = Math.max(res, dp[i])
+    if (s[i]==='(') continue
+    if (s[i-1-dp[i-1]] == '(') dp[i]=dp[i-1]+2
+    dp[i]+=dp[i-dp[i]]||0
+    res=Math.max(res, dp[i])
   }
   return res
 };
 ```
-
-Solution (stack - get it)
+stack存index + 额外指针
 ```js
 /**
  * @param {string} s
  * @return {number}
  */
-var longestValidParentheses = function(s) {
-  const len = s.length
-  if (len<=1) return 0
-  const stack = []
-  let last = -1
-  let res = 0
-  let i = -1
-  while (++i<len) {
-    if (s[i] === '(') stack.push(i)
+var longestValidParentheses=function(s) {
+  var stack=[], last=-1, res=0, i=-1
+  while (++i<s.length) {
+    if (s[i]==='(') stack.push(i)
     else {
-      if (stack.length===0) last = i
+      if (!stack.length) last=i
       else {
         stack.pop()
-        if (stack.length === 0) res = Math.max(res, i - last)
-        else res = Math.max(res, i - stack[stack.length-1])
+        if (!stack.length) res=Math.max(res, i-last)
+        else res=Math.max(res, i-stack[stack.length-1])
       }
     }
   }
   return res
+};
+```
+遍历两次
+```js
+var longestValidParentheses=function(s) {
+  var q=[], i=-1, r=0, tmp=0
+  while (++i<s.length) {
+    if (s[i]==='(') q.push(1)
+    else {
+      var j=q.lastIndexOf(1)
+      if (j>-1) q[j]=2
+      else q.push(0)
+    }
+  }
+  for (var n of q) {
+    if (n===2) tmp+=2
+    else {
+      r=Math.max(r, tmp)
+      tmp=0
+    }
+  }
+  return Math.max(r, tmp)
 };
 ```

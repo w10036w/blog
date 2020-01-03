@@ -78,6 +78,11 @@ var getPermutation = function(n, k) {
   }
 }
 ```
+recursive
+```js
+var getPermutation = function(n, k) {
+  
+```
 
 JAVA
 ```java

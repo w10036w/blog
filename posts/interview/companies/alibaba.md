@@ -7,3 +7,14 @@
 - 第四轮: 代码面试。这一面的面试可能给你一个在线网站，然后你和你的面试官一起登陆上去，共享 web 页面，然后他给你出题，你来现场写代码伪代码就行，然后你再给他讲一遍你的逻辑就 ok 了。
 - 第五轮: boss 面试。这面是你的主管的主管来面你了，还是先讲项目，然后挑重点的问，不过和二三面明显的区别就是他会问你更高层次的解决方案，不在拘泥于你做的那一点东西，会让你从整体上或者部分整体上讲清楚你项目的解决方案以及你自己的思考 (上面的那三个问题)，会让你尝试给出更好的解决方案，并解释原因。
 - 第六轮: 就是谈人生谈理想谈三观谈薪资啦！
+
+## redmart
+- Tech Stack
+  - Microservices written in Java or Scala using Play Framework and Akka
+  - React or AngularJs for web apps
+  - MongoDB, PostgreSQL, Cassandra for storage
+  - AWS infrastructure, with HAProxy, Nginx, Redis
+  - [Chef](https://www.chef.io/) deployments;
+  - GitHub, Travis CI and JIRA for development tools;
+  - testing with JUnit, ScalaTest, FrisbyJS, Calabash and Selenium
+  - AWS Kinesis, Spark and AWS Redshift for our data infrastructure

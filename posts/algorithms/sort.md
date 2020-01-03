@@ -16,9 +16,8 @@ function quickSort(arr) {
 }
 // best
 function quickSort(arr, l=0, r=arr.length-1) {
-  if (l>=r) return
-  const p = arr[l]
-  let [il, ir] = [l, r]
+  if (l>=r) return // FORGET
+  var p = arr[l], il=l, ir=r
   while (il<ir) {
     while(il<ir && arr[ir]>=p) ir--
     arr[il] = arr[ir]

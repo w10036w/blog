@@ -25,6 +25,7 @@
 - [88. Merge Sorted Array](leetcode/88-merge-sorted-array.md)
 - [122. Best Time to Buy and Sell Stock II](leetcode/122-best-time-to-buy-and-sell-stock-ii.md)
 - [189. Rotate Array](leetcode/189-rotate-array.md)
+- [215. Kth Largest Element in an Array](leetcode/215-kth-largest-element-in-an-array.md)
 - [287. Find the Duplicate Number](leetcode/287-find-the-duplicate-number.md)
 - [349. Intersection of Two Arrays](leetcode/349-intersection-of-two-arrays.md)
 - [670. Maximum Swap](leetcode/670-maximum-swap.md)
@@ -96,6 +97,7 @@
 
 ## Binary Search
 - [33. Search in Rotated Sorted Array](leetcode/33-search-in-rotated-sorted-arry.md)
+- [34. Find First and Last Position of Element in Sorted Array](leetcode/34-find-first-and-last-position-of-element-in-sorted-array.md)
 - [109. Convert Sorted List to Binary Search Tree](leetcode/109-convert-sorted-list-to-bst.md)
 - [235. Lowest Common Ancestor of a Binary Search Tree](leetcode/235-lowest-common-ancestor-of-a-binary-search-tree.md)
 
@@ -103,6 +105,7 @@
 - [771. Jewels and Stones](leetcode/771-jewel-and-stones.md)
 
 ## DP
+- [5. Longest Palindromic Substring](leetcode/5-longest-palindromic-substring.md)
 - [32. Longest Valid Parentheses](leetcode/32-longest-valid-parentheses.md)
 - [53. Maximum Subarray !!](leetcode/53-maximum-subarray.md)
 - [62. Unique Paths !!](leetcode/62-unique-paths.md)

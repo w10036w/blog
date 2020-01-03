@@ -43,7 +43,7 @@ var uniquePathsWithObstacles = function(obstacleGrid) {
   if (n===1) return obstacleGrid.every(e => e[0]===0)) ? 1 : 0
   let i = -1
   let j = -1
-  const M = (new Array(m)).fill([])
+  const M = (new Array(m)).fill([]) // todo
   const gRes = (a,b, M) => {
     if (a<0||b<0) return 0
     if (obstacleGrid[a][b] ===1) return 0
