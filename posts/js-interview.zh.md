@@ -152,3 +152,17 @@
 不管是刚入门的小白，还是才高八斗的资深开发、架构，你都需要从这里开始
 
 掌握自动化部署技能
+
+interesting math questions for frontend
+> https://performancejs.com/post/hde6d32/The-Best-Frontend-JavaScript-Interview-Questions-(Written-by-a-Frontend-Engineer
+
+`missing`
+
+Takes an unsorted array of unique numbers (ie. no repeats) from 1 through some number n, and returns the missing number in the sequence (there are either no missing numbers, or exactly one missing number). Can you do it in O(N) time? Hint: There’s a clever formula you can use.
+```js
+missing([])                         // undefined
+missing([1, 4, 3])                  // 2
+missing([2, 3, 4])                  // 1
+missing([5, 1, 4, 2])               // 3
+missing([1, 2, 3, 4])               // undefined
+```

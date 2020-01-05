@@ -128,7 +128,7 @@ var num4 = parseInt("10", 16);  // 16（十六进制）
 JS / 双精度注意事项
 - `指数 / 阶码 有正负` 如 2^4, 2^-4, 因此表示范围为 `-1023~1023`(2^10-1), 偏移量为 1023
 - 除 0 外, 尾数必始于 1 所以 `尾数省略了第一位 1`
-- `最大值最小值` 与指数部分有关, 因为此时尾数必为 `1.111111...`; `指数` 最大最小值范围为 `-2^1023 ~ +2^1023`, 因此最大值为 `0b1.111111...(约等于1.9{15})*2^1023 = Number.MAX_VALUE`
+- `最大值最小值` 与指数部分有关, 因为此时尾数必为 `1.111111...`; `指数` 最大最小值范围为 `-2^1023 ~ +2^1023`, 因此最大值为 `0b1.111111...(约等于1.9{15})*2^1023 = 2^1024-1 = Number.MAX_VALUE = Infinity-1`
 - `精确度` 与有效数字/尾数 `位数` 有关, 2^(52+1)=9007199254740992, 16位, 意味着最多能有16位有效数字, 确保的精度为 `15~16` 位, 因此在表示整数时, 最大精确 "安全值" 为 2^53-1 = Number.MAX_SAFE_INTEGER
 
 ```js
@@ -371,7 +371,7 @@ if (Object.prototype.toString.call(fn) != "[object Function]") {
   throw new TypeError(fn + " is not a function");
 }
 ```
-Array.`map`
+#### map
 ```js
 Array.prototype.map = function(fn, thisArg) {
   const arr = this
@@ -387,7 +387,7 @@ Array.prototype.map = function(fn, thisArg) {
   return res
 }
 ```
-Array.`reduce`
+#### reduce
 ```js
 // if reduceRight, amend i
 Array.prototype.reduce = function(fn, initValue) {
@@ -405,7 +405,7 @@ Array.prototype.reduce = function(fn, initValue) {
   return r
 }
 ```
-Array.`filter`
+#### filter
 ```js
 Array.prototype.filter = function(fn, thisArg) {
   const arr = this
@@ -419,7 +419,7 @@ Array.prototype.filter = function(fn, thisArg) {
   return res
 }
 ```
-Array.`flat` / Array.`flatten`
+#### flat / flatten
 ```js
 flat = arr => {
   // if allow reduce
@@ -438,17 +438,15 @@ flat = arr => {
 }
 ```
 
-### lodash / underscore
+### curry 柯里化
 !!! `curry` 帮助创建 偏函数 [Partial function](https://www.liaoxuefeng.com/wiki/1016959663602400/1017454145929440)
 ```js
-// curry
 curry = (fn, ...args) => args.length>=fn.length
   ? fn(...args)
   : (...args2) => curry(fn, ...args, ...args2)
 
 // ES5 curry
-var curry = function (){
-  var fn = arguments[0]
+var curry = function(fn) {
   if (typeof fn !== 'function') throw new TypeError('')
   var slice = Array.prototype.slice
   var args1 = slice.call(arguments, 1)
@@ -477,6 +475,8 @@ const sum = (a, b=0) => {
 }
 console.log(sum(100,200)(300)(400)())
 ```
+
+### debounce 防抖
 !!! underscore.`debounce`
 > 不管触发了多少次回调，只认最后一次
 ```js
@@ -499,6 +499,8 @@ function debounce(func, wait, immediate) {
   };
 };
 ```
+
+### throttle 节流
 **naive.`throttle`**
 ```js
 var throttle = function(fn, wait){
@@ -512,7 +514,7 @@ var throttle = function(fn, wait){
   }
 }
 ```
-高级 throttle: 定时器+时间戳, 第一次和最后一次都会触发
+debounced throttle: 定时器 + 时间戳, 第一次和最后一次都会触发
 ```js
 function throttle(fn, wait) {
   let pre = 0;
@@ -532,7 +534,6 @@ function throttle(fn, wait) {
   }
 }
 ```
-
 **underscore.`throttle`**
 > 在某段时间内，不管触发了多少次回调，都只认第一次，并在计时结束时给予响应。
 
@@ -583,7 +584,7 @@ function(func, wait, options) {
   return throttled;
 };
 ```
-迭代器 (自 axios)
+### Iterator 迭代器
 ```js
 /**
  * @param {Object|Array} obj The object to iterate
@@ -597,7 +598,7 @@ function forEach(obj, fn) {
   // 如果不是对象，放在数组里。
   if (typeof obj !== 'object') { obj = [obj] }
   // 是数组 则用for 循环，调用 fn 函数。参数类似 Array.prototype.forEach 的前三个参数。
-  if (isArray(obj)) {
+  if (Array.isArray(obj)) {
     // Iterate over array values
     for (var i = 0, l = obj.length; i < l; i++) {
       fn.call(null, obj[i], i, obj);
@@ -607,19 +608,19 @@ function forEach(obj, fn) {
     // 用 for in 遍历对象，但 for in 会遍历原型链上可遍历的属性。
     // 所以用 hasOwnProperty 来过滤自身属性了。
     // 其实也可以用Object.keys来遍历，它不遍历原型链上可遍历的属性。
-    for (var key in obj) {
-      if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        fn.call(null, obj[key], key, obj);
-      }
-    }
+    // for (var key in obj) {
+    //   if (Object.prototype.hasOwnProperty.call(obj, key)) {
+    //     fn.call(null, obj[key], key, obj);
+    //   }
+    // }
     // better
-    // Object.keys(obj).forEach(key => {
-    //   fn.call(void 0, obj[key], key, obj)
-    // })
+    Object.keys(obj).forEach(key => {
+      fn.call(void 0, obj[key], key, obj)
+    })
   }
 }
 ```
-`bigInt Sum` 大数相加
+### BigInt Sum 大数相加
 ```js
 /**
  * @param {string} a
@@ -643,7 +644,7 @@ function sum(a, b) {
   return r
 }
 ```
-`EventEmitter`
+### `EventEmitter`
 ```js
 // notice: chain functions: on, emit, off, once
 class EventEmitter {
@@ -698,11 +699,11 @@ class EventEmitter {
   // nodejs EventEmitter 捕获异常, 使用 domain 模块
 }
 ```
-`delegate` 事件委托
+### `delegate` 事件委托
 ```js
-// hint: 绑定父元素, 通过 `e.target.nodeName` 限定委托元素 e.target
+// 监听父元素, 通过 `e.target.nodeName` 限定委托元素 e.target
 document.addEventListener('DOMContentLoaded', function() {
-  let app = document.getElementById('todo');
+  let app = document.getElementById('parent');
   app.addEventListener('click', function(e) {
     if (e.target && e.target.nodeName === 'LI') {
       let item = e.target;
@@ -712,7 +713,7 @@ document.addEventListener('DOMContentLoaded', function() {
 })
 ```
 
-数组乱序: 从最后一个元素始 随机选一个元素,交换
+### disorder 数组乱序: 从最后一个元素始 随机选一个元素,交换
 ```js
 function disorder(arr) {
   const l = arr.length

@@ -100,6 +100,7 @@
 - [34. Find First and Last Position of Element in Sorted Array](leetcode/34-find-first-and-last-position-of-element-in-sorted-array.md)
 - [109. Convert Sorted List to Binary Search Tree](leetcode/109-convert-sorted-list-to-bst.md)
 - [235. Lowest Common Ancestor of a Binary Search Tree](leetcode/235-lowest-common-ancestor-of-a-binary-search-tree.md)
+- [617. Merge Two Binary Trees](leetcode/617-merge-two-binary-trees.md)
 
 ## RegExp
 - [771. Jewels and Stones](leetcode/771-jewel-and-stones.md)
@@ -115,6 +116,12 @@
 - [121. Best Time to Buy and Sell Stock](leetcode/121-best-time-to-buy-and-sell-stock.md)
 - [309. Best Time to Buy and Sell Stock with Cooldown !!!](leetcode/309-best-time-to-buy-and-sell-stock-with-cooldown.md)
 - [343. Integer Break](leetcode/343-integer-break.md)
+
+## Graph
+- [1202. Smallest String With Swaps](leetcode/1202-smallest-string-with-swaps.md)
+
+## Bitwise
+- [136. Single Number](leetcode/136-single-number.md)
 
 ## Uncategoried
 - [12. Integer to Roman](leetcode/12-integer-to-roman.md)

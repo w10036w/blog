@@ -34,12 +34,22 @@
 - Don’t bash your current, or past, employers
 - better career development
 
-### open problem-solving
-- How do you manage last-minute changes, when deadline is very near?
-
-### KEY FACTORS
-- problem-solving, communication, and team skills
+### KEY FACTORS 核心软技能
+- problem-solving
+- communication
+- team skills
 - summarize key points
+#### open problem-solving
+- manage last-minute changes, when deadline is very near
+- most challenge project
+- most difficult task
+
+#### team skills
+- How do you assign work
+- Do you pre-assign tasks based on proficiencies, or are all members expected to be equally proficient?
+- How do you estimate work
+- Do you find yourself frequently blocked by dependencies from other teams
+- What are your group's best and worst working relationships with other groups in the company
 
 ### question to interviewer
 - I saw your company just did X… how will this impact Y?

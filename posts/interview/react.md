@@ -136,7 +136,30 @@ componentDidMount() {
 
 `forceUpdate` 调用后将会直接进入 componentWillUpdate 阶段，无法拦截，因此在实际项目中应该弃用。
 
-### React patch, Event System
+### BatchedUpdates 批量更新
+可以说，setState是对单个组件的合并渲染，batchedUpdates是对多个组件的合并渲染。合并渲染是 React 最主要的优化手段。
+
+### React patch, Event System 任务系统
+`updateFiberAndView` 是位于一个 `requestIdleCallback` 中，因此它的时间很有限，分给 DFS 部分的时间也更少，因此它们不能做太多事情。这怎么办呢，标记一下，留给 commit 阶段做。于是产生了一个任务系统。
+
+每个 Fiber 分配到新的任务时，就通过位操作，累加一个 sideEffect。sideEffect 字面上是副作用的意思，非常重 FP 流的味道，但我们理解为任务更方便我们的理解。
+
+每个 Fiber 可能有多个任务，比如它要插入 DOM 或移动，就需要加上 Replacement，需要设置样式，需要加上 Update。
+
+怎么添加任务呢？
+```js
+fiber.effectTag |= Update
+```
+怎么保证不会重复添加相同的任务？
+```js
+fiber.effectTag &= ~DidCapture;
+```
+在 commit 阶段，确保其包含了某项任务, 相同性质任务只执行一次, 也可用素数乘除实现
+```js
+if(fiber.effectTag & Update){ /*操作属性*/}
+```
+
+任务参考 `TypeOfSideEffect`
 
 ### Fiber
 > [英文架构分析](https://github.com/acdlite/react-fiber-architecture)

@@ -41,3 +41,7 @@
 
    判定是否为平衡树的条件：将该树重新排序，若不存在重新排序后的二叉树的树高比原来的树小，则判定该树为平衡树。其实就是判断 `2^(height+1)-1 > nodeCount > 2^height -1`
 7. [B 树](jianshu.com/p/75b062bffefb)
+
+## 哈希表 hashtable
+> 参考 https://www.cnblogs.com/yangecnu/p/Introduce-Hashtable.html
+
