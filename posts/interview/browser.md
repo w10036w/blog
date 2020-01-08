@@ -42,6 +42,7 @@
 尽量不使用 document.write()，知道 [passive 的事件监听器](https://zjy.name/passive-event-listeners/)是什么
 
 ## 浏览器渲染
+> [参考](https://juejin.im/post/5da52531518825094e373372)
 
 DOM -> CSSOM -> Render Tree -> Layout -> Paint -> Composite
 - 构建 DOM 树: 1) 页面初次加载, 获取 `html`, 构建 `DOM` 树; 2) js 修改了节点, 再次构建;
@@ -50,10 +51,19 @@ DOM -> CSSOM -> Render Tree -> Layout -> Paint -> Composite
 - 绘制 (paint): 遍历渲染树，调用渲染器的 paint() 方法在屏幕上绘制出节点内容，本质上是一个像素填充的过程。这个过程也出现于回流或一些不影响布局的 CSS 修改引起的屏幕局部重画，这时候它被称为重绘（Repaint）。实际上，绘制过程是在多个层上完成的，这些层我们称为渲染层（RenderLayer）
 - 渲染层合成 (Composite) :多个绘制后的渲染层按照恰当的重叠顺序进行合并，而后生成位图，最终通过显卡展示到屏幕上
 
-`渲染层 (RenderLayer)`: 浏览器创建新渲染层的情况:
-  - DOM 根元素 `document`
-  - CSS `position（relative、fixed、sticky、absolute）`, `opacity < 1`, `filter`, `mask`, `mix-blend-mode` 不为 `normal`, `transform` 非 `none`, `backface-visibility: hidden`, `reflection`, `column-count` 值不为 auto, `column-width` 属性且值不为 auto, `overflow` 不为 `visible`
-  - 当前有对于 `opacity`, `transform`, `fliter`, `backdrop-filter` 应用动画
+`渲染层 (RenderLayer)`: 浏览器创建新渲染层 (开启硬件加速) 的情况:
+- DOM 根元素 `document`
+- CSS: `position 非 static`, `opacity < 1`, `filter`, `mask`, `mix-blend-mode` 不为 `normal`, `transform` 非 `none`, `backface-visibility: hidden`, `reflection`, `column-count` 值不为 auto, `column-width` 属性且值不为 auto, `overflow` 不为 `visible`
+- 当前有对于 `opacity`, `transform`, `fliter`, `backdrop-filter` 应用动画
+
+`合成层 (CompositingLayer)`: 满足某些特殊条件的渲染层，会被浏览器自动提升为合成层。合成层拥有单独的 `GraphicsLayer`, 而其他不是合成层的渲染层，则和其第一个拥有 `GraphicsLayer` 的父层共用一个。
+- 3D transforms：translate3d、translateZ 等
+- video、canvas、iframe 等元素
+- 通过 Element.animate () 实现的 opacity 动画转换
+- 通过 СSS 动画实现的 opacity 动画转换
+- position: fixed
+- 具有 will-change 属性
+- 对 opacity、transform、fliter、backdropfilter 应用了 animation 或者 transition
 
 `重绘(repaint, redraw)`: **绘制阶段**, 改变每个元素外观时所触发的浏览器行为，比如颜色，背景等样式发生了改变而进行的重新构造新外观的过程。重构不会引发页面的重新布局，不一定伴随着回流
 
@@ -70,6 +80,7 @@ DOM -> CSSOM -> Render Tree -> Layout -> Paint -> Composite
 
 #### 何时发生重绘（回流一定会触发重绘）
 当页面中元素样式的改变并不影响它在文档流中的位置时（例如：color、background-color、visibility 等），浏览器会将新样式赋予给元素并重新绘制它，这个过程称为重绘。
+
 有时即使仅仅回流一个单一的元素，它的父元素以及任何跟随它的元素也会产生回流。现代浏览器会对频繁的回流或重绘操作进行优化，浏览器会维护一个队列，把所有引起回流和重绘的操作放入队列中，如果队列中的任务数量或者时间间隔达到一个阈值的，浏览器就会将队列清空，进行一次批处理，这样可以把多次回流和重绘变成一次。你访问以下属性或方法时，浏览器会立刻清空队列：
 
 - clientWidth、clientHeight、clientTop、clientLeft
@@ -97,6 +108,11 @@ JavaScript
 - 也可以先为元素设置 display: none，操作结束后再把它显示出来。因为在 display 属性为 none 的元素上进行的 DOM 操作不会引发回流和重绘
 - 避免频繁读取会引发回流 / 重绘的属性，如果确实需要多次使用，就用一个变量缓存起来
 - 对具有复杂动画的元素使用绝对定位，使它脱离文档流，否则会引起父元素及后续元素频繁回流
+
+优化建议
+- 动画尽量使用 transform
+- 减少隐式合成, 如把动画节点的 z-index 属性值设置极大
+- 减小合成层尺寸, 如通过 scale 放大
 
 ### 浏览器一帧内的工作
 
@@ -571,6 +587,7 @@ CSS Media Queries
 - 文件优化: 图片 `compression` `webp`, fontawesome, 小图 base64/svg; JS: server compression, `defer/async`, `Worker`
 - [CDN](infrastructure.md)
 - webpack uglify + tree shaking + code splitting
+- 针对 V8 或 JSEngine 的实现进行优化
 
 ## Debug
 

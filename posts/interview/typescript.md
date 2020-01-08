@@ -3,9 +3,32 @@
 ## 文档
 - [中文入门](https://ts.xcatliu.com/)
 
-## 特性
+## 常用特性枚举
 
 类型检查, 私有/保护变量, 装饰器 (方法/属性/参数/工厂) +[元数据反射](https://zhuanlan.zhihu.com/p/42220487)(reflect metadata)
+
+### 泛型
+能接受多种类型的 repeat()
+```ts
+function repeat<T>(item: T, count: number): T[] {
+  let result: T[] = [];
+  for (let i = 0; i < count; i++) {
+    result.push(item);
+  }
+  return result;
+}
+let arr: number[] = repeat<number>(13, 4);
+let arr2: string[] = repeat<string>('aaa', 4);
+```
+
+### 类型推测
+泛型的例子, 不传类型也可以自行推断
+```ts
+// ...
+let arr: number[] = repeat(13, 4);
+```
+### 装饰器 decorator
+
 
 ![util functions](../../assets/img/interview-typescript-utils.png)
 

@@ -1,9 +1,17 @@
 # 前端面试基础 (TODO) 待分类
 
+> What's **not going to change** in the next 10 years?
+>
+> Build a business strategy around the things that are **stable in time**.
+>
+> -- Jeff Bezos
+
 - [掘金: 自检清单](https://juejin.im/post/5cc1da82f265da036023b628)
 - [底层协议](interview/protocols.md)
 - [设施硬件层](interview/infrastructure.md)
 - [JS 语言基础](interview/js.md)
+- [CSS 基础](interview/css-fundamental.md)
+- [JS 常用函数实现](interview/regular-function.md)
 - [regex](interview/regex.md)
 - [ES6 ES7 新特性](interview/es6.md)
 - [浏览器](interview/browser.md)
@@ -11,72 +19,10 @@
 - [系统设计](interview/system-design.md)
 - [面试技巧]
 
-待整理
+TODO
 - [这儿有 20 道大厂面试题等你查收](https://juejin.im/post/5d124a12f265da1b9163a28d)
 
-## CSS + HTML
-
-### CSS
-- BFC (Block Formatting Context) 块级格式化上下文, 触发条件
-  - 根元素或其它包含它的元素
-  - 浮动元素 (元素的 float 不是 none)
-  - 绝对定位元素 (元素具有 position 为 absolute 或 fixed)
-  - 内联块 (元素具有 display: inline-block)
-  - 表格单元格 (元素具有 display: table-cell，HTML 表格单元格默认属性)
-  - 表格标题 (元素具有 display: table-caption, HTML 表格标题默认属性)
-  - 具有 overflow 且值不是 visible 的块元素
-  - 弹性盒（flex 或 inline-flex）
-  - display: flow-root
-  - column-span: all
-- `box model 盒模型`: 页面在渲染时，DOM 元素所采用的布局模型，一个元素占用的空间大小由几个部分组成，内容 (content)、内边距 (padding)，边框 (border) 和外边距 (margin)。可以通过 box-sizing 来进行设置，其中 IE 盒模型的 content 包含了 padding 和 border，这是区别于 W3C 标准盒模型的地方。
-- 各种边界奇葩现象，margin 上下的合并
-- display: block, inline*, flex, grid, table*, contents, none, initial, inherit, run-in, list-item
-- flex 布局: align-items, justify-content, flex, flex-grow,
-- 伪元素，状态元素
-- selector 优先度: !important > inline > id > class > tag > * > inherit > initial
-- pre-css (sass, stylus, 或 jss) + post-css
-- 清除浮动 `.clearfix`, `clear:both`, (同容器相邻元素) `overflow: hidden` (同容器内)
-  ```css
-  .clearfix:after {
-      visibility: hidden;
-      display: block;
-      font-size: 0;
-      content: " ";
-      clear: both;
-      height: 0;
-    }
-  ```
-- [文本溢出](https://juejin.im/post/5dc15b35f265da4d432a3d10)
-- [CSS 图形](https://github.com/qq449245884/xiaozhi/issues/42)
-- 动画
-  
-  transition 过渡动画：
-  - transition-property：属性名称
-  - transition-duration: 间隔时间
-  - transition-timing-function: 动画曲线
-  - transition-delay: 延迟
-
-  animation 关键帧动画：
-  - animation-name：动画名称
-  - animation-duration: 间隔时间
-  - animation-timing-function: 动画曲线
-  - animation-delay: 延迟
-  - animation-iteration-count：动画次数
-  - animation-direction: 方向
-  - animation-fill-mode: 禁止模式
-- 性能杀手:
-  ```css
-  filter: blur(10px) // 高斯模糊
-  ```
-
-- GPU 加速: [硬件加速 CSS 提升性能](https://blog.teamtreehouse.com/increase-your-sites-performance-with-hardware-accelerated-css)
-  ```css
-  transform: translateZ (0);
-  /* OR */
-  will-change: transform;
-  ```
-  
-### HTML
+## HTML
 - 标签语义化，比如 header，footer，nav，aside，article，section 等，利于开发/阅读模式/SEO，新增了很多表单元素，入 email，url 等，除去了 center 等样式标签，还有除去了有性能问题的 frame，frameset 等标签
 - video，audio
 - 新接口，如 navigator.geoloaction

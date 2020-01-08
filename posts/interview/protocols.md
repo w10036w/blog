@@ -63,8 +63,18 @@ QQ 既有 UDP 又有 TCP
 4. `client ack`: 客户端确认服务端的 `FIN`
 
 ### [HTTP](http://www.52im.net/thread-1677-1-1.html)
+sample
+```sh
+POST /user/starkwang HTTP/1.1                  <--- 起始行
+Host: localhost:8080                           <--- 头部开始
+Connection: keep-alive
+User-Agent: Mozilla/5.0 (Macintosh; ...
+Content-Type: application/json; charset=utf-8  <--- 头部结束
 
-一个 http 请求
+{"text": "这里是Body!!"}                        <--- 传输体
+```
+
+一个 http 请求包的传递, 增减头部过程
 ![http request](../../assets/img/js-interview-http-req.png)
 
 http 协商缓存

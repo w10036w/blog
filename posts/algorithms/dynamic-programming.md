@@ -22,11 +22,9 @@ var fn
 most powerful `fibonacci` js function
 
 ```js
-function fib(n) {
-  let [curr, next] = [0, 1]
-  while(n-- >0) {
-    [curr, next] = [next, curr + next];
-  }
-  return curr;
+function fibonacci(n) {
+  var a=0, b=1
+  while(n-- >0) [a, b] = [b, a+b]
+  return a;
 }
 ```

@@ -24,6 +24,8 @@ return its depth = 3.
  * @return {number}
  */
 var maxDepth = function(root) {
-  return root? Math.max(maxDepth(root.right),maxDepth(root.left))+1:0
+  return root
+    ? 1+Math.max(maxDepth(root.right),maxDepth(root.left))
+    : 0
 };
 ```

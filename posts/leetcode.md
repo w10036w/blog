@@ -28,6 +28,7 @@
 - [215. Kth Largest Element in an Array](leetcode/215-kth-largest-element-in-an-array.md)
 - [287. Find the Duplicate Number](leetcode/287-find-the-duplicate-number.md)
 - [349. Intersection of Two Arrays](leetcode/349-intersection-of-two-arrays.md)
+- [448. Find All Numbers Disappeared in an Array](leetcode/448-find-all-numbers-disappeared-in-an-array.md)
 - [670. Maximum Swap](leetcode/670-maximum-swap.md)
 - [912. Sort an Array](leetcode/912-sort-an-array.md)
 
@@ -36,17 +37,22 @@
 - [26. Remove Duplicates from Sorted Array](leetcode/26-remove-duplicates-from-sorted-array.md)
 - [27. Remove Element](leetcode/27-remove-element.md)
 - [206. Reverse Linked List](leetcode/206-reverse-linked-list.md)
+- [283. Move Zeroes](leetcode/283-move-zeroes.md)
 - [344. Reverse String](leetcode/344-reverse-string.md)
 
 ## Sort
 - [75. Sort Colors](leetcode/75-sort-colors.md)
+- [149. Max Points on a Line](leetcode/149-max-points-on-a-line.md)
 
 ## Hash Table / Dict
 - [36. Valid Sudoku](leetcode/36-valid-sudoku.md)
 - [49. Group Anagrams](leetcode/49-group-anagrams.md)
+- [169. Majority Element](leetcode/169-majority-element.md)
 - [205. Isomorphic Strings](leetcode/205-isomorphic-strings.md)
 - [211. Add and Search Word - Data structure design](leetcode/211-add-and-search-word.md)
+- [217. Contains Duplicate](leetcode/217-contains-duplicate.md)
 - [387. First Unique Character in a String](leetcode/387-first-unique-char-in-string.md)
+- [454. 4Sum II](leetcode/454-4sum-ii.md)
 - [720. Longest Word in Dictionary](leetcode/720-longest-word-in-dict.md)
 
 ## DFS (Deep First Search)+[Backtracking](algorithms/backtracking.md)
@@ -67,6 +73,7 @@
 - [216. Combination Sum III](leetcode/216-combination-sum-iii.md)
 - [306. Additive Number](leetcode/306-additive-number.md) !!
 - [401. Binary Watch](leetcode/401-binary-watch.md)
+- [543. Diameter of Binary Tree](leetcode/543-diameter-of-binary-tree.md) !!
 - [784. Letter Case Permutation](leetcode/784-letter-case-permuatation.md)
 
 ## LinkedList
@@ -80,6 +87,7 @@
 
 ## Stack
 - [20. Valid Parentheses](leetcode/20-valid-parentheses.md)
+- [155. Min Stack](leetcode/155-min-stack.md)
 
 ## Tree
 - [94. Binary Tree Inorder Traversal](leetcode/94-binary-tree-inorder-traversal.md)
@@ -117,6 +125,9 @@
 - [309. Best Time to Buy and Sell Stock with Cooldown !!!](leetcode/309-best-time-to-buy-and-sell-stock-with-cooldown.md)
 - [343. Integer Break](leetcode/343-integer-break.md)
 
+## Divide and Conquer
+- [108. Convert Sorted Array to Binary Search Tree](leetcode/108-convert-sorted-array-to-binary-search-tree.md)
+
 ## Graph
 - [1202. Smallest String With Swaps](leetcode/1202-smallest-string-with-swaps.md)
 
@@ -142,6 +153,8 @@
 - [38. Count and Say](leetcode/38-count-and-say.md)
 - [58. Length of Last Word](leetcode/58-length-of-last-word.md)
 - [89. Gray Code (meaningless)](https://leetcode.com/problems/gray-code)
+- [237. Delete Node in a Linked List](https://leetcode.com/problems/delete-node-in-a-linked-list/)
+- [412. Fizz Buzz](https://leetcode.com/problems/fizz-buzz/)
 - [595. Big Countries (MySQL)](https://leetcode.com/problems/big-countries)
 - [812. Largest Triangle Area (google)](leetcode/812-largest-triangle-area.md)
 

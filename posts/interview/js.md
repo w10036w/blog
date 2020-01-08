@@ -204,13 +204,6 @@ function SaferHTML(templateData) {
 }
 ```
 模板字符串的限制: \ 转义符, 如 `\u`, `\x`
-
-## Function
-```js
-function add(n1, n2, n3){
-  arguments[1] = {};
-  console.log(n2 === arguments[1]) // true
-}
 ```
 ## ==, ===, Object.is()
 "==" 两边的类型是否相同，相同的话就比较值的大小，例如 1==2，返回 false
@@ -293,50 +286,36 @@ r & 4 // 如有权则返回4,否则0
 5. 倒转，加回小数点
 </details>
 <hr>
+
 ## 闭包
 
 缺点是引用始终存在，占用内存
 
 ## 原型链继承
-1. 类属性使用 `this` 绑定
-2. 类方法使用 `prototype` 对象来绑定
-3. 为了继承属性， 使用 `call` 函数来传递 this
-4. 为了继承方法，使用 `Object.create` 连接父和子的原型
-5. 始终将子类构造函数设置为自身，以获得其对象的正确类型
-```js
-// 1.
-function Animal(name, type) {
-  this.name = name;
-  this.type = type;
-}
-// 2.
-Animal.prototype.shout = function () { return this.name + ' shout' }
-// 3.
-function Dog(name, type) {
-  Animal.call(this, name, type);
-  this.sound = 'bow';
-}
-// 4. Link prototype chains to inherit parent class functions
-Dog.prototype = Object.create(Animal.prototype);
-// 5. target the constructor to itself
-Dog.prototype.constructor = Dog;
-
-// 原型链上的属性
-function Person(){}
-Person.prototype.friend = [];
-Person.prototype.name = '';
-var a = new Person();
-a.friend[0] = 'Ana';
-a.name = 'Bob';
-var b = new Person();
-console.log(b.friend) // Ana
-console.log(b.name) // ''
-```
 
 ## 作用域 + 基本变量
-块级作用域: let, const, if, function 等
+### 1. global scope 全球作用域
+不在函数或块级作用域内
 
-暂时性死区
+### 2. function (local) scope 函数作用域
+
+### 3. block scope 块级作用域
+自 ES6 引入, 具有单独的作用域, 生效于两项条件同时满足:
+1. 使用 `let, const`
+2. 大括号包裹 ({ ... }), for (let i=0, j=0;), function 内部 (和参数部分共享)
+
+#### 存在意义
+
+- 禁止变量提升, 导致暂时性死区 temporal dead zone
+- 不允许重复声明 (因此函数参数不可以重新在函数内 `let, const` )
+- `typeof` 不再类型安全
+- 防止变量污染
+  - 用来计数的循环变量 `for(let i=0)` 不再泄漏为全局变量
+  - 声明的变量仅块内有效, 因此匿名立即执行函数表达式（匿名 IIFE）不再必要
+- 和全局变量脱钩 (var 和 全局 function 会自动挂载到 `globalThis`)
+- 块级下的函数声明 ES5 实际禁止, 但浏览器未遵守, ES6 允许并实现, 块内声明 function 类似使用 let, 不影响块外, 但浏览器为向前兼容, 块内声明 function 类似用 var, 按 var 一个匿名函数的方式 提升
+
+暂时性死区例
 ```js
 var name = 'B'; // 变量提升，声明但不赋值
 function name() {} // 函数提升，声明且赋值，优先级比变量高
@@ -350,525 +329,64 @@ name = function () {} // 函数优先级更高, 而且不管其和 var name 的�
 name = 'B' // 变量赋值在之后, 覆盖函数声明提升
 */
 ```
+不能重复声明
+```js
+function func(arg) {
+  let arg; // 报错, arg 已在参数阶段声明
+}
+// 对比
+var arg='global';
+function func(arg='argument') {
+  var arg='function';
+  console.log(arg) // function
+}
+```
+函数参数部分为懒执行, 调用时才报错
+```js
+// 不报错, 但调用时 ReferenceError: x is not initialized
+function func(y=x,x=2) { // 改为(x=2, y=x) 不会报错
+  console.log(y, x)
+}
+```
+single-statement时, (不加 `{}`) 时报错
+```js
+if (true) let x = 1;
+// Uncaught SyntaxError: Lexical declaration cannot appear in a single-statement context
+if (true) { let x = 1; } // ok
+```
+块级函数声明 [难点](http://es6.ruanyifeng.com/#docs/let#%E5%9D%97%E7%BA%A7%E4%BD%9C%E7%94%A8%E5%9F%9F%E4%B8%8E%E5%87%BD%E6%95%B0%E5%A3%B0%E6%98%8E)
+```js
+// 以下在浏览器报错 (无论是否严格), 因内部 var f 被提升, 而 定义函数部分不被执行
+// 在 node 环境下, 非严格模式同 浏览器行为一致, 严格模式输出理想结果 out
+function f() { console.log('out'); }
+(function () {
+  // var f; // 变量声明被提升
+  if (false) {
+    function f() { console.log('in'); }
+  }
+  f();
+}());
+```
+
+#### Nested Scope 嵌套作用域
+
+#### Lexical Scope / Static Scope 静态作用域
+> 大多数语言如 C, C++, Java, JavaScript支持静态. Perl 同时支持静态 + 动态
+
+在编译时而不是运行时决定, 因此下面例子不受干涉
+```js
+let number = 42;
+function printNumber() {
+  console.log(number);
+}
+function log() {
+  let number = 54;
+  printNumber();
+}
+log(); // Prints 42
+```
 
 `window, document`: window 对象是指浏览器打开的窗口。document 对象是 HTML 文档对象的一个只读引用，window 对象的一个属性
-
-## 常用函数实现
-
-### String
-`String.trim()`
-```js
-str => str.replace(/(^\s+)|(\s+$)/g, '')
-```
-
-### Array
-```js
-// Array shared verification
-if (this == null) {
-  throw new TypeError(" this is null or not defined");
-}
-if (Object.prototype.toString.call(fn) != "[object Function]") {
-  throw new TypeError(fn + " is not a function");
-}
-```
-#### map
-```js
-Array.prototype.map = function(fn, thisArg) {
-  const arr = this
-  let T
-  if (thisArg) T = thisArg
-  const res = []
-
-  const l = arr.length
-  for(let i = 0; i<l; i++) {
-    const r = fn.call(T, arr[i], i, arr)
-    res.push(r)
-  }
-  return res
-}
-```
-#### reduce
-```js
-// if reduceRight, amend i
-Array.prototype.reduce = function(fn, initValue) {
-  const arr = this
-  const len = arr.length
-  let r = arr[0]
-  let i = 0
-  if (typeof initValue !== 'undefined') {
-    r = initValue
-    i--
-  }
-  while(++i<len) {
-    r = fn(r, arr[i], i, arr)
-  }
-  return r
-}
-```
-#### filter
-```js
-Array.prototype.filter = function(fn, thisArg) {
-  const arr = this
-  const len = arr.length
-  const res = []
-  let i = -1
-  while (++i<len) {
-    const r = fn.call(thisArg, arr[i], i, arr)
-    if (r) res.push(arr[i])
-  }
-  return res
-}
-```
-#### flat / flatten
-```js
-flat = arr => {
-  // if allow reduce
-  return arr.reduce((acc, cur) => {
-    if (Array.isArray(cur)) acc.push(...flat(cur))
-    else acc.push(cur)
-    return acc
-  }, [])
-  // not allowed
-  var res = []
-  arr.forEach(e => {
-    if (Array.isArray(e)) res.push(...flat(e))
-    else res.push(e)
-  })
-  return res
-}
-```
-
-### curry 柯里化
-!!! `curry` 帮助创建 偏函数 [Partial function](https://www.liaoxuefeng.com/wiki/1016959663602400/1017454145929440)
-```js
-curry = (fn, ...args) => args.length>=fn.length
-  ? fn(...args)
-  : (...args2) => curry(fn, ...args, ...args2)
-
-// ES5 curry
-var curry = function(fn) {
-  if (typeof fn !== 'function') throw new TypeError('')
-  var slice = Array.prototype.slice
-  var args1 = slice.call(arguments, 1)
-  return args1.length>=fn.length ?
-    fn.apply(void 0, args1) :
-    function () {
-      var args2 = [fn].concat(args1, slice.call(arguments))
-      return curry.apply(void 0, args2)
-    }
-}
-
-// 调用
-const foo = (a, b, c) => a * b * c;
-curry(foo)(2, 3, 4); // -> 24
-curry(foo, 2)(3, 4); // -> 24
-curry(foo, 2, 3)(4); // -> 24
-curry(foo, 2, 3, 4); // -> 24
-
-// e.g. infinite sum, hint: arguments.length
-const sum = (a, b=0) => {
-  if (arguments.length === 0) return b
-  return n => {
-    let res = a+b
-    return sum(n, res)
-  }
-}
-console.log(sum(100,200)(300)(400)())
-```
-
-### debounce 防抖
-!!! underscore.`debounce`
-> 不管触发了多少次回调，只认最后一次
-```js
-// Returns a function, that, as long as it continues to be invoked, will not
-// be triggered. The function will be called after it stops being called for
-// N milliseconds. If `immediate` is passed, trigger the function on the
-// leading edge, instead of the trailing.
-function debounce(func, wait, immediate) {
-  var timeout;
-  return function() {
-    var context = this, args = arguments;
-    var later = function() {
-      timeout = null;
-      if (!immediate) func.apply(context, args);
-    };
-    var callNow = immediate && !timeout;
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-    if (callNow) func.apply(context, args);
-  };
-};
-```
-
-### throttle 节流
-**naive.`throttle`**
-```js
-var throttle = function(fn, wait){
-  var last = 0
-  return function(){
-    var curr = +new Date()
-    if (curr-last>wait || !last){
-      fn.apply(this, arguments)
-      last = curr
-    }
-  }
-}
-```
-debounced throttle: 定时器 + 时间戳, 第一次和最后一次都会触发
-```js
-function throttle(fn, wait) {
-  let pre = 0;
-  let timer = null;
-  return function (...args) {
-    let now = Date.now()
-    if (now - pre > wait) {
-      clearTimeout(timer);
-      timer = null;
-      pre = now
-      fn.apply(this, args);
-    } else if (!timer) {
-      timer = setTimeout(() => {
-        fn.apply(this, args);
-      }, wait);
-    }
-  }
-}
-```
-**underscore.`throttle`**
-> 在某段时间内，不管触发了多少次回调，都只认第一次，并在计时结束时给予响应。
-
-```js
-// Returns a function, that, when invoked, will only be triggered at most once
-// during a given window of time. Normally, the throttled function will run
-// as much as it can, without ever going more than once per `wait` duration;
-// but if you'd like to disable the execution on the leading edge, pass
-// `{leading: false}`. To disable execution on the trailing edge, ditto.
-function(func, wait, options) {
-  var timeout, context, args, result;
-  var previous = 0;
-  if (!options) options = {};
-
-  var later = function() {
-    previous = options.leading === false ? 0 : Date.now();
-    timeout = null;
-    result = func.apply(context, args);
-    if (!timeout) context = args = null;
-  };
-
-  var throttled = function() {
-    var now = Date.now();
-    if (!previous && options.leading === false) previous = now;
-    var remaining = wait - (now - previous);
-    context = this;
-    args = arguments;
-    if (remaining <= 0 || remaining > wait) {
-      if (timeout) {
-        clearTimeout(timeout);
-        timeout = null;
-      }
-      previous = now;
-      result = func.apply(context, args);
-      if (!timeout) context = args = null;
-    } else if (!timeout && options.trailing !== false) {
-      timeout = setTimeout(later, remaining);
-    }
-    return result;
-  };
-
-  throttled.cancel = function() {
-    clearTimeout(timeout);
-    previous = 0;
-    timeout = context = args = null;
-  };
-
-  return throttled;
-};
-```
-### Iterator 迭代器
-```js
-/**
- * @param {Object|Array} obj The object to iterate
- * @param {Function} fn The callback to invoke for each item
- */
-function forEach(obj, fn) {
-  // Don't bother if no value provided
-  // 判断 null 和 undefined 直接返回
-  if (obj === null || typeof obj === 'undefined') return;
-  // Force an array if not already something iterable
-  // 如果不是对象，放在数组里。
-  if (typeof obj !== 'object') { obj = [obj] }
-  // 是数组 则用for 循环，调用 fn 函数。参数类似 Array.prototype.forEach 的前三个参数。
-  if (Array.isArray(obj)) {
-    // Iterate over array values
-    for (var i = 0, l = obj.length; i < l; i++) {
-      fn.call(null, obj[i], i, obj);
-    }
-  } else {
-    // Iterate over object keys
-    // 用 for in 遍历对象，但 for in 会遍历原型链上可遍历的属性。
-    // 所以用 hasOwnProperty 来过滤自身属性了。
-    // 其实也可以用Object.keys来遍历，它不遍历原型链上可遍历的属性。
-    // for (var key in obj) {
-    //   if (Object.prototype.hasOwnProperty.call(obj, key)) {
-    //     fn.call(null, obj[key], key, obj);
-    //   }
-    // }
-    // better
-    Object.keys(obj).forEach(key => {
-      fn.call(void 0, obj[key], key, obj)
-    })
-  }
-}
-```
-### BigInt Sum 大数相加
-```js
-/**
- * @param {string} a
- * @param {string} b
- * @return {string}
- */
-function sum(a, b) {
-  var l = Math.max(a.length, b.length)
-  a = a.padStart(l, 0)
-  b = b.padStart(l, 0)
-  var i = l, plus1 = 0, r = '', tmp
-  while (--i>-1) {
-    tmp = Number(a[i]) + Number(b[i]) + plus1
-    if (tmp>9) {
-      tmp = tmp-10
-      plus1 = 1
-    } else plus1 = 0
-    r = tmp + r
-  }
-  if (plus1===1) r = '1'+r
-  return r
-}
-```
-### `EventEmitter`
-```js
-// notice: chain functions: on, emit, off, once
-class EventEmitter {
-  constructor() {
-    this.listeners = {}
-    // this.maxLength = 10
-  }
-  on(type, cb, prepend=false) { // addListener() + prependListener()
-    const fns = this.listeners[type] || (this.listeners[type] = [])
-    if (Array.isArray(fns) && !fns.includes(cb) && typeof cb === 'function') {
-      if (prepend) fns.unshift(cb)
-      else fns.push(cb)
-    }
-    return this
-  }
-  emit(type, ...args) {
-    const fns = this.listeners[type]
-    if (Array.isArray(fns)) {
-      fns.forEach(cb => cb(...args))
-    }
-    return this
-  }
-  off (type, cb) { // removeListener() + removeAllListeners()
-    const fns = this.listeners[type]
-    if (Array.isArray(fns)) {
-      if (typeof cb === 'function') {
-        const i = fns.indexOf(cb)
-        if (i>-1) fns.splice(i, 1)
-      } else fns.length = 0
-    }
-    return this
-  }
-  once(type, cb) {
-    const self = this
-    function fn(...args) {
-      cb(...args)
-      self.off(type, fn)
-    }
-    this.on(type, fn)
-    return this
-  }
-  // setMaxListeners(n) { this.maxLength = n }
-  // listeners(type) { return this.listeners[type] || [] }
-  
-  // EventEmitter.prototype.on = EventEmitter.prototype.addListener
-  // EventEmitter.prototype.off = EventEmitter.prototype.removeListener
-  
-  // 特殊事件名:
-  // 'newListener': 如监听, 每次新加事件时会触发
-  // 'removeListener': 如监听, 每次删除事件时会触发
-
-  // nodejs EventEmitter 捕获异常, 使用 domain 模块
-}
-```
-### `delegate` 事件委托
-```js
-// 监听父元素, 通过 `e.target.nodeName` 限定委托元素 e.target
-document.addEventListener('DOMContentLoaded', function() {
-  let app = document.getElementById('parent');
-  app.addEventListener('click', function(e) {
-    if (e.target && e.target.nodeName === 'LI') {
-      let item = e.target;
-      alert('you clicked on item: ' + item.innerHTML)
-    }
-  })
-})
-```
-
-### disorder 数组乱序: 从最后一个元素始 随机选一个元素,交换
-```js
-function disorder(arr) {
-  const l = arr.length
-  let i = l
-  while (--i>=0) {
-    const rand = l*Math.random()|0
-    let tmp = arr[i]
-    arr[i] = arr[rand]
-    arr[rand] = tmp
-  }
-  return arr
-}
-```
-Promise 化 ajax
-```js
-function myXHR(method, url, data) {
-  var requset = new XMLHttpRequest();
-  return new Promise((resolve, reject) => {
-    requset.onreadystatechange = function () {
-      if (requset.readyState === 4) {
-        if (requset.status === 200) resolve(requset.responseText)
-        else reject(requset.status)
-      }
-    }
-    requset.open(method, url);
-    requset.send(data);
-  });
-}
-
-var p = myXHR('GET', 'url');
-p.then(responseText => {
-  console.log(responseText);
-}).catch(status => {
-  console.log(new Error(status));
-})
-```
-
-
-TODO
-- [ ] 实现完全二叉树
-
-[图片懒加载](https://github.com/ConardLi/awesome-coding-js/blob/master/JavaScript/%E5%9B%BE%E7%89%87%E6%87%92%E5%8A%A0%E8%BD%BD.md)
-## 监听图片高度
-图片，用一个其他属性存储真正的图片地址：
-
-```html
-  <img src="loading.gif" data-src="https://cdn.pixabay.com/photo/2015/09/09/16/05/forest-931706_1280.jpg" alt="">
-  <img src="loading.gif" data-src="https://cdn.pixabay.com/photo/2014/08/01/00/08/pier-407252_1280.jpg" alt="">
-```
-通过图片`offsetTop`和`window`的`innerHeight`，`scrollTop`判断图片是否位于可视区域。
-```js
-// 用自执行函数包裹
-var imgs = document.getElementsByTagName("img");
-var n = 0; //存储图片加载到的位置，避免每次都从第一张图片开始遍历
-lazyload(); //页面载入完毕加载可是区域内的图片
-// 节流函数，保证每200ms触发一次
-function throttle(fn, time) {
-  let timer;
-  return function (...args) {
-    if (!timer) {
-      timer = setTimeout(() => {
-        timer = null
-        fn(...args)
-      }, time);
-    }
-  }
-}
-// if needed, removeListener in the end
-var throttled = throttle(lazyload, 200)
-window.addEventListener('scroll', throttled)
-function lazyload() { //监听页面滚动事件
-  var seeHeight = window.innerHeight; //可见区域高度
-  // document.documentElement 是整个 <html></html>
-  var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-  //滚动条距离顶部高度  
-  for (var i = n; i < img.length; i++) {
-    // or use
-    // img[i].getBoundingClientRect().top <= window.innerHeight
-    if (img[i].offsetTop < seeHeight + scrollTop) {
-      if (img[i].getAttribute("src") == "loading.gif") {
-        img[i].src = img[i].getAttribute("data-src");
-      }
-      n = i + 1;
-    }
-  }
-}
-```
-
-## IntersectionObserver
-> !!!<br>
-> IntersectionObserver接口 (从属于Intersection Observer API) 提供了一种异步观察目标元素与其祖先元素或顶级文档视窗(viewport)交叉状态的方法。祖先元素与视窗(viewport)被称为根(root)。
-
-`Intersection Observer`可以不用监听`scroll`事件，做到元素一可见便调用回调，在回调里面我们来判断元素是否可见。
-
-```js
-if (IntersectionObserver) {
-  let lazyImageObserver = new IntersectionObserver((entries, observer) => {
-    entries.forEach((entry, index) => {
-      let lazyImage = entry.target;
-      // 如果元素可见
-      if (entry.intersectionRatio > 0) {
-        if (lazyImage.getAttribute("src") == "loading.gif") {
-          lazyImage.src = lazyImage.getAttribute("data-src");
-        }
-        lazyImageObserver.unobserve(lazyImage)
-      }
-    })
-  })
-  for (let i = 0; i < img.length; i++) {
-    lazyImageObserver.observe(img[i]);
-  }
-}
-```
-
-### `new`, `this`, `arguments` 和 `call, apply, bind`
-
-#### `new` & `Object.create()`
-`new Fn(...args)` 操作代码化演示
-```js
-function _new(Fn, ...args) {
-  // 1. 创建新对象
-  let obj = {}
-  // 2. 空对象的原型指向函数的面试
-  obj.__proto__ = Fn.prototype
-  // 3. 执行构造函数, 添加属性和方法
-  let res = Fn.apply(obj, args)
-  // 4. return
-  if (res && (typeof res === 'object' || typeof res === 'function'))
-    return res
-  return obj
-}
-// 解释
-function Super(age) {
-  this.age = age;
-  return { age: 2 }
-}
-let a = new Super(10);
-console.log(a.age) // 2
-```
-Object.create()
-```js
-if (typeof Object.create !== "function") {
-  Object.create = function (proto, propertiesObject) {
-    if (typeof proto !== 'object' && typeof proto !== 'function') {
-      throw new TypeError('Object prototype may only be an Object: ' + proto);
-    } else if (proto === null) {
-      throw new Error("This browser's implementation of Object.create is a shim and doesn't support 'null' as the first argument.");
-    }
-    if (typeof propertiesObject != 'undefined') throw new Error("This browser's implementation of Object.create is a shim and doesn't support a second argument.");
-    function F() {}
-    F.prototype = proto;
-    return new F();
-  };
-}
-```
 
 ### this 判断顺序
 1. 全局
@@ -887,92 +405,6 @@ if (typeof Object.create !== "function") {
     // 否则, node 下 undefined, 因为 全局 age 不在 global 下
     // 浏览器下 28
     ```
-
-### apply & call
-apply polyfill [参考](https://juejin.im/post/5bf6c79bf265da6142738b29)
-```js
-function gThis() { return this }
-function gFn(length) {
-  var code = 'return arguments[0][arguments[1]](';
-  for(var i = 0; i < length; i++){
-    if(i > 0) code += ',';
-    code += 'arguments[2][' + i + ']';
-  }
-  code += ')';
-  return code;
-}
-function gArguments(args) {
-  let arg = [];
-  for(let i=0; i<args.length ; i++){
-    arg[i] = 'args[' + i + ']';
-  }
-  return arg
-}
-Function.prototype.apply = function(thisArg, args) {
-  // 1.如果 `IsCallable(func)` 是 `false`, 则抛出一个 `TypeError` 异常。
-  if(typeof this !== 'function') throw new TypeError(this + ' is not a function')
-  if(typeof args === 'undefined' || args === null) args = []
-  if(!thisArg) thisArg = gThis()
-  thisArg = new Object(thisArg)
-  var __fn__ = Math.random()
-  // const fn = Symbol('fn') // ES6
-  while (thisArg[__fn__]) { __fn__ = Math.random() }
-  thisArg[__fn__] = this
-  // new Function()
-  var res = (new Function(gFn(args.length)))(thisArg, __fn__, args)
-  // ES6
-  // const res = thisArg[__fn__](...args)
-  // eval()
-  // var res = eval('thisArg[__fn__]('+gArguments(args)+')')
-  delete thisArg[__fn__] // ES6: Reflect.deleteProperty(thisArg, 'fn')
-  return res
-}
-// polyfill
-Function.prototype.call = function() {
-  // apply same verification
-  var thisArg = arguments[0]
-  var args = Array.prototype.slice(arguments, 1)
-  return this.apply(thisArg, args)
-}
-```
-
-`call = fn.call` 引发的 `this` 指向错误
-```js
-const arrayLike = { length: 0 }
-const call = [].push.call; // typeof call "function"
-call(arrayLike, 1); // call is not a function
-// because "this" inside `call` points to global "this", thus there is no `call` on window/global/globalThis.
-```
-
-### bind
-`Function.bind` see [full in MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_objects/Function/bind#Polyfill)
-```js
-// Does not work with `new funcA.bind(thisArg, args)`
-if (!Function.prototype.bind) (function(){
-  var slice = Array.prototype.slice;
-  Function.prototype.bind = function(thisArg) {
-    var fn = this;
-    var args = slice.call(arguments, 1);
-    if (typeof fn !== 'function') {
-      // closest thing possible to the ECMAScript 5
-      // internal IsCallable function
-      throw new TypeError('Function.prototype.bind - ' +
-        'what is trying to be bound is not callable');
-    }
-    var fNOP = function() {}
-    var fbound = function(){
-      var _args = args.concat(slice.call(arguments))
-      // KEY
-      return fn.apply(fNOP.prototype.isPrototypeOf(this) ? this : thisArg, _args);
-    }
-    // assign fn's prototype to fNOP
-    if (this.prototype) fNOP.prototype = this.prototype
-    // use ctor to fulfill prototype chain
-    fbound.prototype = new fNOP();
-    return fbound
-  };
-})();
-```
 
 `arguments`
 > https://www.cnblogs.com/yugege/p/5539020.html
@@ -1005,120 +437,6 @@ function addMethod(object, name, fn) {
   }
 }
 ```
-
-polyfill `requestAnimationFrame`
-
-[reference](https://gist.github.com/paulirish/1579671)
-```js
-(function () {
-  var lastTime = 0;
-  var vendors = ['ms', 'moz', 'webkit', 'o'];
-  for (var x=0; x<vendors.length && !window.requestAnimationFrame; ++x) {
-    window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame';
-    window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame']
-      || window[vendors[x] + 'CancelRequestAnimationFrame'];
-  }
-  if (!window.requestAnimationFrame)
-    window.requestAnimationFrame = function (callback, element) {
-      var now = window.performance ? performance.now() : +new Date
-      var nextTime = Math.max(now, lastTime+16)
-      return setTimeout(function () {
-        callback(lastTime=nextTime)
-      }, nextTime-now);
-    };
-  if (!window.cancelAnimationFrame)
-    window.cancelAnimationFrame = clearTimeout
-    };
-}());
-```
-
-### 观察者模式 发布订阅模式
-> 参考[知乎链接](https://zhuanlan.zhihu.com/p/60324936)
-
-观察者模式
-
-它定义了对象间的一种一对多的关系，让多个观察者对象同时监听某一个主题对象，当一个对象发生改变时，所有依赖于它的对象都将得到通知。<br>
-观察者模式在前端开发中非常常用， 我们经常用的事件就是观察者模式的一种体现，它对我们解耦模块，开发基于消息的业务起着非常重要的作用。
-
-![observer vs pubsub](../../assets/img/interview-pattern-observer-subpub.jpg)
-从图中可以看出，观察者模式中观察者和目标直接进行交互，而发布订阅模式中统一由调度中心进行处理，订阅者和发布者互不干扰。
-
-观察者模式的订阅者与发布者之间是存在依赖的，而发布/订阅模式则不会。
-
-发布 / 订阅模式优势在于， 这样一方面实现了解耦，还有就是可以实现更细粒度的一些控制。比如发布者发布了很多消息，但是不想所有的订阅者都接收到，就可以在调度中心做一些处理，类似于权限控制之类的。还可以做一些节流操作。
-
-观察者 代码
-```js
-class Observer {
-  constructor() { }
-  update(val) {
-    //
-  }
-}
-// 观察者列表
-class ObserverList {
-  constructor() {
-    this.observerList = []
-  }
-  add(observer) {
-    return this.observerList.push(observer);
-  }
-  remove(observer) {
-    this.observerList = this.observerList.filter(ob => ob !== observer);
-  }
-  count() {
-    return this.observerList.length;
-  }
-  get(index) {
-    return this.observerList(index);
-  }
-}
-// 目标
-class Subject {
-  constructor() {
-    this.observers = new ObserverList();
-  }
-  addObserver(observer) {
-    this.observers.add(observer);
-  }
-  removeObserver(observer) {
-    this.observers.remove(observer);
-  }
-  notify(...args) {
-    let obCount = this.observers.count();
-    for (let index = 0; index < obCount; index++) {
-      this.observers.get(i).update(...args);
-    }
-  }
-}
-```
-订阅发布 PubSub 代码
-```js
-class PubSub {
-  constructor() {
-    this.subscribers = {}
-  }
-  subscribe(type, fn) {
-    let listeners = this.subscribers[type] || (this.subscribers[type] = [])
-    listeners.push(fn);
-  }
-  unsubscribe(type, fn) {
-    let listeners = this.subscribers[type];
-    if (!Array.isArray(listeners)) return;
-    this.subscribers[type] = listeners.filter(v => v !== fn);
-  }
-  publish(type, ...args) {
-    let listeners = this.subscribers[type];
-    if (!listeners || !listeners.length) return;
-    listeners.forEach(fn => fn(...args));
-  }
-}
-
-let ob = new PubSub();
-ob.subscribe('add', (val) => console.log(val));
-ob.publish('add', 1);
-```
-观察者模式由具体目标调度，每个被订阅的目标里面都需要有对观察者的处理，会造成代码的冗余。而发布订阅模式则统一由调度中心处理，消除了发布者和订阅者之间的依赖。
 
 <hr>
 
@@ -1220,9 +538,6 @@ console.log('macro2')
 > 核心原因是第一次 new Promise 的时候，他接着入栈了一个 undefined value，导致需要多执行一次的 undefined 的 then 回调。  
 `isolate->factory ()->undefined_value ()`
 
-#### setTimeout
-`setTimeout` 在控制台会返回一个 id.
-
 ### 垃圾回收 [参考1](https://github.com/qq449245884/xiaozhi/issues/3) 
 
 垃圾回收为后台进程
@@ -1292,19 +607,6 @@ console.log('macro2')
 
 ## QA
 
-Q: 求 [1, 10, 11, -1,'-5',12, 13, 14, 15, 2, 3, 4, 7, 8, 9] 内最大值与最小值之差:
-
-A:  
-  ```js
-  function MaxMinPlus(arr) {
-    // 返回最大值与最小值之差
-    return Array.isArray(arr)
-      ? Math.max(...arr) - Math.min(...arr)
-      // alternative
-      // ? Math.max.apply(Math, arr) - Math.min.apply(Math, arr)
-      : console.log('err')
-  }
-  ```
 Q: [如果我们在浏览器控制台中运行 'foo' 函数，是否会导致堆栈溢出错误？](https://juejin.im/post/5d2d146bf265da1b9163c5c9#heading-3)
   ```js
   function foo() {
@@ -1314,6 +616,7 @@ Q: [如果我们在浏览器控制台中运行 'foo' 函数，是否会导致堆
 A: 不会.
 
 JavaScript 并发模型基于 "事件循环"。 当我们说 "浏览器是 JS 的家" 时我真正的意思是浏览器提供运行时环境来执行我们的 JS 代码。
+
 浏览器的主要组件包括 `调用堆栈`，`事件循环`，`任务队列` 和 `Web API`。 像 `setTimeout`, `setInterval` 和 `Promise` 这样的全局函数不是 JavaScript 的一部分，而是 Web API 的一部分。 JavaScript 环境的可视化形式如下所示：
 
 ![browser eventloop](../../assets/img/interview-js-qa4-eventloop.png)
@@ -1321,24 +624,30 @@ JavaScript 并发模型基于 "事件循环"。 当我们说 "浏览器是 JS �
 JS 调用栈是后进先出 (LIFO) 的。引擎每次从堆栈中取出一个函数，然后从上到下依次运行代码。每当它遇到一些异步代码，如 setTimeout，它就把它交给 Web API(箭头 1)。因此，每当事件被触发时，callback 都会被发送到任务队列（箭头 2）。
 事件循环 (Event loop) 不断地监视任务队列 (Task Queue)，并按它们排队的顺序一次处理一个回调。每当调用堆栈 (call stack) 为空时，Event loop 获取回调并将其放入堆栈 (stack)(箭头 3) 中进行处理。请记住，如果调用堆栈不是空的， 则事件循环不会将任何回调推入堆栈。
 
-Q: (头条)`function request (urls, maxNumber, callback)` 要求编写函数实现，根据 urls 数组内的 url 地址进行并发网络请求，最大并发数 maxNumber, 当所有请求完毕后调用 callback 函数 (已知请求网络的方法可以使用 fetch api)
+Q: (头条) `function request (urls, maxNumber, callback)` 要求编写函数实现，根据 urls 数组内的 url 地址进行并发网络请求，最大并发数 maxNumber, 当所有请求完毕后调用 callback 函数 (已知请求网络的方法可以使用 fetch api)
 
 A:
-```js
-function request(urls, maxNumber, callback) {
-  let res = {}
-  let i = 0
-  const chain = () => {
-    if (!urls.length) return
-    const url = urls.shift()
-    fetch(url).then(data => {
-      res[url] = data
-      return urls.length && chain()
-    })
-  }
-  const reqs = new Array(maxNumber).fill(chain())
-  Promise.all(reqs).then(_ => callback(res))
 
+见 [asyncPool](../regular-functions/asyncPool.js)
+```js
+// 核心代码
+async function asyncPool(jobs, limit, callback) {
+  const res = {}
+  const pool = []
+  const handler = // fetch
+    job => new Promise(resolve => {
+      setTimeout(() => resolve(job), Math.random()*2000)
+    })
+  const asyncWorker = (job, worker) => handler(job).then(data => {
+    console.log(`worker ${worker} has done job ${job}`)
+    res[job]=data
+    if (jobs.length===0) return
+    return asyncWorker(jobs.pop(), worker)
+  })
+  for (let i=0; i<limit; i++) {
+    pool.push(asyncWorker(jobs.pop(), i+1))
+  }
+  return Promise.all(pool).then(_ => callback(res))
 }
 ```
 
@@ -1353,11 +662,11 @@ A: redux 本身有哪些作用？我们先来快速的过一下 redux 的核心�
 - `applyMiddleware()`, 可以添加中间件（中间件是干什么的我们后面讲）处理副作用。
 - `compose.js`, `bindActionCreators,hs`: 工具函数
 
-Q: 实现 `a == 1 && a == 2 && a == 3`
+Q: 实现 `a==1 && a==2 && a==3`
 
 A:
 ```js
-// [Symbol.toPrimitive] / toString / valueOf
+// 重写 [Symbol.toPrimitive] / toString / valueOf 选一
 a = {
   i: 1,
   toString() { return this.i++ },
@@ -1371,13 +680,12 @@ a = new Proxy({}, {
     return () => this.i++
   }
 })
-// rewrite []
-// 数组的 toString 接口默认调用数组的 join 方法，重写 join 方法
+// 重写数组 `join()`, 因为 数组的 `toString()` 默认调用数组的 join
 a=[1,2,3];
 a.join=a.shift
 ```
 
-Q: `add(1)==1 && add(1)(2)==3 && add(1)(2)(3)==6`
+Q: 实现 `add(1)==1 && add(1)(2)==3 && add(1)(2)(3)==6`
 
 A:
 ```js

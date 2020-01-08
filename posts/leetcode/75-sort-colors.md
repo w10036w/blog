@@ -25,25 +25,36 @@ thoughts:
 3. set `a, b, c` to iterate push(0/1/2), [...a, ...b, ...c]
 4. common solution for n>3 colors:
    1. quicksort
+
 solution:
+
+1.
 ```js
 /**
  * @param {number[]} nums
  * @return {void} Do not return anything, modify nums in-place instead.
  */
 var sortColors = function(nums) {
-  // 2.
-  let j = 0
-  let i = -1
-  let k = nums.length-1
-  while (++i<=k) {
-    if (nums[i]===0) [ nums[i], nums[j++] ] = [ nums[j], nums[i] ]
-    else if (nums[i]===2) [ nums[i--], nums[k--] ] = [ nums[k], nums[i] ]
+  var c0=c1=c2=0
+  for(var i=0;i<nums.length;i++) {
+    if (nums[i]===0) c0++
+    else if (nums[i]===1) c1++
+    else c2++
   }
-  return nums
-
-  //  dutch partitioning problem
-  // todo
-  // https://leetcode.com/problems/sort-colors/discuss/26481/Python-O(n)-1-pass-in-place-solution-with-explanation
+  nums.fill(0, 0, c0).fill(1, c0, c0+c1).fill(2, c0+c1, c0+c1+c2)
 };
 ```
+2.
+```js
+var sortColors = function(nums) {
+  var l=0, r=nums.length-1
+  for(var i=0;i<=r;i++) {
+    if (nums[i]===0) [ nums[i], nums[l++] ]=[ nums[l], nums[i] ]
+    else if(nums[i]===2) [ nums[i], nums[r--] ]=[ nums[r], nums[i] ]
+  }
+}
+```
+
+TODO dutch partitioning problem
+
+https://leetcode.com/problems/sort-colors/discuss/26481/Python-O(n)-1-pass-in-place-solution-with-explanation

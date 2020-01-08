@@ -14,6 +14,9 @@ linux 在使用 CFS 调度器的情况下，其调度开销大约为 O (logm), �
 
 [Worker from v10.5.0](https://blog.insiderattack.net/deep-dive-into-worker-threads-in-node-js-e75e10546b11)
 
+## llhttp v12 替代 http parser (c语言实现)
+
+
 ### 性能优化方案
 Worker Thread Pooling
 

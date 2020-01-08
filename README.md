@@ -16,5 +16,3 @@ TODO LIST
 | :--- | :--- |
 | [thoughts](./posts/thoughts.md) | 想法 |
 | | [博客建设记录](/blog.md) |
-| [leetcode JS](/algojs.md) | |
-| | [个人技术选型及依赖](/mytoolchain.md) |

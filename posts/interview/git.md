@@ -1,5 +1,6 @@
 # interview - git
-> https://www.jianshu.com/p/38832b41143d
+参考 TODO 整理
+- [高频使用的 Git 命令](https://juejin.im/post/5de8d849e51d455808332166)
 
 ```sh
 # remote
@@ -35,6 +36,9 @@ git reset --hard <hash>
 
 git log -p -2
 
+# ! 提供类似 GUI 工具的 log 展示
+git log --graph --date=relative --pretty=tformat:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%an %ad)%Creset'
+
 git reflog  //check #hash history
 
 # modify files
@@ -45,12 +49,11 @@ git mv 重命名
 git branch dev
 
 # Rename / delete a branch
-# You just have to create a new local branch with the desired name, push it to your remote, and then delete the old remote branch:
-git branch new-branch-name origin/old-branch-name
-git push origin --set-upstream new-branch-name
-git push origin :old-branch-name
-# remove local branch
-git branch -D {branchName}
+# 全过程
+git branch new-branch origin/old-branch # fork 一个新 branch
+git push origin --set-upstream new-branch-name # 推送新 branch
+git push origin :old-branch-name # 删除远程 branch
+git branch -D {branchName} # 删除 local branch
 
 # Then, to see the old branch name, each client of the repository would have to do:
 git fetch origin
@@ -68,11 +71,10 @@ git revert # 反转提交
 # submit changes
 git push --set-upstream origin <branch> # Push to a new remote branch
 
-# 清理远程repo：（e.g.清除前缀ch.deploy的）
-git branch -r | awk -F/ '/\/ch.deploy/{print $2}' | xargs -I {} git push origin :{}
+# 清理远程 repo:（e.g. 清除前缀为 deploy 的 branch）
+git branch -r | awk -F/ '/\/deploy/{print $2}' | xargs -I {} git push origin :{}
 
-
-# 查看有哪些match
+# 查看有哪些 matched pattern branch, 如 查询前缀为 deploy 的
 git branch -r | awk -F/ '/\/deploy/{print $2}'
 
 ```
