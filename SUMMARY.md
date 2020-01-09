@@ -12,7 +12,7 @@
   - [typescript](interview/typescript.md)
   - [系统设计](interview/system-design.md)
 - [LeetCode 分类刷题](posts/leetcode.md)
-  - [Hash Table 哈希表]
+  - Hash Table 哈希表
     - [36. Valid Sudoku](leetcode/36-valid-sudoku.md)
     - [49. Group Anagrams](leetcode/49-group-anagrams.md)
     - [205. Isomorphic Strings](leetcode/205-isomorphic-strings.md)
