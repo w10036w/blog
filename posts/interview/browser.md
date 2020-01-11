@@ -39,7 +39,7 @@
   - 浏览器有一个单独的线程用于处理 AJAX 请求
   - 当请求完成时，若有回调函数，通知事件触发线程
 
-尽量不使用 document.write()，知道 [passive 的事件监听器](https://zjy.name/passive-event-listeners/)是什么
+尽量不使用 document.write()，知道 addEventListener [passive 的事件监听器](https://zjy.name/passive-event-listeners/)是什么
 
 ## 浏览器渲染
 > [参考](https://juejin.im/post/5da52531518825094e373372)

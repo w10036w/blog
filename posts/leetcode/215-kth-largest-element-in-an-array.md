@@ -28,7 +28,8 @@ var findKthLargest = function(nums, k) {
   return nums[nums.length-k]
 };
 ```
-[quick select](https://github.com/azl397985856/leetcode/blob/master/problems/215.kth-largest-element-in-an-array.md#%E8%A7%A3%E6%B3%95%E4%B8%89---quick-select)
+
+saver & faster: [quick select](https://github.com/azl397985856/leetcode/blob/master/problems/215.kth-largest-element-in-an-array.md#%E8%A7%A3%E6%B3%95%E4%B8%89---quick-select)
 ```js
 var findKthLargest = function(nums, k) {
   var target=nums.length-k

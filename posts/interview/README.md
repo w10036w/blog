@@ -14,10 +14,11 @@
 - [JS 常用函数实现](interview/regular-function.md)
 - [regex](interview/regex.md)
 - [ES6 ES7 新特性](interview/es6.md)
+- [React](interview/react.md)
 - [浏览器](interview/browser.md)
 - [typescript](interview/typescript.md)
 - [系统设计](interview/system-design.md)
-- [面试技巧]
+- [面试技巧](interview/tricks.md)
 
 TODO
 - [这儿有 20 道大厂面试题等你查收](https://juejin.im/post/5d124a12f265da1b9163a28d)

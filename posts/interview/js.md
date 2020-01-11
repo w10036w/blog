@@ -44,8 +44,10 @@ undefined
 动态类型语言，成员除了表示存在的空值外，还有可能根本就不存在（因为存不存在只在运行期才知道）. 这就是 `undefined` 的意义所在。对于 JAVA 这种强类型语言，如果有 "undefined" 这种情况, 就会直接编译失败，所以在它不需要一个这样的类型.
 
 ### 类型判断
-对基本类型 primitive 可用 `typeof`,  返回值列表:<br>
+对基本类型 primitive (非 `null`) 可用 `typeof`,  返回值列表:<br>
 `undefined number string boolean symbol bigint object function`
+
+注意 `null` 返回 'object'
 
 #### 对引用数据类型 object
 `instanceof` 是查询原型链，因此不适合判断 primitive 类型。
@@ -133,8 +135,8 @@ JS / 双精度注意事项
 
 ```js
 // 用 hex 表示的各位数 转换
-0 = 0x0000000000000000
-1 = 0x3FF0000000000000
+0 = 0x0000000000000000 // + 2^(-1023) * 1.00... (52 个 0)
+1 = 0x3FF0000000000000 // + 2^0 * 1.00...(52 个 0)
 ```
 
 原生解决方案
@@ -159,6 +161,24 @@ let num = 10
 num.toString(n) // n 进制, 2 / 8 / 10 / 16
 num.toString(2) // "1010"
 ```
+
+### [replace()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace)
+Syntax
+```js
+var newStr = str.replace(regexp|substr, newSubstr|function)
+function replacer(match, p1, p2, p3, offset, string) {
+  // p1 is nondigits, p2 digits, and p3 non-alphanumerics
+  return [p1, p2, p3].join(' - ');
+}
+var newString = 'abc12345#$*%'.replace(/([^\d]*)(\d*)([^\w]*)/, replacer);
+console.log(newString);  // abc - 12345 - #$*%
+```
+| Possible name | Supplied value |
+| :-- | :-- |
+| match | The matched substring. |
+| p1, p2, ... | The nth string found by a parenthesized capture group, provided the first argument to replace() was a RegExp object. |
+| offset | The offset of the matched substring within the whole string being examined. (For example, if the whole string was 'abcd', and the matched substring was 'bc', then this argument will be 1.) |
+| string | The whole string being examined. |
 
 ### slice() vs substring() vs substr()
 
@@ -204,7 +224,7 @@ function SaferHTML(templateData) {
 }
 ```
 模板字符串的限制: \ 转义符, 如 `\u`, `\x`
-```
+
 ## ==, ===, Object.is()
 "==" 两边的类型是否相同，相同的话就比较值的大小，例如 1==2，返回 false
  判断的是否是 null 和 undefined，是的话就返回 true
@@ -223,6 +243,8 @@ Object.is(+0, -0) // false
 ### 位运算符 (bitwise operator)
 [我们要不要在 JS 使用二进制位运算？](https://juejin.im/entry/57317b2679df540060d5d6c2)
 首先对性能基本没有负面影响, 纯数字计算更快, 但只能对 Number 使用
+
+[位运算装逼指南](https://mp.weixin.qq.com/s/C6o6T9ju34vAxNBg5zobWw)
 
 `&` 按位与
 
@@ -386,7 +408,12 @@ function log() {
 log(); // Prints 42
 ```
 
-`window, document`: window 对象是指浏览器打开的窗口。document 对象是 HTML 文档对象的一个只读引用，window 对象的一个属性
+`window, document`
+
+window 对象是指浏览器打开的窗口。document 对象是 HTML 文档对象的一个只读引用，window 对象的一个属性
+
+window -> BOM (browser object model)
+document -> DOM
 
 ### this 判断顺序
 1. 全局

@@ -19,14 +19,14 @@ Input: [7,6,4,3,1]
 Output: 0
 Explanation: In this case, no transaction is done, i.e. max profit = 0.
 ```
-My solution
+## solution
 
 Kadane's Algorithm from [here](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/discuss/39038/Kadane's-Algorithm-Since-no-one-has-mentioned-about-this-so-far-:)-(In-case-if-interviewer-twists-the-input)/36808)
 > All the straight forward solution should work, but if the interviewer twists the question slightly by giving the difference array of prices, Ex: for {1, 7, 4, 11}, if he gives {0, 6, -3, 7}, you might end up being confused.
 
 ```js
 var maxProfit = function(prices) {
-  var i=0, r=0, min=prices[0]
+  var r=0, i=0, min=prices[0]
   while (++i<prices.length) {
     r = Math.max(r, prices[i]-min)
     min = Math.min(prices[i], min)

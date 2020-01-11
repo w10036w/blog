@@ -28,11 +28,11 @@
 
 #### flex 布局
 容器 (加粗为默认值)
-1. `justify-content`: **flex-start** | flex-end | center | space-between | space-around; 主轴对齐
-2. `align-items`: flex-start | flex-end | center | baseline | **stretch**; 次轴对齐
+1. `justify-content`: **flex-start** \| flex-end \| center \| space-between \| space-around; 主轴对齐
+2. `align-items`: flex-start \| flex-end \| center \| baseline \| **stretch**; 次轴对齐
 3. `flex-direction`: **row**
 4. `flex-wrap`: **no-wrap**
-5. `flex-flow`: <flex-direction> || <flex-wrap>
+5. `flex-flow`: "flex-direction" \| "flex-wrap"
 6. `align-content`: 多轴线对齐, 同 `justify-content`, 单轴时无效
 
 子元素
