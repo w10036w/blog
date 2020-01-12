@@ -46,6 +46,7 @@
 - [149. Max Points on a Line](149-max-points-on-a-line.md)
 
 ## Hash Table / Dict
+- [3. Longest Substring without Repeating Characters](3-longest-substring-without-repeating-characters.md)
 - [36. Valid Sudoku](36-valid-sudoku.md)
 - [49. Group Anagrams](49-group-anagrams.md)
 - [169. Majority Element](169-majority-element.md)
@@ -88,6 +89,7 @@
 - [146. LRU Cache](146-lru-cache.md) !!!
 - [160. Intersection of Two Linked Lists](160-intersection-of-two-linked-lists.md) !!!
 - [206. Reverse Linked List](206-reverse-linked-list.md)
+- [445. Add Two Numbers II](445-add-two-numbers-ii.md)
 
 ## Stack
 - [20. Valid Parentheses](20-valid-parentheses.md)
@@ -151,7 +153,6 @@
 
 ## Archived
 - [Add 2 Numbers](add2numbers.md)
-- [Longest Substring without Repeating Characters](longest-substring-without-repeating-characters.md)
 - [Zig Zag Conversion](algozigzagconversion.md)
 - [Reverse Integer](reverseinteger.md)
 

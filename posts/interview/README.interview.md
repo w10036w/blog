@@ -1,10 +1,11 @@
-# 前端面试基础 (TODO) 待分类
+# 前端面试基础
 
-> What's **not going to change** in the next 10 years?
->
-> Build a business strategy around the things that are **stable in time**.
->
-> -- Jeff Bezos
+## 以不变应万变
+Jeff Bezos:
+
+What's **not going to change** in the next 10 years?
+
+Build a business strategy around the things that are **stable in time**.
 
 - [掘金: 自检清单](https://juejin.im/post/5cc1da82f265da036023b628)
 - [底层协议](interview/protocols.md)
@@ -19,6 +20,8 @@
 - [typescript](interview/typescript.md)
 - [系统设计](interview/system-design.md)
 - [面试技巧](interview/tricks.md)
+
+https://github.com/h5bp/Front-end-Developer-Interview-Questions
 
 TODO
 - [这儿有 20 道大厂面试题等你查收](https://juejin.im/post/5d124a12f265da1b9163a28d)
@@ -63,7 +66,7 @@ TODO
 - [ ] https://juejin.im/post/5dc20a4ff265da4d4e30040b
 - [x] https://juejin.im/post/5db556376fb9a0207a6ddce7
 
-## Q & A
+## Q & A Recap
 
 ### 从输入 URL 到页面加载发生了什么
 1. 浏览器查找当前 URL 缓存

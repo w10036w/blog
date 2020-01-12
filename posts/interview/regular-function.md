@@ -586,17 +586,16 @@ function sum(a, b) {
   var l = Math.max(a.length, b.length)
   a = a.padStart(l, 0)
   b = b.padStart(l, 0)
-  var i = l, plus1 = 0, r = '', tmp
+  var i = l, carry = 0, r = '', tmp
   while (--i>-1) {
-    tmp = Number(a[i]) + Number(b[i]) + plus1
+    tmp = Number(a[i]) + Number(b[i]) + carry
     if (tmp>9) {
-      tmp = tmp-10
-      plus1 = 1
-    } else plus1 = 0
+      tmp-=10
+      carry = 1
+    } else carry = 0
     r = tmp + r
   }
-  if (plus1===1) r = '1'+r
-  return r
+  return carry===1 ? ('1'+r) : r
 }
 ```
 ### fibonacci 斐波那契数列

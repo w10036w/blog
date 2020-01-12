@@ -19,6 +19,7 @@
 第三轮，面试官老师特别和蔼可亲，气氛非常轻松。主要考察知识点广度，聊了我做的一些模块，发布的 npm 包，一些程序设计思想。广度方面主要聊了一些前端测试，前沿技术等，重点聊了一下工具链模块开发。还问了一些平常的学习方法这些。一共一小时多一点时间吧。再接下来就是 hr 面试了。感觉只要不作死，基本上都过了。主要是之前在上一家公司都做了些啥，怎么待实习生的，怎么做技术提升的。为何离职自己职业规划。最后通知 offer 发放。
 
 ## questions
+[题目集合](https://blog.csdn.net/Uupton/article/details/84640146)
 Minimum Window Substring
 Longest Increasing Path in a Matrix
 
