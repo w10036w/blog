@@ -2,6 +2,12 @@
 
 [以 Gitbook 打开](https://w10036w.gitbooks.io/blog/)
 
+Jeff Bezos:
+
+What's **not going to change** in the next 10 years?
+
+Build a business strategy around the things that are **stable in time**.
+
 | EN | 中文 |
 | :--- | :--- |
 | [(working)Frontend Deepsea: State Management](/posts/thoughts/fe-state-mgmt.md) | [(working)前端深水区：状态管理](/posts/thoughts/fe-state-mgmt.zh.md) |

@@ -1,12 +1,5 @@
 # 前端面试基础
 
-## 以不变应万变
-Jeff Bezos:
-
-What's **not going to change** in the next 10 years?
-
-Build a business strategy around the things that are **stable in time**.
-
 - [掘金: 自检清单](https://juejin.im/post/5cc1da82f265da036023b628)
 - [底层协议](interview/protocols.md)
 - [设施硬件层](interview/infrastructure.md)

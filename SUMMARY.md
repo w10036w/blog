@@ -5,11 +5,11 @@
 - [前端面试](posts/interview/README.interview.md)
 
   - [底层协议](posts/interview/protocols.md)
-  - [JS 常用函数实现](posts/interview/regular-function.md)
   - [设施硬件层](posts/interview/infrastructure.md)
   - [JS 语言基础](posts/interview/js.md)
+  - [ES2015-2020](posts/interview/es6.md)
+  - [JS 常用函数](posts/interview/regular-function.md)
   - [regex](posts/interview/regex.md)
-  - [ES6 ES7 新特性](posts/interview/es6.md)
   - [浏览器](posts/interview/browser.md)
   - [typescript](posts/interview/typescript.md)
   - [系统设计](posts/interview/system-design.md)
