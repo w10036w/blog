@@ -2,6 +2,7 @@
 
 ## 参考面经
 - [服务端开发](https://www.nowcoder.com/discuss/147325?type=2)
+- [今日头条前端三轮面试面经](https://www.nowcoder.com/discuss/105513)
 
 ## 流程
 > https://www.kanzhun.com/gsmsh11077801.html
@@ -23,4 +24,39 @@
 Minimum Window Substring
 Longest Increasing Path in a Matrix
 
-revert linked list
+平衡二叉树
+
+### revert linked list
+给定一个单链表的头节点 head, 实现一个调整单链表的函数，使得每 K 个节点之间为一组进行逆序，并且从链表的尾部开始组起，头部剩余节点数量不够一组的不需要逆序。（不能使用队列或者栈作为辅助）
+例如：
+```js
+链表：1->2->3->4->5->6->7->8->null, K = 3。那么 6->7->8，3->4->5，1->2 各位一组。调整后：1->2->5->4->3->8->7->6->null。其中 1，2 不调整，因为不够一组。
+```
+
+### Solution
+[25. Reverse Nodes in k-Group](https://leetcode.com/problems/reverse-nodes-in-k-group/) 加强版
+
+先全链反转, 再每K翻转, 再全链反转
+```js
+function reverseLL(head) {
+  let newHead = reverse(head)
+  newHead = reverseKNode(newHead, 3)
+  return reverse(newHead)
+}
+function reverse(head) {
+  var pre=null, cur=head
+  while(cur) [pre, cur, cur.next]=[cur, cur.next, pre]
+  return pre
+}
+function reverseKNode(head, k) {
+  var tmp=head
+  for(var i=1;i<k&&tmp;i++) tmp=tmp.next
+  if (!tmp) return head // if rest.length<k, do nothing
+  var next=tmp.next
+  tmp.next=null
+  var newHead=reverse(head)
+  var newNext=reverseKNode(next, k)
+  head.next=newNext
+  return newHead
+}
+```

@@ -23,38 +23,30 @@ const output2List = head => {
 
 
 
-var fn = function([l1, l2]) {
-  let s1 = [], s2 = [], sum = 0;
-  while (l1) {
-    s1.push(l1.val);
-    l1 = l1.next;
-  }
-  while (l2) {
-    s2.push(l2.val);
-    l2 = l2.next;
-  }
-  let curr = new ListNode(null);
-  while (s1.length || s2.length) {
-    if (s1.length) sum += s1.pop();
-    if (s2.length) sum += s2.pop();
-    curr.val = sum % 10;
-    const temp = Math.floor(sum/10);
-    const head = new ListNode(temp);
-    head.next = curr;
-    curr = head;
-    sum = temp;
-  }
-  if (curr.val === 0) return curr.next;
-  return curr;
+var reverseKGroup = function(head, k) {
+  var tmp=head
+  for(var i=1;i<k&&tmp;i++) tmp=tmp.next
+  if (!tmp) return head // if rest.length<k, do nothing
+  var next=tmp.next
+  tmp.next=null
+  var newHead=reverse(head)
+  var newNext=reverseKGroup(next, k)
+  head.next=newNext
+  return newHead
+};
+function reverse(head) {
+  var pre=null, cur=head
+  while(cur) [cur.next, pre, cur]=[pre, cur, cur.next]
+  return pre
 }
 
 
 
 const input = [
-  [[6,2,4,3], [5,6,4]],
+  [[1,2,3,4,5], 2],
 ]
 const table={}
-const flow = e => JSON.stringify(output2List(fn(inputs2Lists(e))))
+const flow = e => JSON.stringify(output2List(reverseKGroup(input2List(e[0]), e[1])))
 const output = input.forEach(e => {
   table[JSON.stringify(e)] = flow(e)
 })

@@ -10,24 +10,36 @@
 - 数据链路层: 定义了在单个链路上如何传输数据, ATM, FDDI, 产品如网卡，网桥
 - 物理层: 架空明线、平衡电缆、光纤、无线信道等; 定义有关传输介质的特性, 也参考了其他组织制定的标准。连接头、帧、帧的使用、电流、编码及光调制等都属于各种物理层规范中的内容。物理层常用多个规范完成对所有细节的定义
 
+### IP 级
+#### TTL time to live
+作用是限制数据包在网络中存在的时间，防止数据包不断的在 IP 互联网络上循环。
+
+TTL 指定数据包被路由器丢弃之前允许通过的最大网段数量，是 IP 数据包在网络中可以转发的最大跳数 (跃点数)，TTL 位于 IPv4 包的第 9 个字节，是一个 8 bit 字段。
+
+TTL 字段由数据包的发送者设置，路由器转发数据包时，至少将 TTL 减小 1。路由器将会丢弃 TTL=0 的数据包，并向数据包源地址发送一个类型 11 的 ICMP 报文，表示 time exceeded（TTL 为 0），由发送者决定是否要重发。
+
+TTL 的最大值是 255，推荐值是 64，windows 中 TTL 默认值保存在注册表 HKLM\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters 下的 DefaultTTL (DWORD) 中，修改设置后重启才生效。
+
+在域名系统 (DNS) 中的 TTL 存活时间，用以设定域名纪录的最长缓存时间。
+
 ### [集线器、交换机、路由器功能原理入门](http://www.52im.net/thread-1629-1-1.html)
 ### [TCP (必看)](http://www.52im.net/thread-1107-1-1.html) 三次握手
 以太网数据包（packet）的大小 (MTU, `Maximum Transmission Unit`，最大传输单元) 是固定的，最初是 1518 字节，后来增加到 1522 字节。其中， 1500 字节是负载（payload），22 字节是头信息（head）。IP 数据包在以太网数据包的负载里面，它也有自己的头信息，最少需要 20 字节; TCP 头信息也是 20 字节, 所以 TCP 数据包的负载实际为 1400 字节左右.
 
 数据在 `发送端` 每经过一层都会被加上头部信息; 在 `接收端` 每经过一层都会删除一层头部
 
-TCP 包有编号 SEQ, 例如发送方发送 seq=1, length=100bytes, 客户端返回 ACK=101, 发送方第二次返回 seq=101, length=xxx, 用以防止丢包; 如丢一个包, 客户端返回服务端的 ACK 序号不会增长, 发送方在收到 3 次连续重复 ACK 或 未收到 ACK 直至超时, 即确认丢包并重发.
+TCP 包有编号 SEQ, 例如发送方发送 seq=1, length=100bytes, 接收方返回 ACK=101, 发送方第二次返回 seq=101, length=xxx, 用以防止丢包; 如丢一个包, 接收方返回发送方的 ACK 序号不会增长, 发送方在收到 3 次连续重复 ACK 或 未收到 ACK 直至超时, 即确认丢包并重发.
 
 应用层协议如 http 规定信息体大小 (`Content-Length`), 操作系统按端口接收并组装数据包转交给应用, 由应用根据信息体大小正确分段读取
 
-TCP 协议有慢启动 (slow start) 机制, 根据丢包情况调整发送速率; Linux 内核设定初始一次性发包量 (发送窗口) 10. 即使对于带宽很大、线路很好的连接，初始也只发 10 包. 收到每两个包即发一个确认 (ACK: 下一个包的编号 + 本次 (接收窗口) 剩余包量)
+TCP 协议有慢启动 (slow start) 机制, 根据丢包情况调整发送速率; Linux 内核设定初始一次性发包量 (发送窗口) 10 (TCP_INIT_CWND). 即使对于带宽很大、线路很好的连接，初始也只发 10 包. 收到每两个包即发一个确认 (ACK: 下一个包的编号 + 本次 (接收窗口) 剩余包量)
 ### [UDP 和 TCP 区别](http://www.52im.net/thread-580-1-1.html), 或 [精华版](http://www.52im.net/thread-1277-1-1.html)
 
 **简述**
 
 TCP 是面向连接的、可靠的流协议。流就是指不间断的数据结构，当应用程序采用 TCP 发送消息时，虽然可以保证发送的顺序，但还是犹如没有任何间隔的数据流发送给接收端。TCP 为提供可靠性传输，实行 “顺序控制” 或 “重发控制” 机制。此外还具备 “流控制（流量控制）”、“拥塞控制”、提高网络利用率等众多功能。
 
-UDP 面向非连接, 是不具有可靠性的数据报协议。细微的处理它会交给上层的应用去完成。在 UDP 的情况下，虽然可以确保发送消息的大小，却不能保证消息一定会到达。因此，应用有时会根据自己的需要进行重发处理。
+UDP 面向非连接, 是不具有可靠性的数据包协议。细微的处理它会交给上层的应用去完成。在 UDP 的情况下，虽然可以确保发送消息的大小，却不能保证消息一定会到达。因此，应用有时会根据自己的需要进行重发处理。
 
 TCP 和 UDP 的优缺点无法简单地、绝对地去做比较：TCP 用于在传输层有必要实现可靠传输的情况；而在一方面，UDP 主要用于那些对高速传输和实时性有较高要求的通信或广播通信。TCP 和 UDP 应该根据应用的目的按需使用。
 
@@ -48,10 +60,10 @@ QQ 既有 UDP 又有 TCP
 </summary>
 
 ### TCP 握手
-#### 建立连接 三次握手
+#### 建立连接 三次握手, .5 RTT * 3
 
-1. `client syn`: 请求端（通常称为客户）发送一个 SYN 段指明客户打算连接的服务器的端口，以及初始序号（seq/ISN，在这个例子中为 1415531521）。这个 SYN 段为报文段 1。此时 客户端状态为 `syn_sent`
-2. `server syn ack + server syn`: 服务器发回包含服务器的初始序号的 SYN 报文段（报文段 2）作为应答。同时，将确认序号设置为客户的 ISN/seq 加 1 以对客户的 SYN 报文段进行确认。一个 SYN 将占用一个序号。此时 服务端状态为 `syn_rcvd`
+1. `client syn`: 请求端（通常称为客户）发送一个 `SYN` 段指明客户打算连接的服务器的端口，以及初始序号（seq/ISN，在这个例子中为 1415531521）。这个 `SYN` 段为报文段 1(实际因安全等原因为随机数)。此时 客户端状态为 `syn_sent`
+2. `server syn ack + server syn`: 服务器发回包含服务器的初始序号的 `SYN` 报文段（报文段 2）作为应答。同时，将确认序号设置为客户的 seq/ISN 加 1 以对客户的 `SYN` 报文段进行确认, 同时自己生成随机数 server seq/ISN `SYN`. 此时 服务端状态为 `syn_rcvd`
 3. `client ack`: 客户必须将确认序号设置为服务器的 ISN 加 1 以对服务器的 SYN 报文段进行确认（报文段 3）。此时 客户端/服务端状态为 `established`
 
 这三个报文段完成连接的建立。这个过程也称为三次握手（three-way handshake）。
@@ -61,6 +73,20 @@ QQ 既有 UDP 又有 TCP
 2. `server ack`: 收到, 序号+1, 向服务端应用提交 `EOF`, 开始关闭其连接, 向客户端发回 `ACK`
 3. `server fin`: 服务端确认关闭, 发回 `FIN`
 4. `client ack`: 客户端确认服务端的 `FIN`
+
+#### RTT Round-Trip Time 速度
+光在光纤中非直线传播,  ~31%
+如北京至上海约 1000 公里, 不考虑路由跳转限制, 理论 RTT 极限为 21.6ms, 实际为 40+ms
+
+```js
+RTT = 1000000m / 300000m/ms * 2 / .31 = 21.6ms
+```
+
+#### TCP 级优化
+- CDN, 云服务缩短物理距离, 降低 RTT
+- `TCP fast open`, 双方各自在最后一次握手时带数据, 节省 1 RTT (by Google, supported from Linux 3.7)
+- `SACK`, selective ACK
+- TCP 连接重用, `http/1.1` `keep alive`, http2 多路复用 multiplexing
 
 ### [HTTP](http://www.52im.net/thread-1677-1-1.html)
 sample
@@ -81,20 +107,23 @@ http 协商缓存
 - ![http cache](../../assets/img/js-interview-http-cache.png)
 - cookies 缓存
 
-### get vs post
-- `幂等`: GET 可 (多次请求不会对资源造成影响, 无副作用); POST 不可
-- `后退刷新`: GET 可免通知重试; POST 提示用户重新提交
-- `收藏为书签`: GET 可; POST 不可
-- `历史记录`: GET 可保存参数; POST 不可
-- `缓存`: GET 可; POST 不可 (除响应头声明强缓存 `Cache-Control/Expires`)
-- `请求体`: GET 一般无, 只需 encodeUrl, 只需发一次; POST 一般有, 支持多种编码 (`Accept-Encoding`), 允许客户端先发送一次请求 `Expect:100-continue` 以询问服务端是否接收, 允许后在第二次发送请求体
-- `长度`: GET 取决于浏览器/代理/服务器等; POST 无限制
-- `字符`: GET 只允许 `ASCII`; POST 无限制支持二进制
-- `安全`: GET 差 地址栏可见; POST 好
-
 ### HTTPS
 
-如无优化或缓存, 最坏(访问 http 后跳转)比 http 增加 7 个 RTT (循环时间 Round-Trip Time)
+如无优化或缓存, 最坏(开启 HSTS 访问 http 后跳转)比 http 增加 7 个 RTT (循环时间)
+
+在网站全站 HTTPS 后，如用户手动敲入网站的 HTTP 地址，或者从其它地方点击了网站的 HTTP 链接，通常依赖于服务端 `301/302` 跳转才能使用 HTTPS 服务。而第一次的 HTTP 请求就有可能被劫持，导致请求无法到达服务器，从而构成 HTTPS 降级劫持.
+
+#### [HSTS (HTTP Strict Transport Security)](https://www.hi-linux.com/posts/3714.html)
+采用 HSTS 策略的网站将保证浏览器始终连接到该网站的 HTTPS 加密版本，不需要用户手动在 URL 地址栏中输入加密地址，以减少会话劫持风险。
+
+nginx 服务器部署 HSTS 响应头格式
+```sh
+server {
+  # ...
+  add_header Strict-Transport-Securit "max-age=63072000; includeSubdomains;preload"
+}
+```
+
 
 [wireshark 抓包分析 RSA & DH 握手过程 (必看)](https://razeencheng.com/post/ssl-handshake-detail.html)
 wireshark 抓包 TLS RSA 通信图示
@@ -149,15 +178,15 @@ TLS 握手步骤 (client-hello, server-hello, (cert verify with CA & OCSP), ciph
 证书中包含：网站的基本信息、网站的公钥、CA 的名字等信息（详细请看 X.509），然后 CA 根据这几个内容生成摘要（digest），再对摘要用 CA 的私钥加密，加密后的结果即数字签名，最后将数字签名也放入到证书中。那么当系统收到一个证书后，先用公钥解密，解得开说明对方是由权威 CA 签发的，然后再根据证书的信息生成摘要，跟解密出来的摘要对比。
 
 #### 吊销检查
-目前写进国际标准的吊销状态检查协议有两种: 1.CRL, 2. OCSP
+CRL（Certificate Revocation List，证书撤销名单）和 OCSP（Online Certificate Status Protocol，在线证书状态协议)
 
 CRL 是一份全量的文件，记录了被此 CRL 限制的证书中所有被吊销证书的序列号。通过匹配当前证书序列号，与 CRL 中序列号，来判断.
 
-有点绕，反正就说，所有打上了这个 URL 的 CRL 的证书，只要其中一个被吊销，那么下次 CRL 更新时，均会查询匹配到.
+所有打上了这个 URL 的 CRL 的证书，只要其中一个被吊销，那么下次 CRL 更新时，均会查询匹配到.
 那么可不可以认为一个中间颁发机构颁发的证书的 CRL 列表只有一个？不可以！因为数量可能太多，厂商完全可以将同一个中间证书颁发的最终证书，分不同批打不同的 CRL.
 而 OCSP 是 TCP 服务，通过请求证书序列号，服务器告知当前序列号是否在被吊销名单.
 
-有的证书内置了 CRL+OCSP, 有点只内置了 OCSP, 还有的早起证书只内置了 CRL, 但只内置 CRL 的证书是不被新型浏览器信任了.
+有的证书内置了 CRL+OCSP, 有的只内置了 OCSP Stapling (OCSP 封套, 服务端在证书链中包含颁发机构对证书的 OCSP 查询结果，从而让浏览器跳过自己去验证的过程), 还有的早起证书只内置了 CRL, 但只内置 CRL 的证书是不被新型浏览器信任了.
 
 签发者: 证书的签发者，通过以下步骤获得
 
@@ -187,10 +216,20 @@ CRL 是一份全量的文件，记录了被此 CRL 限制的证书中所有被�
 劫持种类: 链路(绝大部分, 中间人攻击, man in the middle), DNS, 客户端
 
 ### HTTP2
-- 二进制传输, 不只是字符串
-- HPACK 算法压缩 `http head`, 减少传输体积 / 数据包量
-- 多路复用
-- 服务端推送
+- `binary frame` 二进制分帧
+- `header compression`: 使用 `HPACK 算法` 压缩 `head frame`, 减少传输体积 / 数据包量
+- `Multiplexing`: 多路复用, 所有通信在一个 tcp 上完成, 可并行交错发送请求和响应, 将一个 TCP 连接分为若干个流（Stream），每个流中可以传输若干消息（Message），每个消息由若干最小的二进制帧（Frame）组成。也就是将每个 request-response 拆分为了细小的二进制帧 Frame，这样即使一个请求被阻塞了，也不会影响其他请求. 解决 `队头阻塞 (Head of line blocking)`
+- `stream` 双向流, 服务端推送
+- 可设置请求优先级
+- 使用类似滑动窗口机制进行流量控制
+
+![http tcp](../../assets/img/interview-protocols-http-tcp.webp)
+
+### HTTP3 / QUIC
+[QUIC](https://zh.wikipedia.org/wiki/%E5%BF%AB%E9%80%9FUDP%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5) (Quick UDP Internet Connections) 的优化
+
+1. 连接建立期间大大减少开销。由于大多数 HTTP 连接都需要 TLS，因此 QUIC 使协商 密钥和支持的协议成为初始握手过程的一部分. 其他包括基于 UDP, 每个流独立互不干涉, 每个数据包单独加密
+2. 提高网络切换期间的性能, 取消现有的冗长过程 (每个现有连接依次超时，然后根据需要重新建立). `QUIC` 包含一个连接标识符，该标识符唯一地标识客户端与服务器之间的连接, 而无论源 IP 地址是什么。这样只需发送一个包含此 ID 的数据包即可重新建立连接，因为即使用户的 IP 地址发生变化, 原始连接 ID 仍然有效.
 
 ### HTTP [状态码](https://juejin.im/post/5db7b2986fb9a02027084ff4)
 分类 | 描述
@@ -324,6 +363,50 @@ CRL 是一份全量的文件，记录了被此 CRL 限制的证书中所有被�
 
 <p>510: 获取资源所需要的策略并没有没满足。（RFC 2774）</p>
 </details>
+
+### get vs post
+- `幂等`: GET 可 (多次请求不会对资源造成影响, 无副作用); POST 不可
+- `后退刷新`: GET 可免通知重试; POST 提示用户重新提交
+- `收藏为书签`: GET 可; POST 不可
+- `历史记录`: GET 可保存参数; POST 不可
+- `缓存`: GET 可; POST 不可 (除响应头声明强缓存 `Cache-Control/Expires`)
+- `请求体编码`: GET 一般无, 只需 `encodeUrl`, 只需发一次; POST 一般有, 支持多种编码 (`Accept-Encoding`), 允许客户端先发送一次请求 `Expect:100-continue` 以询问服务端是否接收, 允许后在第二次发送请求体
+- `长度`: GET 取决于浏览器/代理/服务器等; POST 无限制
+- `字符`: GET 只允许 `ASCII`; POST 无限制支持二进制
+- `安全`: GET 差 地址栏可见; POST 好
+
+### OPTIONS
+发送 `非简单请求` (post 或带有特殊 head 的 get) 时, 会发 option 预检 (cors-preflight-request), 当触发预检时, 一次 AJAX 请求会额外消耗 1 RTT, 严重影响性能.
+
+确认 header 响应, 包含以下 2 字段:
+
+- `Access-Control-Request-Method`: 该字段的值对应当前请求类型，例如 GET、POST、PUT 等等。浏览器会自动处理。
+- `Access-Control-Request-Headers`: 该字段的值对应当前请求可能会携带的额外的自定义 header 字段名，多个字段用逗号分割。浏览器会自动处理，将请求中非简单的 header 字段全部列出来，例如标识请求流水的 `x-request-id`，用于 Auth 鉴权的 `Authorization` 字段。
+
+服务端返回字段:
+
+- `Access-Control-Allow-Origin`: 允许哪些域被允许跨域，例如 http://qq.com 或 https://qq.com，或者设置为 * ，即允许所有域访问（通常见于 CDN ）
+- `Access-Control-Allow-Credentials`: 是否携带票据访问（对应 fetch 方法中 credentials），当该值为 true 时，Access-Control-Allow-Origin 不允许设置为 *
+- `Access-Control-Allow-Methods`: 标识该资源支持哪些方法，例如：POST, GET, PUT, DELETE
+- `Access-Control-Allow-Headers`: 标识允许哪些额外的自定义 header 字段和非简单值的字段（这个后面会解释）
+- `Access-Control-Max-Age`: 表示可以缓存 Access-Control-Allow-Methods 和 - `Access-Control-Allow-Headers`: 提供的信息多长时间，单位秒，一般为 10 分钟。
+- `Access-Control-Expose-Headers`: 通过该字段指出哪些额外的 header 可以被支持。
+
+当 CDN 设置了 `Access-Control-Allow-Origin` 响应头允许跨域时，我们可以给 script 标签添加 `crossOrigin` 属性，从而可以使用 `window.onerror` 捕获 CDN 上的 js 运行时导致的详细错误信息，包括堆栈等。
+
+如果不设置 crossOrigin 属性，则可能只会捕获到 script error，无法获取额外的堆栈信息。
+
+crossOrigin 属性的值默认为 anonymous，即不携带 cookie，如果设置为 `use-credentials`，则会携带 cookie 和客户端证书等票据。
+
+#### option 优化
+- 发出简单请求
+- 服务器端设置 `Access-Control-Max-Age` 字段，那么当第一次请求该 URL 时会发出 OPTIONS 请求，浏览器会根据返回的 Access-Control-Max-Age 字段缓存该请求的 OPTIONS 预检请求的响应结果 (10min), 但只缓存一个 url 而已, 适用于 graphql 方案
+
+### 浏览器级优化
+- `cookie free`, 静态资源 (图片类, css/js 不会附 cookie) 放和主站不同的域名, 不用带 cookie 加速
+- `domain hash`, 静态资源放多个不同域名, 避开 `基于 domain 的并发控制`, 以增加 DNS 开销为代价
+- `sprites, minify, compress`
+- `lazyload` 非首屏视口内容懒加载
 
 ## Q & A
 

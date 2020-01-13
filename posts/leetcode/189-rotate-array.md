@@ -32,11 +32,8 @@ var rotate = function(nums, k) {
   reverse(0, k-1)
   reverse(k, len-1)
   function reverse(start, end) {
-    while(start<end) {
-      [nums[start], nums[end]]=[nums[end], nums[start]]
-      start++
-      end--
-    }
+    do [nums[start], nums[end]]=[nums[end], nums[start]]
+    while(++start<--end)
   }
 }
 ```

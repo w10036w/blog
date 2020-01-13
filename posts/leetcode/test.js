@@ -16,19 +16,24 @@ const h2n = hex => parseInt(hex, 16)
 
 const start=performance.now()
 
-const tests = [
+const input = [
   '#f0f0F0',
   '#9fc',
   'sdf'
 ]
+const expect = [
+  'rgb(240,240,240)',
+  'rgb(153,255,204)',
+  null,
+]
 
 // test cases
-const t= parseInt(performance.now()-start)
+console.time('test')
 
 const o = {}
-tests.forEach(e => {
-  o[e] = fn(e)
-})
+const l=input.map(e => o[e] = fn(e))
+// https://developer.mozilla.org/zh-CN/docs/Web/API/Console/table
 console.table(o)
+console.assert(l.every((e,i) => e===o[input[i]]))
 
-console.log('time: '+t+'ms')
+console.timeEnd('test')

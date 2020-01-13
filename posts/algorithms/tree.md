@@ -152,7 +152,7 @@ function rotateRight(node) {
 
 ```
 
-四种平衡二叉树旋转 
+四种平衡二叉树旋转
 
 [参考 AVL 树的旋转图解和简单实现](https://www.jianshu.com/p/6988699625d5)
 | 插入方式 | 描述 | 旋转方式 |
@@ -195,3 +195,6 @@ function rotateRight(node) {
 3- 最长公共前缀
 
 对所有串建立字典树，对于两个串的最长公共前缀的长度即他们所在的结点的公共祖先个数，于是，问题就转化为求公共祖先的问题。
+
+## 红黑树
+[参考](https://juejin.im/post/5dff59cb6fb9a0163c53ce1d)

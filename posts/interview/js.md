@@ -632,6 +632,33 @@ console.log('macro2')
 
     答：`axios.defaults.adapter` 默认配置中根据环境判断是浏览器还是 node 环境，使用对应的适配器。适配器支持自定义。
 
+## Debug
+### console
+> https://zhuanlan.zhihu.com/p/23080626
+
+- `.table(data[, columns])`, 第一参数可为 Array/Object, 第二参数可以用来过滤列, 类似 SQL select
+- `.assert()`, 错误时提示, 正确时静默
+- `.time(id)`, `.timeEnd(id)`
+- `.group(id)`, `.groupEnd(id)`, `.groupCollapsed()` (默认折叠)
+- `.count(id)`, 得到执行计数
+- `.dir()`, 更优雅的 log, 输出 JSON, 类似 sources 断点时 scope/watch variable 的格式
+
+### devtools
+> https://zhuanlan.zhihu.com/p/80366959
+
+在调试页面中的 JavaScript 代码时，Chrome DevTools 的断点功能是必不可少的，Chrome DevTools 有很多强大的自动断点功能（即你不需要手动找到想要加断点的那行代码），但下面有一个是杜撰的，请挑出它来（本题以 Chrome 当前稳定版 V72 为准）：
+
+A. 在遇到死循环代码的时候自动断点<br>
+B. 在每个 `<script>` 标签第一句代码执行时自动断点<br>
+C. 在某个指定的 DOM 方法被调用时自动断点<br>
+D. 在未捕获的异常抛出时自动断点<br>
+E. 在匹配指定 URL 的 XHR/fetch 请求发起时自动断点<br>
+F. 在指定的节点被删除时自动断点
+
+参考答案：A
+
+考查知识点：页面调试能力。A 为错误项，Chrome 开发者工具目前还没有该能力，B 在 Sources 面板中右下角的 `Event Listener Breakpoints > Script > Script First Statement`，C 用 Console 面板上的 debug() 函数，比如 `debug(alert)` ，然后所有调用 alert() 的地方都会自动中断。D 在 Sources 面板右上角的 Pause on exceptions 按钮。E 在  Sources 面板右下角的 XHR/fetch Breakpoints。F 在 Elements 面板中元素上右键 -> Break on -> node removal.
+
 ## QA
 
 Q: [如果我们在浏览器控制台中运行 'foo' 函数，是否会导致堆栈溢出错误？](https://juejin.im/post/5d2d146bf265da1b9163c5c9#heading-3)

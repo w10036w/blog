@@ -1,6 +1,8 @@
 # interview - nodejs
 
 ## 高性能核心
+![eventloop](../../assets/img/interview-nodejs-eventloop.jpg)
+
 - 单线程, 无线程调度 (thread scheduling) 开销, 多进程内存开销较大
 - 异步 IO, 主线程不阻塞
 
@@ -15,7 +17,6 @@ linux 在使用 CFS 调度器的情况下，其调度开销大约为 O (logm), �
 [Worker from v10.5.0](https://blog.insiderattack.net/deep-dive-into-worker-threads-in-node-js-e75e10546b11)
 
 ## llhttp v12 替代 http parser (c语言实现)
-
 
 ### 性能优化方案
 Worker Thread Pooling

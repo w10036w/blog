@@ -4,9 +4,21 @@ function TreeNode(val, left=null, right=null) {
   this.right=right
 }
 
-var fn = function() {
-  
+var fn = function(root) {
+  var res=[]
+  dfs(root)
+  res.forEach(e => print(e))
+
+  var dfs=function(n, lvl=0) {
+    if (!n) return
+    if (!res[lvl]) res[lvl]=[n.val]
+    else res[lvl].push(n.val)
+    dfs(n.left, lvl+1)
+    dfs(n.right, lvl+1)
+  }
 }
+
+var print=console.log
 
 
 const arr2tree = arr => {

@@ -1,4 +1,4 @@
-# daily questions
+# interview questions 趣题
 
 ## numbers2chinese
 Example
@@ -106,4 +106,22 @@ function camelCase(s) {
 }
 ```
 
-## isPrimeNum
+## isPrime
+Example
+```js
+isPrime(2) // true
+isPrime(10) // false
+```
+
+核心: 6n+1, 6n-1, 平方根简化
+```js
+function isPrime(num) {
+  if (num<=3) return num>1
+  if (num%6!==1 && num%6!==5) return false
+  var sqrt = Math.floor(Math.sqrt(num))
+  for (var i=5; i<sqrt; i+=6) {
+    if (num%i===0 || num%(i+2)===0) return false
+  }
+  return true
+}
+```

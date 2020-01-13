@@ -75,6 +75,7 @@
 - [131. Palindrome Partitioning](131-palindrome-partitioning.md)
 - [216. Combination Sum III](216-combination-sum-iii.md)
 - [306. Additive Number](306-additive-number.md) !!
+- [329. Longest Increasing Path in a Matrix](329-longest-increasing-path-in-a-matrix.md)
 - [401. Binary Watch](401-binary-watch.md)
 - [543. Diameter of Binary Tree](543-diameter-of-binary-tree.md) !!
 - [784. Letter Case Permutation](784-letter-case-permuatation.md)
@@ -82,6 +83,7 @@
 ## LinkedList
 - [21. Merge Two Sorted Lists](21-merge-two-sorted-lists.md)
 - [23. Merge k Sorted Lists](23-merge-k-sorted-lists.md)
+- [25. Reverse Nodes in k-Group](25-reverse-nodes-in-k-group.md)
 - [92. Reverse Linked List II](92-reverse-linked-list-ii.md)
 - [141. Linked List Cycle](141-linked-list-cycle.md)
 - [142. Linked List Cycle II](142-linked-list-cycle-ii.md)

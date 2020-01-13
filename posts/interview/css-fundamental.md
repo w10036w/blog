@@ -92,6 +92,90 @@ animation 关键帧动画：
 - animation-direction: 方向
 - animation-fill-mode: 禁止模式
 
+### [有趣属性](https://mp.weixin.qq.com/s/hGlY6u6TSHWZdD_VHRlvDQ)
+#### attr()
+attr() 用来获取选择到的元素的某一HTML属性值，并用于其样式。它也可以用于伪元素，属性值采用伪元素所依附的元素。
+```html
+<p data-unit="°C">90</p>
+<style>
+  [data-unit]:after {
+    content: attr(data-unit);
+    color: red
+  }
+</style>
+```
+效果
+
+<p data-unit="°C">90</p>
+<style>
+  [data-unit]:after {
+    content: attr(data-unit);
+    color: red
+  }
+</style>
+
+#### currentColor
+color的属性值。它返回当前的标签所继承的文字颜色。
+```html
+<style>
+  .outside{
+    width:200px; height:200px;
+    color: blue;
+    background-color: yellow;
+  }
+  .inside{
+    width:100px; height:100px;box-sizing: border-box;
+    color:red;
+    background-color: pink;
+    border: 10px solid currentColor;
+  }
+</style>
+<div class="outside">
+  <div class="inside"></div>
+</div>
+```
+
+效果
+<style>
+  .outside{
+    width:200px; height:200px;
+    color: blue;
+    background-color: yellow;
+  }
+  .inside{
+    width:100px; height:100px;box-sizing: border-box;
+    color:red;
+    background-color: pink;
+    border: 10px solid currentColor;
+  }
+</style>
+<div class="outside">
+  <div class="inside"></div>
+</div>
+
+#### user-select
+控制选取能否被选择. (可以禁止用户选中内容)
+
+效果
+<p class="disable-select">you cannot select me</p>
+<style>
+  .disable-select{
+    user-select:none;
+  }
+</style>
+
+#### ::selection
+应用于文档中被用户高亮的部分（比如使用鼠标或其他选择设备选中的部分）。
+
+效果
+<p class="selection">select me to see</p>
+<style>
+  .selection::selection{
+    color: yellow;
+    background: blue;
+  }
+</style>
+
 ### 性能
 #### 降低性能
 高斯模糊
@@ -116,4 +200,5 @@ gpu 过程
 transform: translateZ(0);
 /* OR */
 will-change: transform;
+/* 使浏览器可以在元素属性真正发生变化之前, 提前做好对应的优化准备工作 */
 ```

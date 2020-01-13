@@ -1,4 +1,4 @@
-# Ark's Blog
+# 学习总结
 
 [以 Gitbook 打开](https://w10036w.gitbooks.io/blog/)
 
@@ -6,8 +6,9 @@
 | :--- | :--- |
 | [(working)Frontend Deepsea: State Management](/posts/thoughts/fe-state-mgmt.md) | [(working)前端深水区：状态管理](/posts/thoughts/fe-state-mgmt.zh.md) |
 | | [leetcode JS](/posts/leetcode/README.leetcode.md) |
-| | [面试基础](posts/interview/README.md) |
-| | [各公司面试流程](posts/interview/companies/README.companies.md)
+| | [面试基础](posts/interview/README.interview.md) |
+| | [各公司面试流程](posts/interview/companies/README.companies.md) |
+| | [面试趣题](posts/questions/README.questions.md) |
 | | [团队发展参考](posts/team-growth/index.md) |
 
 TODO LIST

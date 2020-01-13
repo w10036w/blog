@@ -357,9 +357,11 @@ ws.readyState // current status
 ## DNS 原理
 DNS (Domain Name System, 域名系统)，作为域名和 IP 地址相互映射的一个分布式数据库。
 
-当浏览器访问一个域名的时候，需要解析一次 DNS，获得对应域名的 ip 地址。在解析过程中，按照<br>
-`浏览器缓存`、`系统缓存`、`路由器缓存`、`ISP(运营商)DNS缓存` (自下而上查缓存)<br>
-`根域名服务器`、`顶级域名服务器`、`主域名服务器` (自上而下, 查到即存上行各级缓存)<br>
+当浏览器访问一个域名的时候，需要解析一次 DNS，获得对应域名的 ip 地址。在解析过程中，按照
+
+- `浏览器缓存`、`系统缓存`、`路由器缓存`、`ISP(运营商)DNS缓存` (自下而上查缓存)
+- `根域名服务器`、`顶级域名服务器`、`主域名服务器` (自上而下, 查到即存上行各级缓存)
+
 的顺序，逐步读取缓存，直到拿到 IP 地址。
 
 ### 总结
@@ -588,24 +590,6 @@ CSS Media Queries
 - [CDN](infrastructure.md)
 - webpack uglify + tree shaking + code splitting
 - 针对 V8 或 JSEngine 的实现进行优化
-
-## Debug
-
-### devtools
-> https://zhuanlan.zhihu.com/p/80366959
-
-在调试页面中的 JavaScript 代码时，Chrome DevTools 的断点功能是必不可少的，Chrome DevTools 有很多强大的自动断点功能（即你不需要手动找到想要加断点的那行代码），但下面有一个是杜撰的，请挑出它来（本题以 Chrome 当前稳定版 V72 为准）：
-
-A. 在遇到死循环代码的时候自动断点<br>
-B. 在每个 `<script>` 标签第一句代码执行时自动断点<br>
-C. 在某个指定的 DOM 方法被调用时自动断点<br>
-D. 在未捕获的异常抛出时自动断点<br>
-E. 在匹配指定 URL 的 XHR/fetch 请求发起时自动断点<br>
-F. 在指定的节点被删除时自动断点
-
-参考答案：A
-
-考查知识点：页面调试能力。A 为错误项，Chrome 开发者工具目前还没有该能力，B 在 Sources 面板中右下角的 `Event Listener Breakpoints > Script > Script First Statement`，C 用 Console 面板上的 debug() 函数，比如 `debug(alert)` ，然后所有调用 alert() 的地方都会自动中断。D 在 Sources 面板右上角的 Pause on exceptions 按钮。E 在  Sources 面板右下角的 XHR/fetch Breakpoints。F 在 Elements 面板中元素上右键 -> Break on -> node removal.
 
 ## 浏览器本地存储 local storage
 
