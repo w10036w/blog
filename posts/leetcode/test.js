@@ -2,24 +2,35 @@ if (typeof window==='undefined') {
   performance = require('perf_hooks').performance
 }
 
-var fn = function hexToRGB(hex) {
-  if (!/^#([0-9A-Fa-f]{3})?[0-9A-Fa-f]{3}$/.test(hex)) return null
-  var a,b,c
-  if (hex.length===4) {
-    a=h2n(hex[1]+hex[1]), b=h2n(hex[2]+hex[2]), c=h2n(hex[3]+hex[3])
-  } else {
-    a=h2n(hex[1]+hex[2]), b=h2n(hex[3]+hex[4]), c=h2n(hex[5]+hex[6])
-  }
-  return `rgb(${a},${b},${c})`
+var fn = function(arrs) {
+  var r=[...new Set(arrs[0])]
+  arrs.forEach((arr, i) => {
+    if (i===0) return
+    r=r.filter(e => arr.includes(e))
+  })
+  return r
 }
-const h2n = hex => parseInt(hex, 16)
 
-const start=performance.now()
+var fn = function(arrs) {
+  var m=new Map(), n=arrs.length-1
+  for (let e of new Set(arrs[0])) {
+    m.set(e, 0)
+  }
+  arrs.forEach((arr, i) => {
+    if (i===0) return
+    for (let e of arr) {
+      if (m.get(e)===i-1) m.set(e, i)
+    }
+  })
+  for (let [k, v] of m) {
+    if (v!==n) m.delete(k)
+  }
+  return [...m.keys()]
+}
 
 const input = [
-  '#f0f0F0',
-  '#9fc',
-  'sdf'
+  [[1,1,1,2,2,3,4,5,5],[1,2,3],[2,3,4],[6,9,2]],
+  [[1, 2, 3, 4], [2, 3, 4, 5], [3, 4, 5, 6]],
 ]
 const expect = [
   'rgb(240,240,240)',
@@ -31,9 +42,9 @@ const expect = [
 console.time('test')
 
 const o = {}
-const l=input.map(e => o[e] = fn(e))
+const l=input.map(e => o[e] = JSON.stringify(fn(e)))
 // https://developer.mozilla.org/zh-CN/docs/Web/API/Console/table
 console.table(o)
-console.assert(l.every((e,i) => e===o[input[i]]))
+// console.assert(l.every((e,i) => e===o[input[i]]))
 
 console.timeEnd('test')

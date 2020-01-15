@@ -12,7 +12,7 @@ re = new RegExp(/xyz/ig, 'i'); // re.flags === 'i'
 - search()
 - split()
 
-## 标记 (除 `i`, `g`)
+## 新增标记 (flag) (TC39)
 `s`: 正则表达式中 `.` 匹配除回车外的任何单字符，标记 `s` 改变这种行为，**允许行终止符的出现**
 ```js
 /hello.world/.test('hello\nworld');  // false
@@ -40,4 +40,40 @@ var s = '𠮷';
 // 5
 /^\S$/.test('𠮷') // false // \S 匹配所有非空白
 /^\S$/u.test('𠮷') // true
+```
+
+## 编码 (TC39)
+
+```js
+const regexGreekSymbol = /\p{Script=Greek}/u;
+regexGreekSymbol.test('π');// → true
+```
+
+## named capture groups 命名捕获 (TC39)
+
+基本格式 `(?<name>)`, 反向引用表示和之前同一类型 `\k<name>`
+
+```js
+let re = /(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})/
+re.exec('2013-03-12')
+re=/^(?<half>.*)\*\k<half>$/
+re.exec('a*a')
+```
+
+## 向前断言
+
+有 `(?=)` 无 `(?!)`
+
+```js
+/\d+(?=%)/.exec("100% of US presidents")[0]==='100'
+/\d+(?!%)/.exec("that’s all 44 of them")[0]==='44'
+```
+
+## 向后断言 (TC39)
+
+有 `(?<=)` 无 `(?<!)`, 区别为多一个 `<`
+
+```js
+/(?<=\$)\d+/.exec("Franklin is on $100")[0]==='100'
+/(?<!\$)\d+/.exec("it is worth €90")[0]==='90'
 ```

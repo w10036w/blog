@@ -17,6 +17,7 @@ If you have figured out the O(n) solution, try coding another solution using the
 
 [reference](https://leetcode.com/problems/maximum-subarray/discuss/20193/DP-solution-and-some-thoughts)
 
+## Solution
 <details>
 <summary>hint</summary>
 粘连型一维 dp[], 需要在子问题多一层转化<br>

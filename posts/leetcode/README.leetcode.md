@@ -1,5 +1,8 @@
 # Leetcode JS
 
+[O(logn) 是怎么回事](https://juejin.im/entry/593f56528d6d810058a355f4)
+
+
 [算法](algorithms/index.md) 如下
 1. 基础技巧：分治、二分、贪心
 2. 排序算法：快速排序、归并排序、计数排序
@@ -69,6 +72,7 @@
 - [79. Word Search](79-word-search.md) !!!
 - [90. Subsets II](90-subsets-ii.md)
 - [93. Restore IP Addresses](93-restore-ip-address.md)
+- [110. Balanced Binary Tree](110-balanced-binary-tree.md)
 - [112. Path Sum](112-path-sum.md)
 - [129. Sum Root to Leaf Numbers](129-sum-root-to-leaf-numbers.md)
 - [130. Surrounded Regions](130-surrounded-regions.md)
@@ -116,6 +120,7 @@
 - [34. Find First and Last Position of Element in Sorted Array](34-find-first-and-last-position-of-element-in-sorted-array.md)
 - [109. Convert Sorted List to Binary Search Tree](109-convert-sorted-list-to-bst.md)
 - [235. Lowest Common Ancestor of a Binary Search Tree](235-lowest-common-ancestor-of-a-binary-search-tree.md)
+- [378. Kth Smallest Element in a Sorted Matrix](378-kth-smallest-element-in-a-sorted-matrix.md) !! divide & binary search
 - [617. Merge Two Binary Trees](617-merge-two-binary-trees.md)
 
 ## RegExp

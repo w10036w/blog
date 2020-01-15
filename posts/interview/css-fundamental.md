@@ -21,6 +21,20 @@
 
 `border-box` vs `content-box`, 前者的 `width / height` 属性数值内含了 `border + padding`
 
+### selector 优先级
+
+`!important` > inline style
+
+\> `id` (ID selector)
+
+\> `class` = `:hover` (伪类) (class selector)
+
+\> `tag` = `::before`(伪元素) (element selector)
+
+\> `*` (universal selector) = `+ > ~ (空格) ||` (关系选择符) = `:not()` (否定伪类)
+
+\> inherit > initial
+
 ### 核心属性
 #### display
 `block, inline*, flex, grid, none` <br>
@@ -51,7 +65,6 @@
 
 - flex 布局: align-items, justify-content, flex, flex-grow,
 - 伪元素，状态元素
-- selector 优先度: !important > inline > id > class > tag > * > inherit > initial
 - pre-css (sass, stylus, 或 jss) + post-css
 - 清除浮动 `.clearfix`, `clear:both`, (同容器相邻元素) `overflow: hidden` (同容器内)
   ```css
@@ -147,6 +160,9 @@ color的属性值。它返回当前的标签所继承的文字颜色。
     color:red;
     background-color: pink;
     border: 10px solid currentColor;
+  }
+  div>div{
+    background-color: blue
   }
 </style>
 <div class="outside">

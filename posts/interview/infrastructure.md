@@ -1,9 +1,7 @@
 # interview - infrastructure 设施硬件
 
-## CDN - Content Delivery Network 或 Content Ddistribute Network，即内容分发网络
-> 来源 
-> https://zhuanlan.zhihu.com/p/28940451
-> https://segmentfault.com/a/1190000010631404
+## CDN - Content Delivery Network 或 Content Distribute Network，即内容分发网络
+> [参考1](https://zhuanlan.zhihu.com/p/28940451) [参考2](https://segmentfault.com/a/1190000010631404)
 
 ### 基本思路
 

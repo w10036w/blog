@@ -29,7 +29,7 @@ var getSum = function(a, b) {
 }
 ```
 
-integer just `a.toString(2)`
+if is integer just `a.toString(2)`
 follow up: convert float number to binary
 ```js
 /**

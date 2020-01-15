@@ -103,8 +103,11 @@ Content-Type: application/json; charset=utf-8  <--- 头部结束
 一个 http 请求包的传递, 增减头部过程
 ![http request](../../assets/img/js-interview-http-req.png)
 
-http 协商缓存
-- ![http cache](../../assets/img/js-interview-http-cache.png)
+http 缓存
+- 强缓存: head 中 `cache-control` (1.1), `expires` (1.0)
+- 协商缓存
+  
+  ![negotiation cache](../../assets/img/js-interview-http-cache.png)
 - cookies 缓存
 
 ### HTTPS
@@ -402,9 +405,9 @@ crossOrigin 属性的值默认为 anonymous，即不携带 cookie，如果设置
 - 发出简单请求
 - 服务器端设置 `Access-Control-Max-Age` 字段，那么当第一次请求该 URL 时会发出 OPTIONS 请求，浏览器会根据返回的 Access-Control-Max-Age 字段缓存该请求的 OPTIONS 预检请求的响应结果 (10min), 但只缓存一个 url 而已, 适用于 graphql 方案
 
-### 浏览器级优化
+### 应用层级优化
 - `cookie free`, 静态资源 (图片类, css/js 不会附 cookie) 放和主站不同的域名, 不用带 cookie 加速
-- `domain hash`, 静态资源放多个不同域名, 避开 `基于 domain 的并发控制`, 以增加 DNS 开销为代价
+- `domain hash`, 静态资源放多个不同域名, 避开客户端 `基于 domain 的并发控制`, 以增加 DNS 开销为代价
 - `sprites, minify, compress`
 - `lazyload` 非首屏视口内容懒加载
 

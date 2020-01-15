@@ -125,3 +125,40 @@ function isPrime(num) {
   return true
 }
 ```
+
+## intersection of multi arrays
+Example
+```js
+[[1,1,1,2,2,3,4,5,5],[1,2,3],[2,3,4],[6,9,2]] // [2]
+  [[1, 2, 3, 4], [2, 3, 4, 5], [3, 4, 5, 6]] // [3, 4]
+```
+
+```js
+// O(n^2)
+var intersection = function(arrs) {
+  var m=new Map(), n=arrs.length-1
+  for (let e of new Set(arrs[0])) {
+    m.set(e, 0)
+  }
+  arrs.forEach((arr, i) => {
+    if (i===0) return
+    for (let e of arr) {
+      if (m.get(e)===i-1) m.set(e, i)
+    }
+  })
+  for (let [k, v] of m) {
+    if (v!==n) m.delete(k)
+  }
+  return [...m.keys()]
+}
+
+// O(n^3)
+var intersection = function(arrs) {
+  var r=[...new Set(arrs[0])]
+  arrs.forEach((arr, i) => {
+    if (i===0) return
+    r=r.filter(e => arr.includes(e))
+  })
+  return r
+}
+```

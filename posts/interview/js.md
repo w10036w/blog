@@ -194,6 +194,24 @@ console.log(newString);  // abc - 12345 - #$*%
   
   返回指定下标间的字符，可 为负, `start>end` 时会返回 `''`
 
+### 编码
+
+### base64
+
+```js
+// node
+// encode
+Buffer.from('123').toString('base64')
+// decode
+Buffer.from('MTIz', 'base64').toString()
+
+// browser
+// encode
+window.btoa('123') // binary to ascii
+// decode
+window.atob('MTIz')
+```
+
 ## Template 模板
 ### tagged template 标签模板
 ```js
@@ -337,7 +355,7 @@ r & 4 // 如有权则返回4,否则0
 - 和全局变量脱钩 (var 和 全局 function 会自动挂载到 `globalThis`)
 - 块级下的函数声明 ES5 实际禁止, 但浏览器未遵守, ES6 允许并实现, 块内声明 function 类似使用 let, 不影响块外, 但浏览器为向前兼容, 块内声明 function 类似用 var, 按 var 一个匿名函数的方式 提升
 
-暂时性死区例
+暂时性死区
 ```js
 var name = 'B'; // 变量提升，声明但不赋值
 function name() {} // 函数提升，声明且赋值，优先级比变量高
@@ -564,6 +582,9 @@ console.log('macro2')
 注意: `Promise.resolve()` (resolve 无 value) 按 A+ 实现时为 `完全同步代码` (return UNDEFINED), 但在 webkit 上实现为新建一个 `Promise` (resolved and return undefined), 因此会影响任务的注册和执行时机
 > 核心原因是第一次 new Promise 的时候，他接着入栈了一个 undefined value，导致需要多执行一次的 undefined 的 then 回调。  
 `isolate->factory ()->undefined_value ()`
+
+<hr>
+
 
 ### 垃圾回收 [参考1](https://github.com/qq449245884/xiaozhi/issues/3) 
 

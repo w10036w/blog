@@ -20,7 +20,7 @@
     4. performance optimization
     5. engineering improvement
   - personal project
-    - Vue ssr starter kit with Nginx congfiguration
+    - Vue2 ssr kit + koa2 + mongodb CMS with Nginx congfiguration
     - React & React Native cross platform app starter kit
     - GraphQL middlelayer server consuming data from DB or microservice
     - a simple but powerful state-management library based on React Hooks
@@ -39,6 +39,7 @@
 - communication
 - team skills
 - summarize key points
+
 #### open problem-solving
 - manage last-minute changes, when deadline is very near
 - most challenge project
