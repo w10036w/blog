@@ -37,8 +37,8 @@ var mergeKLists = function(lists) {
   // return mergeLists(mergeKLists(l1), mergeKLists(l2))
 };
 function mergeLists(a, b) {
-  const prehead=new ListNode()
-  let curr=prehead
+  const pref=new ListNode()
+  let curr=pref
   while (a&&b) {
     if (a.val<b.val) {
       curr.next=a
@@ -51,6 +51,6 @@ function mergeLists(a, b) {
   }
   if(a) curr.next=a
   if(b) curr.next=b
-  return prehead.next
+  return pref.next
 }
 ```

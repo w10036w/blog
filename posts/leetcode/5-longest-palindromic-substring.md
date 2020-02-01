@@ -53,7 +53,7 @@ var longestPalindrome = function(s) {
   return r
 }
 ```
-`[Manacher's Algorithm](https://blog.csdn.net/hk2291976/article/details/51107886)` from [discuss](https://leetcode.com/problems/longest-palindromic-substring/discuss/461806/JavaScript-or-DP-or-~-52ms-or-beats-99.86)
+[`Manacher's Algorithm`](https://blog.csdn.net/hk2291976/article/details/51107886) from [discuss](https://leetcode.com/problems/longest-palindromic-substring/discuss/461806/JavaScript-or-DP-or-~-52ms-or-beats-99.86)
 ```js
 var longestPalindrome = function(s) {
   if (s.length<=1) return s

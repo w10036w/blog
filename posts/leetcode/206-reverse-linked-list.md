@@ -19,29 +19,21 @@ A linked list can be reversed either iteratively or recursively. Could you imple
  * @return {ListNode}
  */
 var reverseList = function(head) {
-  let [prev, curr]=[null, head]
+  var prev=null, curr=head
   while(curr) [curr.next, prev, curr]=[prev, curr, curr.next];
   return prev
 };
 ```
-笨递归 每次记终点和前一个, 断开前一个, 终点next 指向前一个, 循环 O(n^2)
+
+recursive
 ```js
-/**
- * @param {ListNode} head
- * @return {ListNode}
- */
 var reverseList = function(head) {
-  if (!head) return null
-  if (!head.next) return head
-  var last=head, prev=null, tmp=last.next
-  while (tmp) {
-    // if (prev && !prev.next) prev.next=last
-    prev=last
-    last=last.next
-    tmp = last.next
-    last.next=prev
-    prev.next=null
-  }
-  return last
+  return reverse(head, null)
+}
+function reverse(head, newHead) {
+  if (head===null) return newHead
+  var next=head.next
+  head.next=newHead
+  return reverse(next, head)
 }
 ```

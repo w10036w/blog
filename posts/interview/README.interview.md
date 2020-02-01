@@ -1,23 +1,22 @@
-# 前端面试基础 (TODO) 待分类
-
-> What's **not going to change** in the next 10 years?
->
-> Build a business strategy around the things that are **stable in time**.
->
-> -- Jeff Bezos
+# 前端面试基础
 
 - [掘金: 自检清单](https://juejin.im/post/5cc1da82f265da036023b628)
-- [底层协议](interview/protocols.md)
-- [设施硬件层](interview/infrastructure.md)
-- [JS 语言基础](interview/js.md)
-- [CSS 基础](interview/css-fundamental.md)
-- [JS 常用函数实现](interview/regular-function.md)
-- [regex](interview/regex.md)
-- [ES6 ES7 新特性](interview/es6.md)
-- [浏览器](interview/browser.md)
-- [typescript](interview/typescript.md)
-- [系统设计](interview/system-design.md)
-- [面试技巧]
+- [底层协议](protocols.md)
+- [设施硬件层](infrastructure.md)
+- [JS 语言基础](js.md)
+- [CSS 基础](css-fundamental.md)
+- [JS 常用函数实现](regular-function.md)
+- [regex](regex.md)
+- [ES6 ES7 新特性](es6.md)
+- [浏览器](browser.md)
+- [React](react.md)
+- [Vue](vue.md)
+- [typescript](typescript.md)
+- [系统设计](system-design.md)
+- [面试技巧](tricks.md)
+- [工程](engineering.md)
+
+https://github.com/h5bp/Front-end-Developer-Interview-Questions
 
 TODO
 - [这儿有 20 道大厂面试题等你查收](https://juejin.im/post/5d124a12f265da1b9163a28d)
@@ -25,7 +24,7 @@ TODO
 ## HTML
 - 标签语义化，比如 header，footer，nav，aside，article，section 等，利于开发/阅读模式/SEO，新增了很多表单元素，入 email，url 等，除去了 center 等样式标签，还有除去了有性能问题的 frame，frameset 等标签
 - video，audio
-- 新接口，如 navigator.geoloaction
+- 新接口, 如 navigator.geoloaction
 - docType
   - 混杂模式
   - 标准模式
@@ -62,7 +61,7 @@ TODO
 - [ ] https://juejin.im/post/5dc20a4ff265da4d4e30040b
 - [x] https://juejin.im/post/5db556376fb9a0207a6ddce7
 
-## Q & A
+## Q & A Recap
 
 ### 从输入 URL 到页面加载发生了什么
 1. 浏览器查找当前 URL 缓存
@@ -99,16 +98,26 @@ TODO
 
 掌握自动化部署技能
 
+#### 6. 大数据处理
+[百度腾讯参考题目](https://juejin.im/post/5ddb2476f265da7e0a3e2c85)
+
 interesting math questions for frontend
 > https://performancejs.com/post/hde6d32/The-Best-Frontend-JavaScript-Interview-Questions-(Written-by-a-Frontend-Engineer
 
-`missing`
+ratelimiter 算法
 
-Takes an unsorted array of unique numbers (ie. no repeats) from 1 through some number n, and returns the missing number in the sequence (there are either no missing numbers, or exactly one missing number). Can you do it in O(N) time? Hint: There’s a clever formula you can use.
-```js
-missing([])                         // undefined
-missing([1, 4, 3])                  // 2
-missing([2, 3, 4])                  // 1
-missing([5, 1, 4, 2])               // 3
-missing([1, 2, 3, 4])               // undefined
-```
+[高并发的场景下，不能不说的限流算法](https://juejin.im/post/5e00bbe3518825122e0a8b8b)
+
+#### 计数器
+
+限制单位时间内的处理请求数不超过阈值
+
+#### 滑动窗口
+
+一分钟分 6 份，每份 10 秒；每过 10 秒钟，我们的时间窗口就会往右滑动一格，每个格子都有独立的计数器，我们每次都计算时间窗口内的数量，可以解决计数器法中的问题，而且当滑动窗口的格子越多，那么限流的统计就会越精确。
+
+#### 漏桶
+一个固定容量的桶，有水流进来，也有水流出去，我们不需要控制流进来的速度，只需要控制流出去的速度，如果水流进来的太快，桶满了，多余的水会溢出去，并不会影响水流出去的速度。
+
+#### 令牌桶
+桶里面有 N 个令牌，所有的请求在处理之前都需要拿到一个可用的令牌才会被处理，如果桶里面没有令牌的话，则拒绝服务；令牌桶算法的原理是系统会以一个恒定的速度往桶里放入令牌。

@@ -321,13 +321,21 @@ console.log(b.friend) // Ana
 console.log(b.name) // ''
 
 ```
-#### TODO `extends` polyfill
+#### `extends`
+
+```js
+function _extends(Child, Parent){
+  Child.prototype = Object.create(Parent.prototype); // Object.create
+  Child.prototype.constructor = Child; // = Child.prototype.__proto__ = Parent.prototype;
+  Child.__proto__ = Parent; // = Object.setPrototypeOf(Child, Parent);
+}
+```
 
 <hr>
 
 ## functional programming / utils / helpers (lodash, underscore, ramda)
 
-### curry 柯里化
+### curry 柯里
 !!! `curry` 帮助创建 偏函数 [Partial function](https://www.liaoxuefeng.com/wiki/1016959663602400/1017454145929440)
 ```js
 curry = (fn, ...args) => args.length>=fn.length
@@ -335,7 +343,7 @@ curry = (fn, ...args) => args.length>=fn.length
   : (...args2) => curry(fn, ...args, ...args2)
 
 // ES5 curry
-var curry = function(fn) {
+curry = function(fn) {
   if (typeof fn !== 'function') throw new TypeError('')
   var slice = Array.prototype.slice
   var args1 = slice.call(arguments, 1)
@@ -363,6 +371,91 @@ const sum = (a, b=0) => {
   }
 }
 console.log(sum(100,200)(300)(400)())
+```
+
+### compose & pipe/lodash.flow
+```js
+compose = (...fns) => (...args) => {
+  let i=fns.length-1
+  let res=fns[i].apply(this, args)
+  while(i--) res=fns[i].call(this, res)
+  return res
+}
+pipe = (...fns) => (...args) => {
+  let i=0
+  let res=fns[i].apply(this, args)
+  while(++i<fns.length) res=fns[i].call(this, res)
+  return res
+}
+```
+
+### Functor 函子 (homomorphisms between categories)
+[自 Ramda.map 说起的函数式概念解释](https://zhuanlan.zhihu.com/p/96059965)
+
+`Functor` 是类别之间保留结构的转换。 这是一种将对象从一个类别映射到另一类别的对象，同时又保留对象之间的箭头的一种方法 - 将其视为类别同构。
+
+`Endofunctor` 是从一个类别回到同一类别的函子。
+
+A functor is a structure-preserving transformation between categories.
+
+An endofunctor is a functor from one category back to the same category.
+
+简单函子
+```js
+var a = Functor.of(1).add(4).multiply(4) // { val:20 }
+Functor.of(1).map(add4).map(multiply4) // { val: 20 }
+a == 20 // true
+
+function Functor(val) {
+  this.val=val
+}
+Functor.of = val => new Functor(val)
+Functor.prototype.map = function(f) {
+  return Functor.of(f(this.val))
+}
+Functor.prototype.add = function(n) {
+  return Functor.of(this.val+n)
+}
+Functor.prototype.multiply = function(n) {
+  return Functor.of(this.val*n)
+}
+Functor.prototype.toString = function() {
+  return this.val
+}
+```
+`Maybe`, 增加空值判断
+
+`Either` 函子是指内部有分别有左值和右值, 优先使用右值
+```js
+Maybe.prototype.map = function(f) {
+  return this.val ? Maybe.of(f(this.val)) : Maybe.of(null);
+}
+function Either(left,right){
+  this.left = left;
+  this.right = right;
+}
+Either.prototype.map=function(f){
+  return this.right ? Either.of(this.left, f(this.right)) : Either.of(f(this.left), this.right);
+}
+Either.of = function(left,right) {
+  return new Either(left,right);
+}
+```
+
+TODO
+
+`Monad`, 能够将多层嵌套函子解除的函子, 我们往函子传入的值不仅仅可以是普通的数据类型，也可以是其它函子，当往函子内部传其它函子的时候，则会出现套娃函子。
+
+```js
+// 新增 join, flatMap，通过 flatMap 我们能够在每一次传入函子的时候都将嵌套解除。
+Monad.prototype.join=function(){
+  return this.val;
+}
+Monad.prototype.flatMap=function(f){
+  return this.map(f).join();
+}
+const nested = Monad.of(Monad.of('nested'))
+console.log(Monad.of(nested).flatMap(Monad.of).flatMap(Monad.of));
 ```
 
 ### debounce 防抖
@@ -586,17 +679,16 @@ function sum(a, b) {
   var l = Math.max(a.length, b.length)
   a = a.padStart(l, 0)
   b = b.padStart(l, 0)
-  var i = l, plus1 = 0, r = '', tmp
+  var i = l, carry = 0, r = '', tmp
   while (--i>-1) {
-    tmp = Number(a[i]) + Number(b[i]) + plus1
+    tmp = Number(a[i]) + Number(b[i]) + carry
     if (tmp>9) {
-      tmp = tmp-10
-      plus1 = 1
-    } else plus1 = 0
+      tmp-=10
+      carry = 1
+    } else carry = 0
     r = tmp + r
   }
-  if (plus1===1) r = '1'+r
-  return r
+  return carry===1 ? ('1'+r) : r
 }
 ```
 ### fibonacci 斐波那契数列
@@ -613,9 +705,39 @@ function fibonacci(n) {
 ## data structure
 ### TODO Complete Binary Search Tree
 
-### TODO MaxHeap
+### TODO MaxHeap / PriorityQueue
+refer to [google closure](https://github.com/google/closure-library/blob/master/closure/goog/structs/heap.js)
 
+[geeksforgeeks](https://www.geeksforgeeks.org/implementation-priority-queue-javascript/)
 <hr>
+
+### Trie Tree 字典树
+
+[参考](https://www.jianshu.com/p/ba70ca95c33b)
+
+```js
+function TrieNode(key) {
+  this.key=key;
+  this.children=[]
+}
+function Trie(root) {
+  this.root=root
+}
+Trie.prototype = {
+  // 插入单词
+  insertData:(stringData)=>void,
+  insert:(stringData,node)=>void,
+  // 查找单词
+  search:(queryData)=>boolean,
+  searchNext:(node,stringData)=>boolean, // 递归
+  // 删除单词
+  delete:(stringData)=>this,
+  delNext:(parent, index, stringData, delStr)=>boolean, // 递归
+  // 打印树上的所有单词
+  printData:()=>void,
+  printHelper:(node, data)=>void // 递归
+}
+```
 
 ## browser related
 

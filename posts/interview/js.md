@@ -44,8 +44,10 @@ undefined
 动态类型语言，成员除了表示存在的空值外，还有可能根本就不存在（因为存不存在只在运行期才知道）. 这就是 `undefined` 的意义所在。对于 JAVA 这种强类型语言，如果有 "undefined" 这种情况, 就会直接编译失败，所以在它不需要一个这样的类型.
 
 ### 类型判断
-对基本类型 primitive 可用 `typeof`,  返回值列表:<br>
+对基本类型 primitive (非 `null`) 可用 `typeof`,  返回值列表:<br>
 `undefined number string boolean symbol bigint object function`
+
+注意 `null` 返回 'object'
 
 #### 对引用数据类型 object
 `instanceof` 是查询原型链，因此不适合判断 primitive 类型。
@@ -133,8 +135,8 @@ JS / 双精度注意事项
 
 ```js
 // 用 hex 表示的各位数 转换
-0 = 0x0000000000000000
-1 = 0x3FF0000000000000
+0 = 0x0000000000000000 // + 2^(-1023) * 1.00... (52 个 0)
+1 = 0x3FF0000000000000 // + 2^0 * 1.00...(52 个 0)
 ```
 
 原生解决方案
@@ -160,6 +162,24 @@ num.toString(n) // n 进制, 2 / 8 / 10 / 16
 num.toString(2) // "1010"
 ```
 
+### [replace()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace)
+Syntax
+```js
+var newStr = str.replace(regexp|substr, newSubstr|function)
+function replacer(match, p1, p2, p3, offset, string) {
+  // p1 is nondigits, p2 digits, and p3 non-alphanumerics
+  return [p1, p2, p3].join(' - ');
+}
+var newString = 'abc12345#$*%'.replace(/([^\d]*)(\d*)([^\w]*)/, replacer);
+console.log(newString);  // abc - 12345 - #$*%
+```
+| Possible name | Supplied value |
+| :-- | :-- |
+| match | The matched substring. |
+| p1, p2, ... | The nth string found by a parenthesized capture group, provided the first argument to replace() was a RegExp object. |
+| offset | The offset of the matched substring within the whole string being examined. (For example, if the whole string was 'abcd', and the matched substring was 'bc', then this argument will be 1.) |
+| string | The whole string being examined. |
+
 ### slice() vs substring() vs substr()
 
 > https://www.jianshu.com/p/223dbcea7a76
@@ -173,6 +193,24 @@ num.toString(2) // "1010"
 - `slice(start=0,end=last)`
   
   返回指定下标间的字符，可 为负, `start>end` 时会返回 `''`
+
+### 编码
+
+### base64
+
+```js
+// node
+// encode
+Buffer.from('123').toString('base64')
+// decode
+Buffer.from('MTIz', 'base64').toString()
+
+// browser
+// encode
+window.btoa('123') // binary to ascii
+// decode
+window.atob('MTIz')
+```
 
 ## Template 模板
 ### tagged template 标签模板
@@ -204,7 +242,7 @@ function SaferHTML(templateData) {
 }
 ```
 模板字符串的限制: \ 转义符, 如 `\u`, `\x`
-```
+
 ## ==, ===, Object.is()
 "==" 两边的类型是否相同，相同的话就比较值的大小，例如 1==2，返回 false
  判断的是否是 null 和 undefined，是的话就返回 true
@@ -223,6 +261,8 @@ Object.is(+0, -0) // false
 ### 位运算符 (bitwise operator)
 [我们要不要在 JS 使用二进制位运算？](https://juejin.im/entry/57317b2679df540060d5d6c2)
 首先对性能基本没有负面影响, 纯数字计算更快, 但只能对 Number 使用
+
+[位运算装逼指南](https://mp.weixin.qq.com/s/C6o6T9ju34vAxNBg5zobWw)
 
 `&` 按位与
 
@@ -315,7 +355,7 @@ r & 4 // 如有权则返回4,否则0
 - 和全局变量脱钩 (var 和 全局 function 会自动挂载到 `globalThis`)
 - 块级下的函数声明 ES5 实际禁止, 但浏览器未遵守, ES6 允许并实现, 块内声明 function 类似使用 let, 不影响块外, 但浏览器为向前兼容, 块内声明 function 类似用 var, 按 var 一个匿名函数的方式 提升
 
-暂时性死区例
+暂时性死区
 ```js
 var name = 'B'; // 变量提升，声明但不赋值
 function name() {} // 函数提升，声明且赋值，优先级比变量高
@@ -386,7 +426,12 @@ function log() {
 log(); // Prints 42
 ```
 
-`window, document`: window 对象是指浏览器打开的窗口。document 对象是 HTML 文档对象的一个只读引用，window 对象的一个属性
+`window, document`
+
+window 对象是指浏览器打开的窗口。document 对象是 HTML 文档对象的一个只读引用，window 对象的一个属性
+
+window -> BOM (browser object model)
+document -> DOM
 
 ### this 判断顺序
 1. 全局
@@ -538,6 +583,9 @@ console.log('macro2')
 > 核心原因是第一次 new Promise 的时候，他接着入栈了一个 undefined value，导致需要多执行一次的 undefined 的 then 回调。  
 `isolate->factory ()->undefined_value ()`
 
+<hr>
+
+
 ### 垃圾回收 [参考1](https://github.com/qq449245884/xiaozhi/issues/3) 
 
 垃圾回收为后台进程
@@ -604,6 +652,33 @@ console.log('macro2')
 5. 为什么支持浏览器中发送请求也支持 node 发送请求？
 
     答：`axios.defaults.adapter` 默认配置中根据环境判断是浏览器还是 node 环境，使用对应的适配器。适配器支持自定义。
+
+## Debug
+### console
+> https://zhuanlan.zhihu.com/p/23080626
+
+- `.table(data[, columns])`, 第一参数可为 Array/Object, 第二参数可以用来过滤列, 类似 SQL select
+- `.assert()`, 错误时提示, 正确时静默
+- `.time(id)`, `.timeEnd(id)`
+- `.group(id)`, `.groupEnd(id)`, `.groupCollapsed()` (默认折叠)
+- `.count(id)`, 得到执行计数
+- `.dir()`, 更优雅的 log, 输出 JSON, 类似 sources 断点时 scope/watch variable 的格式
+
+### devtools
+> https://zhuanlan.zhihu.com/p/80366959
+
+在调试页面中的 JavaScript 代码时，Chrome DevTools 的断点功能是必不可少的，Chrome DevTools 有很多强大的自动断点功能（即你不需要手动找到想要加断点的那行代码），但下面有一个是杜撰的，请挑出它来（本题以 Chrome 当前稳定版 V72 为准）：
+
+A. 在遇到死循环代码的时候自动断点<br>
+B. 在每个 `<script>` 标签第一句代码执行时自动断点<br>
+C. 在某个指定的 DOM 方法被调用时自动断点<br>
+D. 在未捕获的异常抛出时自动断点<br>
+E. 在匹配指定 URL 的 XHR/fetch 请求发起时自动断点<br>
+F. 在指定的节点被删除时自动断点
+
+参考答案：A
+
+考查知识点：页面调试能力。A 为错误项，Chrome 开发者工具目前还没有该能力，B 在 Sources 面板中右下角的 `Event Listener Breakpoints > Script > Script First Statement`，C 用 Console 面板上的 debug() 函数，比如 `debug(alert)` ，然后所有调用 alert() 的地方都会自动中断。D 在 Sources 面板右上角的 Pause on exceptions 按钮。E 在  Sources 面板右下角的 XHR/fetch Breakpoints。F 在 Elements 面板中元素上右键 -> Break on -> node removal.
 
 ## QA
 

@@ -304,7 +304,18 @@ react 本身为了提高页面渲染性能，推出了一些最佳实践
    - workInProgress tree (temp, snapshot to be updated)
    - effect list (temp, merged side effect list from workInProgress)
 
-### Performance
+### HTML 转义
+ React 会将所有要显示到 DOM 的字符串转义，防止 XSS。所以，如果 JSX 中含有转义后的
+   实体字符，比如 &copy;（©），则最后 DOM 中不会正确显示，因为 React 自动把 &copy; 中的特
+   殊字符转义了。有几种解决办法：
+   -  直接使用 UTF-8 字符 ©；
+   -  使用对应字符的 Unicode 编码查询编码；
+   - 使用数组组装 `<div>{['cc ', <span>&copy;</span>, ' 2015']}</div>`；
+   - 直接插入原始的 HTML。
+   
+   此外，React 提供了 dangerouslySetInnerHTML 属性。正如其名，它的作用就是避免 React 转
+   义字符，在确定必要的情况下可以使用它：
+   <div dangerouslySetInnerHTML={{__html: 'cc &copy; 2015'}} /> 
 
 ## Q & A
 > refer to https://juejin.im/post/5dc20a4ff265da4d4e30040b

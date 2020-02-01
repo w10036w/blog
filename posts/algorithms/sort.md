@@ -27,7 +27,7 @@ function quickSort(arr, l=0, r=arr.length-1) {
   arr[il] = p
   quickSort(arr, l, il-1)
   quickSort(arr, il+1, r)
-  return arr
+  return arr // or no need to return since it mutates original array
 }
 // 非递归
 function quickSort(arr, l=0, r=arr.length-1) {

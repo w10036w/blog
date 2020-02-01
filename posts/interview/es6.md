@@ -161,6 +161,7 @@ expect(callback.lastCalledWith).toBe(colors[1])
 数组
 ```js
 let arr = [1,2,3,4]
+const keys = ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'];
 let p=new Proxy(arr, {
   get(target, prop, receiver) {
     // 浏览器下无问题, 不需要判断
@@ -169,6 +170,7 @@ let p=new Proxy(arr, {
     // Symbol(Symbol.toStringTag)
     // Symbol(Symbol.iterator)
     if (typeof prop!=='symbol') {
+      keys.indexOf(prop) > -1 && console.log(propKey);
       let index = Number(prop);
       if (index<0) prop = String(target.length + index);
     }
@@ -181,7 +183,7 @@ let p=new Proxy(arr, {
     return true
   }
 })
-p.push(5) // arr[4]=5
+p.push(5) // push; set arr[4]=5;
 console.log(p, p[-1]) // [ 1, 2, 3, 4, 5 ] 5
 ```
 表单校验
@@ -335,6 +337,9 @@ let x = new Collection();
 Object.prototype.toString.call(x) // "[object xxx]"
 ```
 
+#### `Symbol.hasInstance`
+定义 instanceof 的返回结果
+
 ### 应用
 - 因 JSON中不能保存 `Symbol`, 可用以防止 `xss`
   ```js
@@ -465,7 +470,7 @@ obj = {[Symbol.toStringTag]: "haha"}
 ```
 E:
 ```js
-obj = {[Symbol.toPrimitive](hint){return hint==="number" ? 1 : 10}} 
+obj = {[Symbol.toPrimitive](hint){return hint==="number" ? 1 : 10}}
 ```
 
 F: `document.all` 具有其性质
@@ -487,13 +492,156 @@ F: `document.all` 具有其性质
 
 注意事项
 - 在 Pending 转为另外两种之一的状态时候，状态不可在改变..
-- Promise 的 then 为异步。而 (new Promise()) 构造函数内为同步
+- Promise 的 `then` 为异步。而 `new Promise()` 构造函数内为同步
 - Promise 的 `catch` **不能捕获任意情况的错误** (比如 then 里面的 setTimout 内手动抛出一个 Error)
 - Promise 的 then 返回 Promise.reject() 会中断链式调用
 - Promise 的 resolve 若是传入值而非函数，会发生值穿透的现象
 - Promise 的 `catch, then`,return 的都是一个新的 `Promise`(在 Promise 没有被中断的情况下)
 
+### Promise.all
+`Promise.all` (iterable) 在下列情况任一满足时返回
+1. iterable 为空时, **同步** 立即返回 Promise.all([])
+2. 所有在可迭代参数中的 promises 完成 (返回 `[promise]`)
+3. 任一 `promise` `reject` (返回 `rejected promise`), 如果是立即 reject, 则同步 reject
+
+例如: 有四个 promise 在一定的时间之后调用成功函数，有一个立即调用失败函数，那么 Promise.all 将立即变为失败。
+
+### 链式调用
+```js
+let task = Promise.resolve()
+for (let i = 0; i < promises.length; i++) {
+  task = task.then(() => promises[i]).then(callback)
+}
+// or reduce
+promises.reduce((task, p) => {
+  return task.then(() => p).then(callback)
+}, Promise.resolve())
+```
+
+### `.race([PromiseLike])`
+将多个 Promise 实例，包装成一个新的 Promise 实例. 返回率先改变状态的 Promise
+
+用来 request timeout
+```js
+const p = Promise.race([
+  fetch('/resource-that-may-take-a-while'),
+  new Promise(function (resolve, reject) {
+    setTimeout(() => reject(new Error('request timeout')), 5000)
+  })
+]);
+```
+
+### `.allSettled([PromiseLike])` (ES2020)
+当所有 Promise resolve / reject 时返回. 弥补 Promise.all 任一错误即抛弃其他结果的行为
+
+### `.any()` (stage3)
+- 任一 fulfill, 返回 fulfil
+- 所有都 reject, 返回 `AggregateError`: [rejectedPromise]
+
 ## Generator
+Generator 函数返回特殊遍历器对象, 只有调用 `next` 方法才会遍历下一个内部状态，所以其实提供了一种可以暂停执行 + 懒运行的函数. `yield` 表达式就是暂停标志。
+
+遍历器对象的 `next` 方法的运行逻辑如下。
+1. 遇到 yield 表达式，就暂停执行后面的操作，并将紧跟在 `yield` 后面的那个表达式的值 (懒求值, 只有此时才会求值)，作为返回的对象的 `value` 属性值。
+2. 下一次调用 next 方法时，再继续往下执行，直到遇到下一个 yield 表达式。
+3. 如果没有再遇到 `yield`，就一直运行到函数到 `return` 为止，并将 return 语句后面的表达式的值，作为返回的对象的 `value` 属性值. 同时返回 `done: true`.
+4. 如果该函数没有 `return` 语句，则返回的对象的 `value` 属性值为 `undefined。`
+
+如果 Generator 无 `yield`, 即为一个懒函数, 只有调用 `.next()` 时内部才执行
+
+常见写法
+```js
+function* genFn() {
+  yield 1
+  return 2
+}
+
+let obj = {
+  *getFn() {},
+  getFn2: function* () {} // 不能用箭头函数
+}
+
+// !! 注意要实例化后再用
+var realFn = getFn()
+realFn.next() // 1
+```
+
+### `yield`
+`yield*` 在一个 Generator 函数里面执行另一个 `Generator / Iterator` 函数 (返回全部遍历值, 而不是 `[Generator] {}`)
+
+如果是非 Generator 的 Iterator, 也可被遍历
+```js
+function* foo() {
+  yield 'a';
+  yield 'b';
+}
+function* bar() {
+  yield 'x';
+  yield* foo();
+  // 依次遍历foo(), 等于
+  // yield 'a'; yield 'b';
+  // 或等于
+  // for (let v of foo()) {
+  //   yield v;
+  // }
+  yield 'y';
+}
+
+for (let v of bar()){
+  console.log(v); // xaby
+}
+// 非 Generator
+let read = (function* () {
+  yield* 'hello';
+})();
+read.next().value // "h"
+```
+
+上例, 只有 `foo` 有 `return` 时才能将值传递给 `bar`
+```js
+function* foo() {
+  yield 'a';
+  return 'b'; // yield 'b' 时 log undefined
+}
+function* bar() {
+  var v = yield* foo()
+  console.log('log '+v)
+  return v
+}
+var it=bar()
+console.log(it.next()) // { value: 'a', done: false }
+console.log(it.next())
+// !! 注意: log b 先一步打印
+// log b
+// { value: 'b', done: true }
+console.log(it.next()) // { value: undefined, done: true }
+
+function* genFuncWithReturn() {
+  yield 'a';
+  yield 'b';
+  return 'The result';
+}
+function* logReturned(genObj) {
+  let result = yield* genObj;
+  console.log(result);
+}
+
+[...logReturned(genFuncWithReturn())]
+// The result
+// 值为 [ 'a', 'b' ]
+```
+
+### yield 用法
+yield 表达式如果用在另一个表达式之中，必须放在圆括号里面。
+```js
+function* demo() {
+  console.log('Hello' + yield); // SyntaxError
+  console.log('Hello' + yield 123); // SyntaxError
+
+  console.log('Hello' + (yield)); // OK, undefined
+  console.log('Hello' + (yield 123)); // OK, 123
+}
+```
 
 ## [for...in vs for of](https://www.jianshu.com/p/c43f418d6bf0)
 ### 对象用 for...in
