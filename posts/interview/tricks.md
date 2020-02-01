@@ -27,7 +27,7 @@
   - always be persevered and passionate, never stop learning, focus on the right things and get them done.
 
 ### personal workflow related
-- contribute to the team: tool & methodology & session sharing, documentation, take training and keep a sharp eye on new technologies
+- contribute to the team: tools & methodology & session sharing, documentation, take training and keep a sharp eye on new technologies
 - list all pros & cons, tradeoff measurements
 
 ### pre-employer/job related

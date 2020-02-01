@@ -88,6 +88,8 @@ RTT = 1000000m / 300000m/ms * 2 / .31 = 21.6ms
 - `SACK`, selective ACK
 - TCP 连接重用, `http/1.1` `keep alive`, http2 多路复用 multiplexing
 
+HTTP/1.1 不是二进制传输，而是通过文本进行传输。由于没有流的概念，在使用并行传输（多路复用）传递数据时，接收端在接收到响应后，并不能区分多个响应分别对应的请求，所以无法将多个响应的结果重新进行组装，也就实现不了多路复用。
+
 ### [HTTP](http://www.52im.net/thread-1677-1-1.html)
 sample
 ```sh
@@ -219,12 +221,18 @@ CRL 是一份全量的文件，记录了被此 CRL 限制的证书中所有被�
 劫持种类: 链路(绝大部分, 中间人攻击, man in the middle), DNS, 客户端
 
 ### HTTP2
-- `binary frame` 二进制分帧
+- `binary frame` 二进制分帧, 帧代表着最小的数据单位，每个帧会标识出该帧属于哪个流，流也就是多个帧组成的数据流。就是在一个 TCP 连接中可以存在多条流。
 - `header compression`: 使用 `HPACK 算法` 压缩 `head frame`, 减少传输体积 / 数据包量
 - `Multiplexing`: 多路复用, 所有通信在一个 tcp 上完成, 可并行交错发送请求和响应, 将一个 TCP 连接分为若干个流（Stream），每个流中可以传输若干消息（Message），每个消息由若干最小的二进制帧（Frame）组成。也就是将每个 request-response 拆分为了细小的二进制帧 Frame，这样即使一个请求被阻塞了，也不会影响其他请求. 解决 `队头阻塞 (Head of line blocking)`
 - `stream` 双向流, 服务端推送
 - 可设置请求优先级
 - 使用类似滑动窗口机制进行流量控制
+
+> https://mp.weixin.qq.com/s/sakIv-NidqkO1tviBHxtWQ
+
+http2.0 也存在队头阻塞问题，如果造成队头阻塞，问题可能比 http1.1 还严重，因为只有一个 tcp 连接，后续的传输都要等前面，http1.1 多个 tcp 连接，阻塞一个，其他的还可以正常跑
+
+在 HTTP/2 中，多个请求在一个 TCP 上, 当出现丢包时，HTTP/2 的表现反倒不如 HTTP/1 了。因为 TCP 为了保证可靠传输，有个特别的 “丢包重传” 机制，丢失的包必须要等待重新传输确认，HTTP/2 出现丢包时，整个 TCP 都要开始等待重传，那么就会阻塞该 TCP 连接中的所有请求（如下图）。而对于 HTTP/1.1 来说，可以开启多个 TCP 连接，出现这种情况反到只会影响其中一个连接，剩余的 TCP 连接还可以正常传输数据。
 
 ![http tcp](../../assets/img/interview-protocols-http-tcp.webp)
 
