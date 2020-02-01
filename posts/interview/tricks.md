@@ -36,6 +36,7 @@
 
 ### KEY FACTORS 核心软技能
 - problem-solving
+- engaging
 - communication
 - team skills
 - summarize key points

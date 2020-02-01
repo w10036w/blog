@@ -138,7 +138,6 @@
 ## Uncategoried
 - [12. Integer to Roman](leetcode/12-integer-to-roman.md)
 - [14. Longest Common Prefix](leetcode/14-longest-common-prefix.md)
-- [14. Longest Common Prefix](leetcode/14-longest-common-prefix.md)
 - [17. Letter Combinations of a Phone Number](leetcode/17-letter-combinations-of-a-phone-number.md)
 - [416. Partition Equal Subset Sum](leetcode/419-partition-equal-subset-sum.md)
 - [980. Unique Paths III (yet)](leetcode/980-unique-paths-iii.md)
