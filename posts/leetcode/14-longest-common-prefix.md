@@ -12,22 +12,22 @@ My Solution (`single pointer`) @2019-11-21
  * @return {string}
  */
 var longestCommonPrefix = function(strs) {
-    let r = ''
-    let temp = ''
-    let curr = ''
-    let i = 0
-    let pointer = 0
-    const l = strs.length
-    while(true) {
-        curr = strs[i] && strs[i][pointer]
-        if (!curr) return r
-        while(++i<l) {
-            temp = strs[i]&& strs[i][pointer]
-            if(!temp || temp!==curr) return r
-        }
-        i=0
-        r+=curr
-        pointer++
+  let r = ''
+  let temp = ''
+  let curr = ''
+  let i = 0
+  let pointer = 0
+  const l = strs.length
+  while(true) {
+    curr = strs[i] && strs[i][pointer]
+    if (!curr) return r
+    while(++i<l) {
+      temp = strs[i]&& strs[i][pointer]
+      if(!temp || temp!==curr) return r
     }
+    i=0
+    r+=curr
+    pointer++
+  }
 };
 ```
