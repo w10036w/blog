@@ -30,5 +30,6 @@ book.epub
 book.mobi
 posts/leetcode/test.js
 benchmark/playground.js
+playground
 
 package*.json

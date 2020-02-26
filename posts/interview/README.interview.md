@@ -73,7 +73,7 @@ todo
 2. DNS 逐层查找缓存解析 URL 对应的 IP
 3. 路由, 网关寻址, CDN 层分发, 缓存
 4. 根据 IP 建立 TCP 连接, 逐层加头拆头
-5. HTTP 握手, (HTTPS 握手, )应用层协议确认
+5. HTTP 握手 (+ HTTPS 握手), 应用层协议确认
 6. HTTP 发起请求
 7. 服务器处理请求，浏览器接收 HTTP 响应, 合并包
 8. 浏览器解析 html, 加载 link, js 资源, 构建 DOM 树 (DOMContentLoaded), 加载图片等资源, 构建渲染树, 渲染页面, 加载完毕 (onload)
@@ -116,7 +116,7 @@ interesting math questions for frontend
 
 > https://performancejs.com/post/hde6d32/The-Best-Frontend-JavaScript-Interview-Questions-(Written-by-a-Frontend-Engineer
 
-ratelimiter 算法
+`ratelimiter` 算法
 
 [高并发的场景下，不能不说的限流算法](https://juejin.im/post/5e00bbe3518825122e0a8b8b)
 

@@ -43,14 +43,19 @@
 - problem-solving
 - engaging
 - communication
-- team skills
-- summarize key points
 
 #### open problem-solving
 
 - manage last-minute changes, when deadline is very near
 - most challenge project
 - most difficult task
+
+### team code quality
+
+- documentation
+- coding style / standard
+- code review - tech debt
+- typescript
 
 #### team skills
 
@@ -75,6 +80,6 @@
 
 ### cover
 
-I am a frontend engineer proficient in cross-platform frontend / middleware / microservice solutioning, designing and executing digital transformation projects via React / React Native / NodeJS / VueJS / Serverless / GraphQL / Data Visualization.
+I am a frontend engineer proficient in cross-platform frontend / middleware / microservice solutioning, designing and executing digital transformation projects via React / React Native / NodeJS / VueJS / Serverless / GraphQL / Data Visualization.we
 
 I have led full stack development focusing on web application, and initiate solution evaluation, performance optimization, and delivery management. I did well in delivering high performance, constructive, maintainable and scalable solutions.

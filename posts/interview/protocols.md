@@ -1,7 +1,9 @@
 # interview - protocols 底层协议
 
 ## 底层协议
+
 七层
+
 - 应用层: FTP, Telnet, SMTP, HTTP, RIP, NFS, DNS
 - 表示层: 定义数据格式, 加密
 - 会话层: RPC, SQL
@@ -11,7 +13,9 @@
 - 物理层: 架空明线、平衡电缆、光纤、无线信道等; 定义有关传输介质的特性, 也参考了其他组织制定的标准。连接头、帧、帧的使用、电流、编码及光调制等都属于各种物理层规范中的内容。物理层常用多个规范完成对所有细节的定义
 
 ### IP 级
+
 #### TTL time to live
+
 作用是限制数据包在网络中存在的时间，防止数据包不断的在 IP 互联网络上循环。
 
 TTL 指定数据包被路由器丢弃之前允许通过的最大网段数量，是 IP 数据包在网络中可以转发的最大跳数 (跃点数)，TTL 位于 IPv4 包的第 9 个字节，是一个 8 bit 字段。
@@ -23,7 +27,9 @@ TTL 的最大值是 255，推荐值是 64，windows 中 TTL 默认值保存在�
 在域名系统 (DNS) 中的 TTL 存活时间，用以设定域名纪录的最长缓存时间。
 
 ### [集线器、交换机、路由器功能原理入门](http://www.52im.net/thread-1629-1-1.html)
+
 ### [TCP (必看)](http://www.52im.net/thread-1107-1-1.html) 三次握手
+
 以太网数据包（packet）的大小 (MTU, `Maximum Transmission Unit`，最大传输单元) 是固定的，最初是 1518 字节，后来增加到 1522 字节。其中， 1500 字节是负载（payload），22 字节是头信息（head）。IP 数据包在以太网数据包的负载里面，它也有自己的头信息，最少需要 20 字节; TCP 头信息也是 20 字节, 所以 TCP 数据包的负载实际为 1400 字节左右.
 
 数据在 `发送端` 每经过一层都会被加上头部信息; 在 `接收端` 每经过一层都会删除一层头部
@@ -33,18 +39,17 @@ TCP 包有编号 SEQ, 例如发送方发送 seq=1, length=100bytes, 接收方返
 应用层协议如 http 规定信息体大小 (`Content-Length`), 操作系统按端口接收并组装数据包转交给应用, 由应用根据信息体大小正确分段读取
 
 TCP 协议有慢启动 (slow start) 机制, 根据丢包情况调整发送速率; Linux 内核设定初始一次性发包量 (发送窗口) 10 (TCP_INIT_CWND). 即使对于带宽很大、线路很好的连接，初始也只发 10 包. 收到每两个包即发一个确认 (ACK: 下一个包的编号 + 本次 (接收窗口) 剩余包量)
+
 ### [UDP 和 TCP 区别](http://www.52im.net/thread-580-1-1.html), 或 [精华版](http://www.52im.net/thread-1277-1-1.html)
 
-**简述**
-
-TCP 是面向连接的、可靠的流协议。流就是指不间断的数据结构，当应用程序采用 TCP 发送消息时，虽然可以保证发送的顺序，但还是犹如没有任何间隔的数据流发送给接收端。TCP 为提供可靠性传输，实行 “顺序控制” 或 “重发控制” 机制。此外还具备 “流控制（流量控制）”、“拥塞控制”、提高网络利用率等众多功能。
-
-UDP 面向非连接, 是不具有可靠性的数据包协议。细微的处理它会交给上层的应用去完成。在 UDP 的情况下，虽然可以确保发送消息的大小，却不能保证消息一定会到达。因此，应用有时会根据自己的需要进行重发处理。
-
-TCP 和 UDP 的优缺点无法简单地、绝对地去做比较：TCP 用于在传输层有必要实现可靠传输的情况；而在一方面，UDP 主要用于那些对高速传输和实时性有较高要求的通信或广播通信。TCP 和 UDP 应该根据应用的目的按需使用。
+> TCP 是面向连接的、可靠的流协议。流就是指不间断的数据结构，当应用程序采用 TCP 发送消息时，虽然可以保证发送的顺序，但还是犹如没有任何间隔的数据流发送给接收端。TCP 为提供可靠性传输，实行 “顺序控制” 或 “重发控制” 机制。此外还具备 “流控制（流量控制）”、“拥塞控制”、提高网络利用率等众多功能。
+>
+> UDP 面向非连接, 是不具有可靠性的数据包协议。细微的处理它会交给上层的应用去完成。在 UDP 的情况下，虽然可以确保发送消息的大小，却不能保证消息一定会到达。因此，应用有时会根据自己的需要进行重发处理。
+>
+> TCP 和 UDP 的优缺点无法简单地、绝对地去做比较：TCP 用于在传输层有必要实现可靠传输的情况；而在一方面，UDP 主要用于那些对高速传输和实时性有较高要求的通信或广播通信。TCP 和 UDP 应该根据应用的目的按需使用。
 
 <summary>
-QQ 既有 UDP 又有 TCP
+<b>QQ 既有 UDP 又有 TCP</b>
 <details>
 <p>不管 UDP 还是 TCP，最终登陆成功之后，QQ 都会有一个 TCP 连接来保持在线状态。这个 TCP 连接的远程端口一般是 80，采用 UDP 方式登陆的时候，端口是 8000。</p>
 <p>UDP 协议是无连接方式的协议，它的效率高，速度快，占资源少，但是其传输机制为不可靠传送，必须依靠辅助的算法来完成传输控制。QQ 采用的通信协议以 UDP 为主，辅以 TCP 协议。由于 QQ 的服务器设计容量是海量级的应用，一台服务器要同时容纳十几万的并发连接，因此服务器端只有采用 UDP 协议与客户端进行通讯才能保证这种超大规模的服务。</p>
@@ -60,7 +65,8 @@ QQ 既有 UDP 又有 TCP
 </summary>
 
 ### TCP 握手
-#### 建立连接 三次握手, .5 RTT * 3
+
+#### 建立连接 三次握手, 耗时 0.5 RTT \* 3
 
 1. `client syn`: 请求端（通常称为客户）发送一个 `SYN` 段指明客户打算连接的服务器的端口，以及初始序号（seq/ISN，在这个例子中为 1415531521）。这个 `SYN` 段为报文段 1(实际因安全等原因为随机数)。此时 客户端状态为 `syn_sent`
 2. `server syn ack + server syn`: 服务器发回包含服务器的初始序号的 `SYN` 报文段（报文段 2）作为应答。同时，将确认序号设置为客户的 seq/ISN 加 1 以对客户的 `SYN` 报文段进行确认, 同时自己生成随机数 server seq/ISN `SYN`. 此时 服务端状态为 `syn_rcvd`
@@ -69,13 +75,15 @@ QQ 既有 UDP 又有 TCP
 这三个报文段完成连接的建立。这个过程也称为三次握手（three-way handshake）。
 
 #### 断开 四次握手
+
 1. `client fin`: 客户端应用程序关闭, 发送 `FIN`
 2. `server ack`: 收到, 序号+1, 向服务端应用提交 `EOF`, 开始关闭其连接, 向客户端发回 `ACK`
 3. `server fin`: 服务端确认关闭, 发回 `FIN`
 4. `client ack`: 客户端确认服务端的 `FIN`
 
 #### RTT Round-Trip Time 速度
-光在光纤中非直线传播,  ~31%
+
+光在光纤中非直线传播, ~31%
 如北京至上海约 1000 公里, 不考虑路由跳转限制, 理论 RTT 极限为 21.6ms, 实际为 40+ms
 
 ```js
@@ -83,6 +91,7 @@ RTT = 1000000m / 300000m/ms * 2 / .31 = 21.6ms
 ```
 
 #### TCP 级优化
+
 - CDN, 云服务缩短物理距离, 降低 RTT
 - `TCP fast open`, 双方各自在最后一次握手时带数据, 节省 1 RTT (by Google, supported from Linux 3.7)
 - `SACK`, selective ACK
@@ -91,7 +100,9 @@ RTT = 1000000m / 300000m/ms * 2 / .31 = 21.6ms
 HTTP/1.1 不是二进制传输，而是通过文本进行传输。由于没有流的概念，在使用并行传输（多路复用）传递数据时，接收端在接收到响应后，并不能区分多个响应分别对应的请求，所以无法将多个响应的结果重新进行组装，也就实现不了多路复用。
 
 ### [HTTP](http://www.52im.net/thread-1677-1-1.html)
+
 sample
+
 ```sh
 POST /user/starkwang HTTP/1.1                  <--- 起始行
 Host: localhost:8080                           <--- 头部开始
@@ -106,10 +117,12 @@ Content-Type: application/json; charset=utf-8  <--- 头部结束
 ![http request](../../assets/img/js-interview-http-req.png)
 
 http 缓存
+
 - 强缓存: head 中 `cache-control` (1.1), `expires` (1.0)
 - 协商缓存
-  
+
   ![negotiation cache](../../assets/img/js-interview-http-cache.png)
+
 - cookies 缓存
 
 ### HTTPS
@@ -119,16 +132,17 @@ http 缓存
 在网站全站 HTTPS 后，如用户手动敲入网站的 HTTP 地址，或者从其它地方点击了网站的 HTTP 链接，通常依赖于服务端 `301/302` 跳转才能使用 HTTPS 服务。而第一次的 HTTP 请求就有可能被劫持，导致请求无法到达服务器，从而构成 HTTPS 降级劫持.
 
 #### [HSTS (HTTP Strict Transport Security)](https://www.hi-linux.com/posts/3714.html)
+
 采用 HSTS 策略的网站将保证浏览器始终连接到该网站的 HTTPS 加密版本，不需要用户手动在 URL 地址栏中输入加密地址，以减少会话劫持风险。
 
 nginx 服务器部署 HSTS 响应头格式
+
 ```sh
 server {
   # ...
   add_header Strict-Transport-Securit "max-age=63072000; includeSubdomains;preload"
 }
 ```
-
 
 [wireshark 抓包分析 RSA & DH 握手过程 (必看)](https://razeencheng.com/post/ssl-handshake-detail.html)
 wireshark 抓包 TLS RSA 通信图示
@@ -141,6 +155,7 @@ wireshark 抓包 TLS RSA 通信图示
 [SSL/TLS](https://segmentfault.com/a/1190000002554673)
 
 TLS 握手步骤 (client-hello, server-hello, (cert verify with CA & OCSP), cipher-spec-exchanged)
+
 > [类似链接](https://segmentfault.com/a/1190000010947472)
 
 ![tls handshake](../../assets/img/interview-protocols-ssl-handshake-rsa.png)
@@ -157,32 +172,37 @@ TLS 握手步骤 (client-hello, server-hello, (cert verify with CA & OCSP), ciph
    4. `cert request` (optional): 如果是非常重要的信息, 服务端会向客户端发送 , 要求客户端提供证书(如银行 usb 密钥)
    5. `server-hello-done`
 3. `client-key-exchange`: 如果服务端发送 `cert request`, 客户端需要发送自己的证书使其验证; 之后客户端验证服务器返回的证书
-    - 有效期 (起止时间)
-    - 域名 (与浏览器地址栏中域名是否匹配)
-    - 吊销状态 (CRL+OCSP), [见 **吊销检查**].
-    - 颁发机构，如果颁发机构是中间证书，在验证中间证书的有效期 / 颁发机构 / 吊销状态。一直验证到最后一层证书，如果最后一层证书是在操作系统或浏览器内置，那么就是可信的，否则就是自签名.
-  
-    以上验证步骤，需要全部通过。否则就会显示警告. 检查通过后, 生成 `master secret`. (PRF 为伪随机函数 pseudorandom function, PRF)
 
-    `master_secret = PRF(pre_master_secret,"master secret",clientHello.random1+serverHello.random2)`
+   - 有效期 (起止时间)
+   - 域名 (与浏览器地址栏中域名是否匹配)
+   - 吊销状态 (CRL+OCSP), [见 **吊销检查**].
+   - 颁发机构，如果颁发机构是中间证书，在验证中间证书的有效期 / 颁发机构 / 吊销状态。一直验证到最后一层证书，如果最后一层证书是在操作系统或浏览器内置，那么就是可信的，否则就是自签名.
 
-    之后发送给服务端如下内容
-     1. `encrypted-random` ( `pre_master_secret`, 48byte, protocol_version+random[46] ): 用协商的 `cipher suite` + `server public key` 加密
-     2. `change-cipher-spec`: 编码改变通知, 表明发送端已取得用以生成连接参数的足够信息，已生成加密密钥 (主密钥), 并且将切换到加密模式。客户端和服务器在条件成熟是会发送这个消息
-     3. `encrypted-client-finish`: Encrypted Handshake Message, 由 `master-secret` 含之前所有握手信息依序以 `master secret` 计算的 hash (`verify_data` 字段), 以供验证
+   以上验证步骤，需要全部通过。否则就会显示警告. 检查通过后, 生成 `master secret`. (PRF 为伪随机函数 pseudorandom function, PRF)
 
-    服务器与浏览器交换的最终秘钥，session key 全等且未泄露 (1, 2 可以抓包，但 3 是无法窃听的, 1,2 和 3 的密文可以通过中间人攻击获得, 但无法获得证书颁发机构的私钥, 若在客户端和服务器中间搭建代理伪造证书, 会由客户端发现是非信任的证书颁发者而提出警告).
+   `master_secret = PRF(pre_master_secret,"master secret",clientHello.random1+serverHello.random2)`
+
+   之后发送给服务端如下内容
+
+   1. `encrypted-random` ( `pre_master_secret`, 48byte, protocol_version+random[46] ): 用协商的 `cipher suite` + `server public key` 加密
+   2. `change-cipher-spec`: 编码改变通知, 表明发送端已取得用以生成连接参数的足够信息，已生成加密密钥 (主密钥), 并且将切换到加密模式。客户端和服务器在条件成熟是会发送这个消息
+   3. `encrypted-client-finish`: Encrypted Handshake Message, 由 `master-secret` 含之前所有握手信息依序以 `master secret` 计算的 hash (`verify_data` 字段), 以供验证
+
+   服务器与浏览器交换的最终秘钥，session key 全等且未泄露 (1, 2 可以抓包，但 3 是无法窃听的, 1,2 和 3 的密文可以通过中间人攻击获得, 但无法获得证书颁发机构的私钥, 若在客户端和服务器中间搭建代理伪造证书, 会由客户端发现是非信任的证书颁发者而提出警告).
+
 4. `server-change-cipher-spec`: 服务器解密 `premaster secret`, 用同样方式生成 `master secret`, 最后回应客户端:
    1. `change-cipher-spec`
    2. `encrypted-server-finished`: Encrypted Handshake Message
 5. 如双方都能正确解密并验证, 通道建立.
 
 #### CA 证书
+
 ![CA](../../assets/img/interview-protocols-ca.png)
 
 证书中包含：网站的基本信息、网站的公钥、CA 的名字等信息（详细请看 X.509），然后 CA 根据这几个内容生成摘要（digest），再对摘要用 CA 的私钥加密，加密后的结果即数字签名，最后将数字签名也放入到证书中。那么当系统收到一个证书后，先用公钥解密，解得开说明对方是由权威 CA 签发的，然后再根据证书的信息生成摘要，跟解密出来的摘要对比。
 
 #### 吊销检查
+
 CRL（Certificate Revocation List，证书撤销名单）和 OCSP（Online Certificate Status Protocol，在线证书状态协议)
 
 CRL 是一份全量的文件，记录了被此 CRL 限制的证书中所有被吊销证书的序列号。通过匹配当前证书序列号，与 CRL 中序列号，来判断.
@@ -221,6 +241,7 @@ CRL 是一份全量的文件，记录了被此 CRL 限制的证书中所有被�
 劫持种类: 链路(绝大部分, 中间人攻击, man in the middle), DNS, 客户端
 
 ### HTTP2
+
 - `binary frame` 二进制分帧, 帧代表着最小的数据单位，每个帧会标识出该帧属于哪个流，流也就是多个帧组成的数据流。就是在一个 TCP 连接中可以存在多条流。
 - `header compression`: 使用 `HPACK 算法` 压缩 `head frame`, 减少传输体积 / 数据包量
 - `Multiplexing`: 多路复用, 所有通信在一个 tcp 上完成, 可并行交错发送请求和响应, 将一个 TCP 连接分为若干个流（Stream），每个流中可以传输若干消息（Message），每个消息由若干最小的二进制帧（Frame）组成。也就是将每个 request-response 拆分为了细小的二进制帧 Frame，这样即使一个请求被阻塞了，也不会影响其他请求. 解决 `队头阻塞 (Head of line blocking)`
@@ -237,19 +258,21 @@ http2.0 也存在队头阻塞问题，如果造成队头阻塞，问题可能比
 ![http tcp](../../assets/img/interview-protocols-http-tcp.webp)
 
 ### HTTP3 / QUIC
+
 [QUIC](https://zh.wikipedia.org/wiki/%E5%BF%AB%E9%80%9FUDP%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5) (Quick UDP Internet Connections) 的优化
 
 1. 连接建立期间大大减少开销。由于大多数 HTTP 连接都需要 TLS，因此 QUIC 使协商 密钥和支持的协议成为初始握手过程的一部分. 其他包括基于 UDP, 每个流独立互不干涉, 每个数据包单独加密
 2. 提高网络切换期间的性能, 取消现有的冗长过程 (每个现有连接依次超时，然后根据需要重新建立). `QUIC` 包含一个连接标识符，该标识符唯一地标识客户端与服务器之间的连接, 而无论源 IP 地址是什么。这样只需发送一个包含此 ID 的数据包即可重新建立连接，因为即使用户的 IP 地址发生变化, 原始连接 ID 仍然有效.
 
 ### HTTP [状态码](https://juejin.im/post/5db7b2986fb9a02027084ff4)
-分类 | 描述
- :- | :-
-1*- | 信息，服务器收到请求，需要请求者继续执行操作|
-2*- | 成功，操作被成功接收并处理
-3*- | 重定向，需要进一步的操作以完成请求
-4*- | 客户端错误，请求包含语法错误或无法完成请求
-5*- | 服务器错误，服务器在处理请求的过程中发生了错误
+
+| 分类 | 描述                                           |
+| :--- | :--------------------------------------------- |
+| 1\*- | 信息，服务器收到请求，需要请求者继续执行操作   |
+| 2\*- | 成功，操作被成功接收并处理                     |
+| 3\*- | 重定向，需要进一步的操作以完成请求             |
+| 4\*- | 客户端错误，请求包含语法错误或无法完成请求     |
+| 5\*- | 服务器错误，服务器在处理请求的过程中发生了错误 |
 
 <details>
 <summary>常用请求</summary>
@@ -376,6 +399,7 @@ http2.0 也存在队头阻塞问题，如果造成队头阻塞，问题可能比
 </details>
 
 ### get vs post
+
 - `幂等`: GET 可 (多次请求不会对资源造成影响, 无副作用); POST 不可
 - `后退刷新`: GET 可免通知重试; POST 提示用户重新提交
 - `收藏为书签`: GET 可; POST 不可
@@ -387,6 +411,7 @@ http2.0 也存在队头阻塞问题，如果造成队头阻塞，问题可能比
 - `安全`: GET 差 地址栏可见; POST 好
 
 ### OPTIONS
+
 发送 `非简单请求` (post 或带有特殊 head 的 get) 时, 会发 option 预检 (cors-preflight-request), 当触发预检时, 一次 AJAX 请求会额外消耗 1 RTT, 严重影响性能.
 
 确认 header 响应, 包含以下 2 字段:
@@ -396,8 +421,8 @@ http2.0 也存在队头阻塞问题，如果造成队头阻塞，问题可能比
 
 服务端返回字段:
 
-- `Access-Control-Allow-Origin`: 允许哪些域被允许跨域，例如 http://qq.com 或 https://qq.com，或者设置为 * ，即允许所有域访问（通常见于 CDN ）
-- `Access-Control-Allow-Credentials`: 是否携带票据访问（对应 fetch 方法中 credentials），当该值为 true 时，Access-Control-Allow-Origin 不允许设置为 *
+- `Access-Control-Allow-Origin`: 允许哪些域被允许跨域，例如 `http://qq.com` 或 `https://qq.com`，或者设置为 \* ，即允许所有域访问（通常见于 CDN ）
+- `Access-Control-Allow-Credentials`: 是否携带票据访问（对应 fetch 方法中 credentials），当该值为 true 时，Access-Control-Allow-Origin 不允许设置为 \*
 - `Access-Control-Allow-Methods`: 标识该资源支持哪些方法，例如：POST, GET, PUT, DELETE
 - `Access-Control-Allow-Headers`: 标识允许哪些额外的自定义 header 字段和非简单值的字段（这个后面会解释）
 - `Access-Control-Max-Age`: 表示可以缓存 Access-Control-Allow-Methods 和 - `Access-Control-Allow-Headers`: 提供的信息多长时间，单位秒，一般为 10 分钟。
@@ -410,10 +435,16 @@ http2.0 也存在队头阻塞问题，如果造成队头阻塞，问题可能比
 crossOrigin 属性的值默认为 anonymous，即不携带 cookie，如果设置为 `use-credentials`，则会携带 cookie 和客户端证书等票据。
 
 #### option 优化
+
 - 发出简单请求
 - 服务器端设置 `Access-Control-Max-Age` 字段，那么当第一次请求该 URL 时会发出 OPTIONS 请求，浏览器会根据返回的 Access-Control-Max-Age 字段缓存该请求的 OPTIONS 预检请求的响应结果 (10min), 但只缓存一个 url 而已, 适用于 graphql 方案
 
+### HTTP 基本优化
+
+参考 [HTTP,HTTP2.0,SPDY,HTTPS 你应该知道的一些事](https://cloud.tencent.com/developer/article/1082516)
+
 ### 应用层级优化
+
 - `cookie free`, 静态资源 (图片类, css/js 不会附 cookie) 放和主站不同的域名, 不用带 cookie 加速
 - `domain hash`, 静态资源放多个不同域名, 避开客户端 `基于 domain 的并发控制`, 以增加 DNS 开销为代价
 - `sprites, minify, compress`
@@ -422,38 +453,43 @@ crossOrigin 属性的值默认为 anonymous，即不携带 cookie，如果设置
 ## Q & A
 
 [TCP 连接和 HTTP 请求](https://zhuanlan.zhihu.com/p/93586950)
+
 - 现代浏览器在与服务器建立了一个 TCP 连接后是否会在一个 HTTP 请求完成后断开？什么情况下会断开？
-  
+
   默认情况下建立 TCP 连接不会断开，只有在请求报头中声明 Connection: close 才会在请求完成后关闭连接。因此一个 TCP 连接可以对应多个 HTTP 请求
+
 - 一个 TCP 连接中 HTTP 请求发送可以一起发送么（比如一起发三个请求，再三个响应一起接收）？
-  
+
   在 HTTP/1.1 存在 Pipelining 技术可以完成这个多个请求同时发送，但是由于浏览器默认关闭，所以可以认为这是不可行的。在 HTTP2 中由于 Multiplexing 特点的存在，多个 HTTP 请求可以在同一个 TCP 连接中并行进行。
+
 - 为什么有的时候刷新页面不需要重新建立 SSL 连接？
 
   在第一个问题的讨论中已经有答案了，TCP 连接有的时候会被浏览器和服务端维持一段时间。TCP 不需要重新建立，SSL 自然也会用之前的。
+
 - (非 http2 )浏览器对同一 Host 建立 TCP 连接到数量有没有限制？
-  
+
   当浏览器拿到一个有几十张图片的网页该怎么办呢？肯定不能只开一个 TCP 连接顺序下载，那样用户肯定等的很难受，但是如果每个图片都开一个 TCP 连接发 HTTP 请求，那电脑或者服务器都可能受不了，要是有 1000 张图片的话总不能开 1000 个 TCP 连接吧，你的电脑同意 NAT 也不一定会同意。
-  
+
   有。Chrome 最多允许对同一个 Host 建立六个 TCP 连接。不同的浏览器有一些区别。
+
 - 收到的 HTML 如果包含几十个图片标签，这些图片是以什么方式、什么顺序、建立了多少连接、使用什么协议被下载下来的呢？
-  
+
   如果图片都是 HTTPS 连接并且在同一个域名下，那么浏览器在 SSL 握手之后会和服务器商量能不能用 HTTP2，如果能的话就使用 Multiplexing 功能在这个连接上进行多路传输。不过也未必会所有挂在这个域名的资源都会使用一个 TCP 连接去获取，但是可以确定的是 Multiplexing 很可能会被用到。
-  
+
   如果发现用不了 HTTP2 呢？或者用不了 HTTPS（现实中的 HTTP2 都是在 HTTPS 上实现的，所以也就是只能使用 HTTP/1.1）。那浏览器就会在一个 HOST 上建立多个 TCP 连接，连接数量的最大限制取决于浏览器设置，这些连接会在空闲的时候被浏览器用来发送新的请求，如果所有的连接都正在发送请求呢？那其他的请求就只能等等了。
 
 **关于 HTTP 协议，下面错误的是哪个一个：**
 
 A. 看到网页有乱码，则很有可能是某个请求的 Content-Type 响应头丢失或者是值设置不当造成的<br>
 B. 即便是不需要发送请求体的 GET 请求，请求头区域下方也必须留一个空行（CRLF）<br>
-C. 服务端可以根据客户端发送的 Accept-Encoding  请求头来分别返回不同压缩格式（Gzip、Brotli）的文件<br>
+C. 服务端可以根据客户端发送的 Accept-Encoding 请求头来分别返回不同压缩格式（Gzip、Brotli）的文件<br>
 **D. 服务端返回的 Date 响应头表示服务器上的系统时间，除给人读外没有实际用途<br>**
 E. HTTP 是无状态的，网站是通过 Cookie 请求头来识别出两个请求是不是来自同一个浏览器的<br>
 F. Access-Control-Allow-Origin 响应头只支持配置单个的域名或者是 - ，不支持配置多个特定的域名
 
 D 为错误选项，Date 响应头有参与缓存时长的计算，不仅仅是给人看看服务器时间。
 
-带有 target="_blank" 的 a 标签被认为是有安全风险的，因为点击它后打开的新标签页面可以通过 window.opener.location = 来将来源页面跳转到钓鱼页面，不过给该 a 标签增加下面哪些属性就能阻止这一行为？
+带有 target="\_blank" 的 a 标签被认为是有安全风险的，因为点击它后打开的新标签页面可以通过 window.opener.location = 来将来源页面跳转到钓鱼页面，不过给该 a 标签增加下面哪些属性就能阻止这一行为？
 
 A. rel="nofollow" <br>
 **B. rel="noopener"** <br>

@@ -1,10 +1,12 @@
 # interview - bytedance 字节跳动
 
 ## 参考面经
+
 - [服务端开发](https://www.nowcoder.com/discuss/147325?type=2)
 - [今日头条前端三轮面试面经](https://www.nowcoder.com/discuss/105513)
 
 ## 流程
+
 > https://www.kanzhun.com/gsmsh11077801.html
 
 笔试一轮，面试三轮，hr 一轮。三年社招岗位，难度很大。
@@ -20,6 +22,7 @@
 第三轮，面试官老师特别和蔼可亲，气氛非常轻松。主要考察知识点广度，聊了我做的一些模块，发布的 npm 包，一些程序设计思想。广度方面主要聊了一些前端测试，前沿技术等，重点聊了一下工具链模块开发。还问了一些平常的学习方法这些。一共一小时多一点时间吧。再接下来就是 hr 面试了。感觉只要不作死，基本上都过了。主要是之前在上一家公司都做了些啥，怎么待实习生的，怎么做技术提升的。为何离职自己职业规划。最后通知 offer 发放。
 
 ## questions
+
 [题目集合](https://blog.csdn.net/Uupton/article/details/84640146)
 Minimum Window Substring
 Longest Increasing Path in a Matrix
@@ -27,16 +30,20 @@ Longest Increasing Path in a Matrix
 平衡二叉树
 
 ### revert linked list
+
 给定一个单链表的头节点 head, 实现一个调整单链表的函数，使得每 K 个节点之间为一组进行逆序，并且从链表的尾部开始组起，头部剩余节点数量不够一组的不需要逆序。（不能使用队列或者栈作为辅助）
 例如：
+
 ```js
 链表：1->2->3->4->5->6->7->8->null, K = 3。那么 6->7->8，3->4->5，1->2 各位一组。调整后：1->2->5->4->3->8->7->6->null。其中 1，2 不调整，因为不够一组。
 ```
 
 ### Solution
+
 [25. Reverse Nodes in k-Group](https://leetcode.com/problems/reverse-nodes-in-k-group/) 加强版
 
-先全链反转, 再每K翻转, 再全链反转
+先全链反转, 再每 K 翻转, 再全链反转
+
 ```js
 function reverseLL(head) {
   let newHead = reverse(head)
@@ -44,19 +51,48 @@ function reverseLL(head) {
   return reverse(newHead)
 }
 function reverse(head) {
-  var pre=null, cur=head
-  while(cur) [pre, cur, cur.next]=[cur, cur.next, pre]
+  var pre = null,
+    cur = head
+  while (cur) [pre, cur, cur.next] = [cur, cur.next, pre]
   return pre
 }
 function reverseKNode(head, k) {
-  var tmp=head
-  for(var i=1;i<k&&tmp;i++) tmp=tmp.next
+  var tmp = head
+  for (var i = 1; i < k && tmp; i++) tmp = tmp.next
   if (!tmp) return head // if rest.length<k, do nothing
-  var next=tmp.next
-  tmp.next=null
-  var newHead=reverse(head)
-  var newNext=reverseKNode(next, k)
-  head.next=newNext
+  var next = tmp.next
+  tmp.next = null
+  var newHead = reverse(head)
+  var newNext = reverseKNode(next, k)
+  head.next = newNext
   return newHead
+}
+```
+
+把有序不重复正整数组转换为范围表示
+
+Example:
+
+```js
+Input: [1, 2, 3, 4, 6, 9, 10, 13, 14, 15, 18, 20, 21]
+Output: "1-4,6,9-10,13-15,18,20-21"
+```
+
+Solution
+
+```js
+function range(numbers) {
+  var r = "" + numbers[0], last = numbers[0]
+  for (var i = 1; i < numbers.length; i++) {
+    if (numbers[i] - numbers[i - 1] !== 1) {
+      if (r[r.length - 1] === "-") r += last
+      r += "," + numbers[i]
+    } else {
+      if (r[r.length - 1] !== "-") r += "-"
+      last = numbers[i]
+      if (i === numbers.length - 1) r += last
+    }
+  }
+  return r
 }
 ```

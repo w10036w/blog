@@ -469,6 +469,12 @@ class 重渲染触发条件，此处暂时不考虑采用 `shouldComponentUpdate
 
 ### Suspence (todo)
 
+## Performance
+
+## [Profiler](https://juejin.im/post/5ba1f995f265da0a972e1657)
+
+16.5+, 录制检测
+
 ## Q & A
 
 > refer to https://juejin.im/post/5dc20a4ff265da4d4e30040b
@@ -488,6 +494,17 @@ Key points:
 `prop drilling`: prop 层层传递, 可以用 `React.Context` 或 `状态管理库` 代替
 
 `Fiber`: 新的`协调引擎`或重新实现核心算法。它的主要目标是支持`虚拟 DOM 的增量渲染` (能够将渲染工作分割成块，并将其分散到多个帧中)。React Fiber 的目标是提高其在动画、布局、手势、暂停、中止或重用等方面的适用性，并为不同类型的更新分配优先级，以及新的并发原语。
+
+Q: `redux` 问题 [参考掘金](https://juejin.im/post/5b9617835188255c781c9e2f)
+
+A: redux 本身有哪些作用？我们先来快速的过一下 redux 的核心思想（工作流程）：
+
+- `createStore.js`: 将状态统一放在一个 state 中，由 store 来管理这个 state。
+- `combineReducers.js`: 这个 store 按照 reducer 的 "shape"（形状）创建。reducer 的作用是接收到 action 后，输出一个新的状态，对应地更新 store 上的状态。
+- `dispatch()`: 根据 redux 的原则指导，外部改变 state 的最佳方式是通过调用 store 的 dispatch 方法，触发一个 action，这个 action 被对应的 reducer 处理，完成 state 更新。
+- `subscribe()`, `getState()å`: 可以通过 subscribe 在 store 上添加一个监听函数。每当调用 dispatch 方法时，会执行所有的监听函数。
+- `applyMiddleware()`, 可以添加中间件（中间件是干什么的我们后面讲）处理副作用。
+- `compose.js`, `bindActionCreators,hs`: 工具函数
 
 ## Reference
 
