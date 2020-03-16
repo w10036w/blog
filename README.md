@@ -16,6 +16,7 @@ Build a business strategy around the things that are **stable in time**.
 | | [各公司面试流程](posts/interview/README.interview.md) |
 | | [面试趣题](posts/questions/README.questions.md) |
 | | [团队发展参考](posts/team-growth/index.md) |
+| | [前端系统设计](posts/frontend-system-design/admin-portal.md) |
 
 TODO LIST
 
