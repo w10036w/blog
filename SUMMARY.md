@@ -18,6 +18,9 @@
   - [面试技巧](posts/interview/tricks.md)
   - [工程](posts/interview/engineering.md)
   - [CSS 基础](posts/interview/css-fundamental.md)
+  - 系统设计
+
+    - [前端管理员控制台](posts/frontend-system-design/admin-portal.md)
 
 - [LeetCode 分类刷题](posts/leetcode/README.leetcode.md)
 
