@@ -67,12 +67,16 @@ function commafy(num) {
   return num.join('')
 }
 ```
+
 follow-up
+
 - only need to cut integer part
 - `for(let i = a.length - 3; i > 0; i=i-3)`
 
 ## hexToRGB
+
 Example
+
 ```js
 hexToRGB('#F0F0F0') // => rgb(240, 240, 240)
 hexToRGB('#9fc') // => rgb(153, 255, 204)
@@ -94,7 +98,9 @@ const h2n = hex => parseInt(hex, 16)
 ```
 
 ## camelCase
+
 Example
+
 ```js
 camelCase('Is_1000_number-good-enough') // isGoodEnough
 ```
@@ -107,13 +113,16 @@ function camelCase(s) {
 ```
 
 ## isPrime
+
 Example
+
 ```js
 isPrime(2) // true
 isPrime(10) // false
 ```
 
 核心: 6n+1, 6n-1, 平方根简化
+
 ```js
 function isPrime(num) {
   if (num<=3) return num>1
@@ -127,9 +136,11 @@ function isPrime(num) {
 ```
 
 ## intersection of multi arrays
+
 Example
+
 ```js
-[[1,1,1,2,2,3,4,5,5],[1,2,3],[2,3,4],[6,9,2]] // [2]
+  [[1,1,1,2,2,3,4,5,5],[1,2,3],[2,3,4],[6,9,2]] // [2]
   [[1, 2, 3, 4], [2, 3, 4, 5], [3, 4, 5, 6]] // [3, 4]
 ```
 

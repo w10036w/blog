@@ -1,6 +1,7 @@
 # interview - browser 浏览器
 
 ## 基础知识
+
 - `进程` process 是 CPU 资源分配的最小单位；
 - `线程` thread 是 CPU 调度的最小单位，一个进程可有多个线程；
 - 不同 `进程` 间可通信，但代价大；
@@ -20,6 +21,7 @@
   - **每 tab 创建一个独立进程**
 
 对于 `渲染进程`，其多线程如下：
+
 - `GUI` 渲染线程
   - 负责渲染页面，布局和绘制
   - 页面需要重绘和回流时，该线程就会执行
@@ -42,9 +44,11 @@
 尽量不使用 document.write()，知道 addEventListener [passive 的事件监听器](https://zjy.name/passive-event-listeners/)是什么
 
 ## 浏览器渲染
+
 > [参考](https://juejin.im/post/5da52531518825094e373372)
 
 DOM -> CSSOM -> Render Tree -> Layout -> Paint -> Composite
+
 - 构建 DOM 树: 1) 页面初次加载, 获取 `html`, 构建 `DOM` 树; 2) js 修改了节点, 再次构建;
 - 构建渲染树: 根据 `css` 生成 `CSSOM`, 和 `DOM` 合并构建为 `render` 树，render 树中不包含 定位和几何信息
 - 构建布局树: `layout`，含有元素的定位和几何信息, 可能随 JS 指令重新计算, 称为 回流 (reflow)
@@ -52,11 +56,13 @@ DOM -> CSSOM -> Render Tree -> Layout -> Paint -> Composite
 - 渲染层合成 (Composite) :多个绘制后的渲染层按照恰当的重叠顺序进行合并，而后生成位图，最终通过显卡展示到屏幕上
 
 `渲染层 (RenderLayer)`: 浏览器创建新渲染层 (开启硬件加速) 的情况:
+
 - DOM 根元素 `document`
 - CSS: `position 非 static`, `opacity < 1`, `filter`, `mask`, `mix-blend-mode` 不为 `normal`, `transform` 非 `none`, `backface-visibility: hidden`, `reflection`, `column-count` 值不为 auto, `column-width` 属性且值不为 auto, `overflow` 不为 `visible`
 - 当前有对于 `opacity`, `transform`, `fliter`, `backdrop-filter` 应用动画
 
 `合成层 (CompositingLayer)`: 满足某些特殊条件的渲染层，会被浏览器自动提升为合成层。合成层拥有单独的 `GraphicsLayer`, 而其他不是合成层的渲染层，则和其第一个拥有 `GraphicsLayer` 的父层共用一个。
+
 - 3D transforms：translate3d、translateZ 等
 - video、canvas、iframe 等元素
 - 通过 Element.animate () 实现的 opacity 动画转换
@@ -70,7 +76,9 @@ DOM -> CSSOM -> Render Tree -> Layout -> Paint -> Composite
 `回流, 重排(reflow)`: **构建布局阶段**, 浏览器为了重新渲染页面的需要而进行的重新计算元素的几何大小和位置的，他的开销是非常大的，回流可以理解为渲染树需要重新进行计算，一般最好触发元素的重构，避免元素的回流；比如通过通过添加类来添加 css 样式，而不是直接在 DOM 上设置，当需要操作某一块元素时候，最好使其脱离文档流，这样就不会引起回流了，比如设置 position：absolute 或者 fixed，或者 display：none，等操作结束后在显示。
 
 ### 何时触发回流和重绘
+
 #### 何时发生回流
+
 - 页面渲染初始化 (无法避免)
 - 添加或删除可见的 DOM 元素
 - 元素的位置变化，或者使用动画
@@ -79,6 +87,7 @@ DOM -> CSSOM -> Render Tree -> Layout -> Paint -> Composite
 - 浏览器的窗口尺寸变化, 因为回流是根据视口的大小来计算元素的位置和大小
 
 #### 何时发生重绘（回流一定会触发重绘）
+
 当页面中元素样式的改变并不影响它在文档流中的位置时（例如：color、background-color、visibility 等），浏览器会将新样式赋予给元素并重新绘制它，这个过程称为重绘。
 
 有时即使仅仅回流一个单一的元素，它的父元素以及任何跟随它的元素也会产生回流。现代浏览器会对频繁的回流或重绘操作进行优化，浏览器会维护一个队列，把所有引起回流和重绘的操作放入队列中，如果队列中的任务数量或者时间间隔达到一个阈值的，浏览器就会将队列清空，进行一次批处理，这样可以把多次回流和重绘变成一次。你访问以下属性或方法时，浏览器会立刻清空队列：
@@ -91,7 +100,9 @@ DOM -> CSSOM -> Render Tree -> Layout -> Paint -> Composite
 - getBoundingClientRect()
 
 以上属性和方法都需要返回最新的布局信息，因此浏览器不得不清空队列，触发回流重绘来返回正确的值。因此，我们在修改样式的时候，**最好避免使用上面列出的属性，他们都会刷新渲染队列。** 如果要使用它们，最好将值缓存起来。
+
 ### 如何避免触发回流和重绘
+
 CSS
 
 - 避免使用 table 布局。
@@ -110,6 +121,7 @@ JavaScript
 - 对具有复杂动画的元素使用绝对定位，使它脱离文档流，否则会引起父元素及后续元素频繁回流
 
 优化建议
+
 - 动画尽量使用 transform
 - 减少隐式合成, 如把动画节点的 z-index 属性值设置极大
 - 减小合成层尺寸, 如通过 scale 放大
@@ -117,6 +129,7 @@ JavaScript
 ### 浏览器一帧内的工作
 
 ![one frame](../../assets/img/interview-browser-frame.png)
+
 - 处理用户的交互
 - JS 解析执行 (按宏任务微任务)
 - 帧开始。窗口尺寸变更，页面滚去等的处理
@@ -125,7 +138,8 @@ JavaScript
 - 绘制
 
 ## 浏览器缓存
-> https://www.geekjc.com/post/5d37f67480c18e4071ccc440
+
+> <https://www.geekjc.com/post/5d37f67480c18e4071ccc440>
 
 浏览器缓存分为强缓存和协商缓存。当客户端请求某个资源时，获取缓存的流程如下 (命中协商缓存 `304`, 命中强缓存 `200`)
 
@@ -137,60 +151,75 @@ JavaScript
 6. 当 `f5` 刷新网页时，跳过强缓存，但是会检查协商缓存；
 
 ### 强缓存
+
 通过默认 http 请求发送, 命中时 `200`, 优先级从高到低
 
 - `Cache-Control:max-age`: 定义于 `http1.1`，利用其 `max-age` 值来判断缓存资源的最大生命周期，它的值单位为 `秒`
+
   ```js
   Cache-control: max-age=30 // 30s 后过期
   // 'no-store': 不需要缓存的资源
   // 'no-cache' + Etag: 频繁变动
   // 'max-age=31536000' + Etag: 代码文件, 一旦文件名变动即重新下载
   ```
+
 - `Expires`: 定义于 `http1.0`，值为 `GMT字符串`，代表缓存资源的过期时间
+
   ```js
   Expires: Wed, 22 Oct 2018 08:41:00 GMT // 此时间后过期; 受本地时间影响
   ```
 
 ### 协商缓存
+
 通过新的 http 请求发送, 命中时 `304`, 优先级从高到低
 
 - `ETag` + `If-None-Match`: `Etag` 表资源唯一标识，客户端如发现 (资源) 有 `Etag` (之前自服务器发来), 通过 `If-None-Match` 将其发送给服务端, 如服务端发现 `Etag` 不一致则发更新的资源，否则命中
 - `Last-Modified` + `If-Modified-Since`: `Last-Modified` 为本地文件最后修改日期 (之前服务端发来). 客户端如发现有 `Last-Modified`, 通过 `If-Modified-Since` 将其发送至服务端, 如服务端发现此日期后有更新则发资源, 否则命中. 但是如果在 `本地打开缓存文件`， `Last-Modified` 会被修改
 
 ## CORS 跨域
+
 同源策略：浏览器安全策略，同协议、ip、端口的脚本才会执行。
 只要协议、域名、端口有任何一个不同，都被当作是不同的域
+
 1. `NGINX 反向代理`: `proxy_pass http://xxx.xxx.xxx`
 2. 服务端 如 `express`, `koa` 配置 `cors`
 3. 通过 `jsonp` 跨域
 jsonp在页面上引入不同域上的 js 脚本文件实现请求不同域上的数据
-  - 通过 `script` 标签引入一个 js 文件
-  - js 文件载入成功后会执行我们在url参数中指定的函数，并且会把我们需要的json数据作为参数传入
+
+- 通过 `script` 标签引入一个 js 文件
+- js 文件载入成功后会执行我们在url参数中指定的函数，并且会把我们需要的json数据作为参数传入
     注：需要服务器端的页面进行相应的配合
+
 4. 通过修改document.domain来跨子域
 5. 使用 `window.name` 来进行跨域
 window对象有个name属性，该属性有个特征：即在一个窗口(window)的生命周期内,窗口载入的所有的页面都是共享一个window.name的，每个页面对window.name都有读写的权限，window.name是持久存在一个窗口载入过的所有页面中的，并不会因新页面的载入而进行重置。
 
 ## 安全
+
 ### CSRF 攻击
+
 前端构造一个恶意页面，请求 JSONP 接口，收集服务端的敏感信息。如果 JSONP 接口还涉及一些敏感操作或信息（比如登录、删除等操作），那就更不安全了。
 
 **解决方法**：验证 JSONP 的调用来源（Referer），服务端判断 Referer 是否是白名单，或者部署随机 Token 来防御。
 
 ### XSS 漏洞
+
 不严谨的 `content-type` 导致的 XSS 漏洞，想象一下 JSONP 就是你请求 `http://youdomain.com?callback=douniwan`, 然后返回 `douniwan({ data })`，那假如请求 `http://youdomain.com?callback=<script>alert(1)</script>` 不就返回 `<script>alert(1)</script>({ data }`) 了吗，如果没有严格定义好 `Content-Type（ Content-Type: application/json`，再加上**没有过滤 callback 参数**，直接当 html 解析了，就是一个赤裸裸的 XSS 了。
 
 **解决方法**：严格定义 `Content-Type: application/json`，然后严格过滤 `callback` 后的参数并且限制长度（进行字符转义，例如 <换成 & lt，> 换成 & gt）等，这样返回的脚本内容会变成文本格式，脚本将不会执行。
 
 ### 服务器被黑，返回一串恶意执行的代码
+
 可以将执行的代码转发到服务端进行校验 JSONP 内容校验，再返回校验结果。
 
 ### XSS 和 CSRF 区别
+
 XSS 跨站脚本攻击（Cross Site Scripting)，为了不和层叠样式表 CSS 混淆，故将跨站脚本攻击缩写为 XSS。恶意攻击者往 Web 页面里插入恶意 Script 代码，当用户浏览该页之时，嵌入其中 Web 里面的 Script 代码会被执行，从而达到恶意攻击用户的目的。
 
 CSRF 跨站请求伪造（Cross-site request forgery），是伪造请求，冒充用户在站内的正常操作。我们知道，绝大多数网站是通过 cookie 等方式辨识用户身份，再予以授权的。所以要伪造用户的正常操作，最好的方法是通过 XSS 或链接欺骗等途径，让用户在本机（即拥有身份 cookie 的浏览器端）发起用户所不知道的请求。
 
 区别：
+
 - 原理不同，CSRF 是利用网站 A 本身的漏洞，去请求网站 A 的 api
 - XSS 是向目标网站注入 JS 代码，然后执行 JS 里的代码。
 - CSRF 需要用户先登录目标网站获取 cookie，而 XSS 不需要登录
@@ -198,6 +227,7 @@ CSRF 跨站请求伪造（Cross-site request forgery），是伪造请求，冒�
 - XSS 是利用合法用户获取其信息，而 CSRF 是伪造成合法用户发起请求
 
 ## 跨页面通讯
+
 - [`BroadcastChannel()`](https://developer.mozilla.org/en-US/docs/Web/API/Broadcast_Channel_API): `.postMessage()`, `.onmessage()`, `.close()`
 - `ServiceWorker`
 - `WebSocket` (可无痕模式用)
@@ -206,7 +236,9 @@ CSRF 跨站请求伪造（Cross-site request forgery），是伪造请求，冒�
 - window.open + [window.postMessage](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage)
 
 ### 跨页面通信代码实现
+
 `WebWorker`
+
 ```js
 // main.js
 if(window.Worker) {
@@ -237,7 +269,9 @@ self.onmessage = function(e) {
 // worker内部要加载其他脚本,可通过 importScripts() 方法
 self.importScripts('foo.js');
 ```
+
 `ServiceWorker`
+
 ```js
 if('serviceWorker' in window.navigator) {
   // 对于多个不同scope的多个Service Worker,我们也可以给指定的Service Worker发送消息
@@ -284,7 +318,9 @@ self.addEventListener("message", function(event) {
   event.source.postMessage('sw2.js -> page');
 });
 ```
+
 `postMessage`
+
 ```js
 // 子 -> 父
 // 子 (iframe) 发送
@@ -302,6 +338,7 @@ window.addEventListener('message', (e) => {
 ```
 
 ### postMessage
+
 ```js
 // sender
 otherWindow.postMessage(message, targetOrigin, [transfer]);
@@ -312,34 +349,46 @@ function receiveMessage(event) {
   console.log(event);
 }
 ```
+
 #### otherWindow
+
 窗口的一个引用，比如 iframe 的 contentWindow 属性，执行 window.open 返回的窗口对象，或者是命名过的或数值索引的 window.frames.
+
 #### message
+
 auto serialized by structured clone algorithm, 无需自己序列化
+
 #### targetOrigin
+
 通过窗口的 origin 属性来指定哪些窗口能接收到消息事件，指定后只有对应 origin 下的窗口才可以接收到消息，设置为通配符 "*" 表示可以发送到任何窗口，但通常处于安全性考虑不建议这么做。如果想要发送到与当前窗口同源的窗口，可设置为 "/"
+
 #### transfer
+
 是一串和 message 同时传递的 **Transferable** 对象，这些对象的所有权将被转移给消息的接收方，而发送一方将不再保有所有权.
 
 ![postmessage](../../assets/img/interview-browser-postmessage-event.png)
 
 ### [serviceWorker vs webWorker](https://stackoverflow.com/questions/38632723/what-can-service-workers-do-that-web-workers-cannot)
-> 参考 https://bitsofco.de/web-workers-vs-service-workers-vs-worklets/
+
+> 参考 <https://bitsofco.de/web-workers-vs-service-workers-vs-worklets/>
 
 `web worker`
+
 - **不阻塞主线程**, 运行在后台的单独线程
 - 多 worker 对一 tab, 生命周期和对应 tab 相同
 - 访问权限: 只能加载同源 js, 无需 UI, 不能操作 DOM, 无 `alert()`, `confirm()` 等, 无法读本地文件 (可通过 fileReader 转成二进制读取), 能加载网络文件, 能使用 `WebSocket`, `IndexedDB` 等接口
 - 用途: 发送 `网络请求`, 统计埋点, 执行复杂的数据操作后通过 `postMessage` 传递给 js 主线程.
 
 `service worker`
+
 - 增强**离线或基于网络连接状态变化的用户体验**
 - 一 worker 对多 tab, 生命周期独立
 - 支持消息推送和后台同步 API.
-- 用途: 离线 web 应用, 如离线存储; 浏览器和网络的代理服务器; 
+- 用途: 离线 web 应用, 如离线存储; 浏览器和网络的代理服务器;
 
 ### WebSocket
-> https://zhuanlan.zhihu.com/p/23386938
+
+> <https://zhuanlan.zhihu.com/p/23386938>
 
 H5新协议, 在单个 TCP 连接上建立客户端到服务端的全双工通信 (Full Duplex, 单工通信只能 A->B, 半双工可A->B或B->A, 不能同时进行), 这就意味着服务器端可以主动推送数据到客户端. 一开始借助 http 请求 (一次握手) 完成.
 
@@ -355,6 +404,7 @@ ws.readyState // current status
 ```
 
 ## DNS 原理
+
 DNS (Domain Name System, 域名系统)，作为域名和 IP 地址相互映射的一个分布式数据库。
 
 当浏览器访问一个域名的时候，需要解析一次 DNS，获得对应域名的 ip 地址。在解析过程中，按照
@@ -365,12 +415,14 @@ DNS (Domain Name System, 域名系统)，作为域名和 IP 地址相互映射�
 的顺序，逐步读取缓存，直到拿到 IP 地址。
 
 ### 总结
+
 如果浏览器最近将一个域名解析为 IP 地址，所属的操作系统将会缓存，下一次 DNS 解析时间可以低至 0-1ms。 如果结果不在系统本地缓存，则需要读取路由器的缓存，则解析时间的最小值大约为 15ms。如果路由器缓存也不存在，则需要读取 ISP（运营商）DNS 缓存，一般像 taobao.com、baidu.com 这些常见的域名，读取 ISP（运营商）DNS 缓存需要的时间在 80-120ms，如果是不常见的域名，平均需要 200-300ms。一般的网站在运营商这里都能查询的到，所以普遍来说 DNS Prefetch 可以给一个域名的 DNS 解析过程带来 15-300ms 的提升，尤其是一些大量引用很多其他域名资源的网站，提升效果就更加明显了。
 <hr>
 
 ## script
 
 ### 异步加载 defer async
+
 `defer`
 
 `<script>` 标签打开 defer 属性，脚本就会异步加载。渲染引擎遇到这一行命令，就会开始下载外部脚本，但不会等它下载和执行，而是直接执行后面的命令。
@@ -386,8 +438,8 @@ async 一旦下载完，渲染引擎就会中断渲染，执行这个脚本以�
 ## link
 
 - DNS 预加载 `dns-prefetch`
-  > https://www.geekjc.com/post/5d762123c15afd63c91f4862
-  > https://bubkoo.com/2015/11/19/prefetching-preloading-prebrowsing/
+  > <https://www.geekjc.com/post/5d762123c15afd63c91f4862>
+  > <https://bubkoo.com/2015/11/19/prefetching-preloading-prebrowsing/>
 
   DNS Prefetch 根据浏览器定义的规则，提前解析之后可能会用到的域名，使解析结果缓存到系统缓存中，缩短 DNS 解析时间，来提高网站的访问速度。
 
@@ -398,50 +450,69 @@ async 一旦下载完，渲染引擎就会中断渲染，执行这个脚本以�
   `自动解析`: 当遇到 a 标签，Chromium 会自动将 href 中的域名解析为 IP 地址，这个解析过程是与用户浏览网页并行处理的。但是为了确保安全性，在 HTTPS 页面中不会自动解析。
 
   当我们希望在 HTTPS 页面开启自动解析功能时，添加如下标记
+
   ```html
   <meta http-equiv="x-dns-prefetch-control" content="on"> <!-- off 为关闭 -->
   ```
+
   `手动解析`:
+
   ```html
   <link rel="dns-prefetch" href="//delai.me">
   <!-- use chrome://histograms/DNS.PrefetchQueue to check cache hit-->
   ```
+
 - 预加载 `preload`, 声明式 `fetch`, 不阻塞 `onload`
+
   ```html
   <link rel="preload" href="https://www.geekjc.com">
   ```
+
 - 预连接 `preconnect`, DNS 预解析 + TCP 握手 + 建立传输层协议
+
   ```html
   <link rel="preconnect" href="http://example.com">
   ```
+
   > 现代浏览器都试着预测网站将来需要哪些连接，然后预先建立 socket 连接，从而消除昂贵的 DNS 查找、TCP 握手和 TLS 往返开销。然而，浏览器还不够聪明，并不能准确预测每个网站的所有预链接目标。好在，在 Firefox 39 和 Chrome 46 中我们可以使用 preconnect 告诉浏览器我们需要进行哪些预连接。
 - 预渲染 `prerender`, 确保该页面一定会被打开时使用; 预加载页面的全部资源
+
   ```html
   <link rel="prerender" href="https://www.geekjc.com">
   ```
+
   使用 [Page Visibility API](http://www.w3.org/TR/page-visibility/) 可以防止页面真正可见前被执行。
 - 预获取 `prefetch`, 确保该资源一定会被用到时使用; 没有同源策略的限制; 对 `webfonts` 性能提升明显
+
   ```html
   <link rel="prefetch" href="image.png">
   ```
+
 - 最高优先级预获取 `subresource`, 在所有 `prefetch` 前运行
+
   ```html
   <link rel="subresource" href="styles.css">
   ```
+
   > `rel=prefetch` 为将来的页面提供了一种低优先级的资源预加载方式，而 `rel=subresource` 为当前页面提供了一种高优先级的资源预加载。
 
 ## 常用事件/变量/函数
+
 ### 操作 DOM
+
 > 参考 [从 DOM 说起](https://juejin.im/post/58f558efac502e006c3e5c97)
 
 添加 DOMElement
+
 ```js
 ParentNode.append(...nodesOrDOMStrings) // returns undefined
 Node.appendChild(node) // return appended node
 ```
+
 大量 DOM 操作, 事件绑定
 
 `createDocumentFragment()` + 分片 + `rAF` + 事件代理 (Fiber DOM 丐版)
+
 ```js
 (() => {
   const ndContainer = document.getElementById('js-list');
@@ -478,6 +549,7 @@ Node.appendChild(node) // return appended node
 ```
 
 BFS 广度优先遍历 DOM, 输出 \`nodeName.${node.className}\`
+
 ```js
 function bfs(node) {
   var q = [node]
@@ -491,7 +563,8 @@ bfs(document.querySelector('body'))
 ```
 
 ### 高度/宽度
-> https://segmentfault.com/a/1190000010746091
+
+> <https://segmentfault.com/a/1190000010746091>
 
 1. `document.documentElement.clientWidth / clientHeight`: 屏幕可视区域的宽高, 不含滚动条和工具条
 2. `window.innerWidth / innerHeight`: 可视区域的宽高
@@ -514,6 +587,7 @@ bfs(document.querySelector('body'))
 返回值是一个 DOMRect 对象，这个对象是由该元素的 getClientRects() 方法返回的一组矩形的集合，即：是与该元素相关的 CSS 边框集合 。
 
 DOMRect 对象包含了一组用于描述边框的只读属性——left、top、right和bottom，单位为像素。除了 width 和 height 外的属性都是相对于视口的左上角位置而言的。
+
 ```js
 //译者注：DOMRect 是 TextRectangle或 ClientRect 的别称，他们是相同的。
 // x: 0
@@ -528,7 +602,9 @@ var rect = obj.getBoundingClientRect();
 ```
 
 ### 移动浏览器
+
 手机 平板 判断
+
 ```js
 var deviceFix = function() {
   var pixelRatio = window.devicePixelRatio;
@@ -540,9 +616,11 @@ var deviceFix = function() {
   // etc.
 }
 ```
+
 方向变化
-> https://davidwalsh.name/orientation-change
+> <https://davidwalsh.name/orientation-change>
 JS 处理
+
 ```js
 // experimental
 window.addEventListener("deviceorientation", handleOrientation, true);
@@ -557,7 +635,9 @@ window.addEventListener("orientationchange", function() {
 window.addEventListener("resize", function() {
 }, false);
 ```
+
 CSS Media Queries
+
 ```css
 /* portrait */
 @media screen and (orientation:portrait) {
@@ -581,6 +661,7 @@ CSS Media Queries
 <hr>
 
 ## 性能优化 performance
+
 - DNS 预解析: dns-prefetch, 各种 link
 - 浏览器缓存: html 协商缓存, css/js/img 强缓存 + hash (cache-control + etag)
 - 使用 http2: 多路复用, 压缩 head

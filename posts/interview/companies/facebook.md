@@ -3,6 +3,7 @@
 ## Algo
 
 ### Currency Excahgne II
+
 > https://aonecode.com/facebook-interview-questions-currency-exchange-2
 
 given the exchange rate table, find out the best exchange rate from A to B. return -1 if not possible
@@ -20,6 +21,7 @@ O: .76
 ```
 
 #### Solution
+
 ```js
 function currencyExchange(from, to, rates) {
 

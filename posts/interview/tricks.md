@@ -35,6 +35,7 @@
 
 ### pre-employer/job related
 
+- why do you choose to leave: growth
 - Don’t bash your current, or past, employers
 - better career development
 
@@ -83,3 +84,20 @@
 I am a frontend engineer proficient in cross-platform frontend / middleware / microservice solutioning, designing and executing digital transformation projects via React / React Native / NodeJS / VueJS / Serverless / GraphQL / Data Visualization.we
 
 I have led full stack development focusing on web application, and initiate solution evaluation, performance optimization, and delivery management. I did well in delivering high performance, constructive, maintainable and scalable solutions.
+
+
+### latest research / direction
+
+- Atomic everything: [Facebook revamp: CSS, no more sass/less, vs Tailwind / CSS in JS](https://juejin.cn/post/6917073600474415117), JS -> [Recoil](https://juejin.cn/post/6881493149261250568)
+
+### resume writting
+
+> 清晰简洁的描述出了自己在公司推动了什么事情，解决了什么难点，而不是千篇一律的流水账。
+> <https://juejin.cn/post/6921890174842454023>
+
+- education, certificate
+- skills, languages, tech stacks, design patterns
+- work: push something, make something happen, metrics / numbers, coordinate, involving design, help decision making for business strategies
+- leadership / team building skills/ management:
+- publish: articles / tutorials in what platforms
+- open source: github or sth else

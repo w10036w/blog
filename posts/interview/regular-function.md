@@ -977,4 +977,55 @@ if (IntersectionObserver) {
 }
 ```
 
-<hr>
+#### RateLimit control (FB intern)
+
+```js
+function RateLimit() {
+  this.lastSec = 0
+  this.quota = 1
+  this.limit = 1
+
+  this.setQPS = function(l) {
+    this.limit = l
+    this.quota = l
+  }
+
+  this.allowThis = function() {
+    var currSec = Math.floor(Date.now()/1000)
+    if (currSec - this.lastSec>=1) {
+      this.quota = this.limit
+      if (this.quota>0) {
+        this.quota--;
+        this.lastSec = currSec
+        return true
+      }
+      return false
+    } else {
+      if (this.quota>0) {
+        this.quota--
+        return true
+      }
+      return false
+    }
+  }
+}
+
+
+var rl = new RateLimit()
+rl.setQPS(2)
+
+var q_number = 1
+
+console.log('q1:', rl.allowThis())
+
+var qq = setInterval(() => {
+  console.log(`q${++q_number}: `, rl.allowThis())
+
+  if (q>20) clearInterval(qq)
+}, 200)
+
+```
+
+#### Object merge
+
+和 deepClone 有些类似

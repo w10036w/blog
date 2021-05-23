@@ -4,13 +4,83 @@
 
 - [中文入门](https://ts.xcatliu.com/)
 
-## 常用特性
+## 常用特性，关键词
+
+### 运算 & 操作符
+
+非空断言运算符 !
+这个运算符可以用在 **变量名** 或者 **函数名** 之后，用来强调对应的元素是非null|undefined的
+
+```ts
+function onClick(callback?: () => void) {
+  callback!();                // 参数是可选入参，加了这个感叹号!之后，TS编译不报错
+}
+```
+
+这个符号的场景，特别适用于我们已经明确知道不会返回空值的场景，从而减少冗余的代码判断，如React的Ref
+
+```ts
+function Demo(): JSX.Elememt {
+  const divRef = useRef<HTMLDivElement>();
+  useEffect(() => {
+    divRef.current!.scrollIntoView();         // 当组件Mount后才会触发useEffect，故current一定是有值的
+  }, []);
+  return <div ref={divRef}>Demo</div>
+}```
+
+
+### 泛型 & 泛型工具
+
+```ts
+Partial<T>, Extract<K, T>, Pick<T, K>, Exclude<T, U>, Omit<T, K>, ReturnType<T>, Required<T>
+
+// ! Partial,  将泛型中全部属性变为可选
+type PT = Partial<T> //
+// 相当于 
+type PT = {
+  [key in keyof T]?: T[P]
+}
+
+// !Pick, 是将T类型中的K键列表提取出来，生成新的子键值对类型
+type Pick<T, K extends keyof T> = {
+  [P in K]: T[P]          
+}
+
+/* e.g. */
+type TypeA = {
+  id: number
+  name: string
+  email: string
+}
+type TypeB = Partial<TypeA> 
+// equal to
+type TypeB = {
+  id?: number
+  name?: string
+  email?: string
+}
+type TypeC = Extract<keyof TypeA, number>
+// equal to
+type TypeC === {
+  id: number
+}
+
+type TypeD = Pick<TypeA, 'id' | 'name'> 
+// equal to
+type TypeD = {
+  id: number
+  name: string
+}
+
+
+```
+
 
 类型检查, 私有/保护变量, 装饰器 (方法/属性/参数/工厂) +[元数据反射](https://zhuanlan.zhihu.com/p/42220487)(reflect metadata)
 
-### `type` vs `interface`
+### `type` vs `interface` 区别
 
-写法略有不同
+- 写法略有不同
 
 ```ts
 type user = {
@@ -23,7 +93,9 @@ interface IUser {
 }
 ```
 
-`interface` can be named as the same and will be **auto-merged**, while `type` need to use `&`
+- `interface` can be named as the same and will be **auto-merged**, while `type` need to use `&`
+
+  重名的 `interface` 会自动合并, `type` 则必须独立命名并相交
 
 ```ts
 interface IA {
@@ -49,7 +121,7 @@ const TE: TA & TB = {
 }
 ```
 
-`interface` 应该用于 `实现`，即和 `implements` 结合使用。
+- `interface` 应该用于 `实现`，即和 `implements` 结合使用。
 
 ```ts
 interface serializeable {
@@ -96,7 +168,7 @@ type keys = keyof Point // 'x' | 'y'
 const a: keys = 'z' // 'z' is not assignable to 'x' | 'y'
 ```
 
-2. 取 `type` 所有键名，可配合 `Extract<>` 使用过滤对应属性
+1. 取 `type` 所有键名，可配合 `Extract<>` 使用过滤对应属性
 
 ```ts
 const c = "c";
@@ -190,8 +262,6 @@ let arr: number[] = repeat(13, 4)
 - [typescript 函数类型](https://juejin.im/post/5d10e242f265da1b6b1ce24b)
 - [ts 最佳实践](https://juejin.im/post/5e095ddb6fb9a016391d5d58)
 
-### 常用类型
-
 参考 [在 React 项目中优雅地使用 Typescript](https://segmentfault.com/a/1190000020536678)
 
 ```js
@@ -255,5 +325,5 @@ const withSomething = <P extends WrappedComponentProps>(
 
 ## 参考资料
 
-- [typescript 高级技巧
-  ](https://zhuanlan.zhihu.com/p/103209639)
+- [typescript 高级技巧](https://zhuanlan.zhihu.com/p/103209639)
+- [typescript 高级用法](https://juejin.cn/post/6964692485415108645)

@@ -1,6 +1,7 @@
 # interview - nodejs
 
 ## 高性能核心
+
 ![eventloop](../../assets/img/interview-nodejs-eventloop.jpg)
 
 - 单线程, 无线程调度 (thread scheduling) 开销, 多进程内存开销较大
@@ -11,7 +12,9 @@ linux 在使用 CFS 调度器的情况下，其调度开销大约为 O (logm), �
 ## [cross JS / C++ Boundary](https://blog.insiderattack.net/crossing-the-js-c-boundary-advanced-nodejs-internals-part-1-cb52957758d8)
 
 ## child_process 做并发
+
 ## worker -- Node.js 并发的关键
+
 [V8 Isolates](https://v8docs.nodesource.com/node-0.8/d5/dda/classv8_1_1_isolate.html) 能同步运行 workers, 其为一个独立的 runtime 实例和独立的 eventloop (独立 js 堆和微任务队列), 和其他 worker 完全隔离, 拥有独立的但能共享内存,
 
 [Worker from v10.5.0](https://blog.insiderattack.net/deep-dive-into-worker-threads-in-node-js-e75e10546b11)
@@ -19,14 +22,17 @@ linux 在使用 CFS 调度器的情况下，其调度开销大约为 O (logm), �
 ## llhttp v12 替代 http parser (c语言实现)
 
 ### 性能优化方案
+
 Worker Thread Pooling
 
 ## Message Queue 消息队列
+
 > [参考1](https://juejin.im/post/5dd8cd7ae51d4523501f7331)
 
 在消息的传输过程中保存消息的容器。Kafka, RocketMQ (阿里), RabbitMQ
 
 ![message queue](../../assets/img/interview-nodejs-mq.png)
+
 - 应用解耦
 - 灵活性和峰值处理能力
 - 排序保证 (FIFO)
@@ -34,6 +40,7 @@ Worker Thread Pooling
 - 可扩展性
 
 使用 MQ
+
 ```js
 const amqp = require('amqplib');
 

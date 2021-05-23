@@ -2,13 +2,28 @@
 
 > https://soulmachine.gitbooks.io/system-design/content/cn/
 
-## [分布式 ID 生成器](https://soulmachine.gitbooks.io/system-design/content/cn/distributed-id-generator.html)
+## 通用方法
+
+1. 拿到题目后，分析，询问细节需求并和面试官保持沟通
+2. 什么场景，用户量，访问量(QPS), 分解需求写出功能列表并筛选出核心功能列表
+3. 采用什么级别的存储模式，建表 [ 数据库系统，文件系统，缓存系统 ]， 比如管理关系性强的数据如 twitter 用户数据，用 SQL, 推文相关，用 NoSQL, 媒体文件用 文件存储系统，如 Amazon S3，用户之间的关系用图数据库
+
+### QPS 预估
+
+- 一台 Web Server承受量约为 1K的QPS（考虑到逻辑处理时间以及数据库查询的瓶颈）
+- 一台 SQL Database承受量约为 1K的QPS（如果JOIN和INDEX query比较多的话，这个值会更小）
+- 一台 NoSQL Database (Cassandra) 约承受量是 10k 的 QPS；
+- 一台 NoSQL Database (Memcached) 约承受量是 1M 的 QPS。
+
+## 常见例子
+
+### 1. 分布式 ID 生成器
 
 - MongoDB UUID
 - round-robin load balancer + 多台 MySQL 生成不同 ID 段
 - Twitter Snowflake
 
-## 短 URL 系统
+### 2. 短 URL 系统
 
 设计要点
 
@@ -23,13 +38,13 @@
 - 如资源有限, 需要过期一部分短链接, 查上述 LRUcache 即可
 - 如需防攻击, IP 限制个数, 监测整个系统限流
 
-## [Feed 流](https://zhuanlan.zhihu.com/p/30226315)
+### 3. [Feed 流](https://zhuanlan.zhihu.com/p/30226315)
 
-## Whatsapp 设计
+### 4. Whatsapp 设计
 
 参考：[硅谷之路 58: 如何设计 WhatsAPP](https://zhuanlan.zhihu.com/p/20923244)
 
-### 数据结构，数据库
+#### 数据结构，数据库
 
 表设计
 
@@ -50,7 +65,7 @@ channel manager
 
 ![Whatsapp Server](../../assets/img/interview-system-design-whatsapp.png)
 
-### 支持高并发/百万级同时在线
+#### 支持高并发/百万级同时在线
 
 首先计算一下需求，假设有一百万用户同时在线，但是用户发消息的频率一般来说并不高，大概十分钟一条，每条 30B。所以每秒有 50GB 的数据量，是一个很大的值，有没有办法缩减呢？
 
@@ -59,7 +74,7 @@ channel manager
 1. 消息打包，批量发送（通过一个 http / socket），共享信息头和信息尾
 2. 消息压缩
 
-### 发给离线用户消息
+#### 发给离线用户消息
 
 如果用户当前不在线，发给他的消息怎么办呢？如果用户换了一台设备，还可以查阅历史记录吗？能不能搜索历史记录呢？
 
@@ -75,6 +90,6 @@ Twitter 架构设计中讲了非常通用的 push／pull 模型。push 模型就
 
 所以没有必要通知地那么及时，可以适当地 lazy 一点，等待 5s 再通知就避免了上述情况。
 
-### 加密
+#### 加密
 
 针对每个 channel 使用同步加密算法

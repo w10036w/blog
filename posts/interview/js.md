@@ -28,15 +28,16 @@ js source -> parser -> abstract syntax tree -> compiler / interpreter (AOT, JIT)
 - 空间较大，运行效率低
 - 无法直接操作其内部存储，使用引用地址读取
 - 通过代码进行分配空间
-  <hr>
+  
+  <hr/>
 
 ## 类型
 
 [基本数据类型 primitive](https://developer.mozilla.org/en-US/docs/Glossary/Primitive)：
-Null Undefined Boolean String Number Symbol BigInt
+Null, Undefined, Boolean, String, Number, Symbol, BigInt,
 
 引用数据类型: 对象 Object
-包含 Array, Function, RegExp, Date, Math, *Map, *Set, Arguments, \*Error, JSON, global
+包含 Array, Function, RegExp, Date, Math, Map, Set, Arguments, \*Error, JSON, global
 
 ### null vs undefined
 
@@ -212,7 +213,7 @@ console.log(newString);  // abc - 12345 - #$*%
 
 ### slice() vs substring() vs substr()
 
-> https://www.jianshu.com/p/223dbcea7a76
+> <https://www.jianshu.com/p/223dbcea7a76>
 
 - `substring(start=0,end=last)`
 
@@ -407,6 +408,8 @@ r & 4 // 如有权则返回4,否则0
 - 和全局变量脱钩 (var 和 全局 function 会自动挂载到 `globalThis`)
 - 块级下的函数声明 ES5 实际禁止, 但浏览器未遵守, ES6 允许并实现, 块内声明 function 类似使用 let, 不影响块外, 但浏览器为向前兼容, 块内声明 function 类似用 var, 按 var 一个匿名函数的方式 提升
 
+![keyword_scope](../../assets/img/keyword_scope.jpg)
+
 暂时性死区
 
 ```js
@@ -579,7 +582,7 @@ function addMethod(object, name, fn) {
 
 我们前文提到过 JS 引擎线程和 GUI 渲染线程是互斥的关系，浏览器为了能够使 宏任务和 DOM 任务有序的进行，会在一个 `宏任务` 执行结果后，在下一个 `宏任务` 执行前， GUI 渲染线程开始工作，对页面进行渲染。
 
-** `<script>` 主代码块, `setTimeout`, `setInterval`, `setImmediate`, `I/O`, `UI 渲染`，都属于宏任务**
+`<script>` 主代码块, `setTimeout`, `setInterval`, `setImmediate`, `I/O`, `UI 渲染`，都属于宏任务
 
 <hr>
 因此宏任务结束后，(此时浏览器会执行渲染) 然后执行下一个 宏任务，而微任务可以理解成在当前 宏任务执行后立即执行的任务。
@@ -691,22 +694,43 @@ console.log("macro2")
 
 常见内存泄漏
 
-- 误修改全局变量
-- 被遗忘的定时器和回调
-- 闭包
-- 脱离 DOM 的引用 (可使用 WeakMap 避免)
+- 意外的全局变量 (function 内定义了全局变量)
+- 没有清理的定时器 (setInterval)
+- 没有清理的的事件监听 (addEventListener， event.on()) 和回调
+- 被遗忘的 Set 成员，Map 键名 （所以有 WeakSet, WeakMap）
+- 被遗忘的闭包 (function1 返回function2, function2 引用了 function1 的变量)
+- 没有清理的 DOM 的引用 ( 手动删除)
+
+```js
+// 在对象中引用DOM
+var elements = {
+  btn: document.getElementById('btn'),
+}
+function doSomeThing() {
+  elements.btn.click()
+}
+
+function removeBtn() {
+  // 将body中的btn移除, 也就是移除 DOM树中的btn
+  document.body.removeChild(document.getElementById('button'))
+  // 但是此时全局变量elements还是保留了对btn的引用, btn还是存在于内存中,不能被GC回收
+}
+// 手动删除
+elements.btn = null 
+
+```
 
 补充: 三色标记法
 
 传统 Mark-Sweep 的一个改进，它是一个并发的 GC 算法。
 
 1. 首先创建三个集合：白、灰、黑。
-1. 将所有对象放入白色集合中。
-1. 然后从根节点开始遍历所有对象（注意这里并不递归遍历），把遍历到的对象从白色集合放入灰色集合。
-1. 之后遍历灰色集合，将灰色对象引用的对象从白色集合放入灰色集合，之后将此灰色对象放入黑色集合
-1. 重复 4 直到灰色中无任何对象
-1. 通过 write-barrier 检测对象有变化，重复以上操作
-1. 收集所有白色对象（垃圾）
+2. 将所有对象放入白色集合中。
+3. 然后从根节点开始遍历所有对象（注意这里并不递归遍历），把遍历到的对象从白色集合放入灰色集合。
+4. 之后遍历灰色集合，将灰色对象引用的对象从白色集合放入灰色集合，之后将此灰色对象放入黑色集合
+5. 重复 4 直到灰色中无任何对象
+6. 通过 write-barrier 检测对象有变化，重复以上操作
+7. 收集所有白色对象（垃圾）
 
 这个算法可以实现 “on-the-fly”，也就是在程序执行的同时进行收集，并不需要暂停整个程序。
 但可能程序中的垃圾产生的速度会大于垃圾收集的速度，这样会导致程序中的垃圾越来越多无法被收集掉。
@@ -751,7 +775,7 @@ console.log("macro2")
 
 ### console
 
-> https://zhuanlan.zhihu.com/p/23080626
+> <https://zhuanlan.zhihu.com/p/23080626>
 
 - `.table(data[, columns])`, 第一参数可为 Array/Object, 第二参数可以用来过滤列, 类似 SQL select
 - `.assert()`, 错误时提示, 正确时静默
@@ -762,7 +786,7 @@ console.log("macro2")
 
 ### devtools
 
-> https://zhuanlan.zhihu.com/p/80366959
+> <https://zhuanlan.zhihu.com/p/80366959>
 
 在调试页面中的 JavaScript 代码时，Chrome DevTools 的断点功能是必不可少的，Chrome DevTools 有很多强大的自动断点功能（即你不需要手动找到想要加断点的那行代码），但下面有一个是杜撰的，请挑出它来（本题以 Chrome 当前稳定版 V72 为准）：
 
@@ -789,7 +813,7 @@ function foo() {
 
 A: 不会.
 
-JavaScript 并发模型基于 "事件循环"。 当我们说 "浏览器是 JS 的家" 时我真正的意思是浏览器提供运行时环境来执行我们的 JS 代码。
+JavaScript 并发模型基于 `事件循环`。 当我们说 "浏览器是 JS 的家" 时我真正的意思是浏览器提供运行时环境来执行我们的 JS 代码。
 
 浏览器的主要组件包括 `调用堆栈`，`事件循环`，`任务队列` 和 `Web API`。 像 `setTimeout`, `setInterval` 和 `Promise` 这样的全局函数不是 JavaScript 的一部分，而是 Web API 的一部分。 JavaScript 环境的可视化形式如下所示：
 
@@ -938,4 +962,50 @@ interface StaticLifecycle<P, S> {
   getDerivedStateFromProps?: GetDerivedStateFromProps<P, S>
   getDerivedStateFromError?: GetDerivedStateFromError<P, S>
 }
+```
+
+### modern browser observers
+
+> <https://xiaotianxia.github.io/blog/vuepress/js/four_kinds_of_observers.html>
+
+- MutationObserver
+
+当我们想知道某个元素在某个时候发生了具体哪些变化时，MutationObserver便是最佳选择
+
+<https://blog.fundebug.com/2019/01/10/understand-mutationobserver/>
+
+- IntersectionObserver
+
+当你想监听某个元素，当它在视口中可见的时候希望可以得到通知，这个API就是最佳的选择了。以往我们的做法是绑定容器的scroll事件，或者设定时器不停地调用getBoundingClientRect() 获取元素位置， 这样做的性能会很差，因为每次获取元素的位置都会引起整个布局的重新计算。还有一个场景是，如果你的元素被放在iframe里，如一些广告，想要知道他们何时出现几乎是不可能的
+
+- PerformanceObserver
+
+用来监控各种性能相关的指标。 该API由一系列API组成.
+
+```js
+var observer = new PerformanceObserver(callback);
+observer.observe({ entryTypes: [entryTypes] });
+```
+
+- ResizeObserver
+
+监听元素的尺寸变化。
+
+之前为了监听元素的尺寸变化，都将侦听器附加到window中的resize事件。对于不受窗口变化影响的元素就没那么简单了。 现在我们可以使用该API轻松的实现。
+
+但是它的触发也是有条件的，下面是触发和不触发的条件：
+
+触发
+
+1. 元素被插入或移除时触发
+2. 元素display从显示变成 none 或相反过程时触发
+
+不触发
+
+1. 对于不可替换内联元素不触发
+2. CSS transform 操作不触发
+
+```js
+var observer = new ResizeObserver(callback);
+observer.observe(target);
 ```

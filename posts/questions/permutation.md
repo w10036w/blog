@@ -1,7 +1,9 @@
 # Permutation 排列类问题
+
 可用 回溯, 动态规划解决
 
 ## 购买商品组合
+
 > 自[小红书](https://www.coordinate.wang/index.php/archives/2592/#directory0097503885018403121) 原创改编
 
 要求: 尽可能多地用完钱
@@ -32,7 +34,9 @@ O: [
   [ 5, 5 ]
 ]
 ```
+
 回溯
+
 ```js
 /**
  * @param {number} target
