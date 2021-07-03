@@ -1,7 +1,9 @@
 ## [47. Permutations II](https://leetcode.com/problems/permutations-ii/)
+
 Given a collection of numbers that might contain duplicates, return all possible unique permutations.
 
 Example:
+
 ```js
 Input: [1,1,2]
 Output:
@@ -10,8 +12,11 @@ Output:
   [1,2,1],
   [2,1,1]
 ]
+
 ```
+
 My solution
+
 ```js
 /**
  * @param {number[]} nums
@@ -31,7 +36,7 @@ var permuteUnique = function(nums) {
       if (i>0 && nums[i]===nums[i-1] && !used[i-1]) continue; // KEY
       tmp.push(nums[i])
       used[i] = true
-      bt(nums, used, len, tmp)
+      dfs(tmp, nums, used)
       tmp.pop()
       used[i]=false
     }

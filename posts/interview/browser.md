@@ -154,10 +154,13 @@ JavaScript
 
 通过默认 http 请求发送, 命中时 `200`, 优先级从高到低
 
-- `Cache-Control:max-age`: 定义于 `http1.1`，利用其 `max-age` 值来判断缓存资源的最大生命周期，它的值单位为 `秒`
+- `Cache-Control`: 定义于 `http1.1`，利用其 `max-age` 值来判断缓存资源的最大生命周期，它的值单位为 `秒`
 
   ```js
-  Cache-control: max-age=30 // 30s 后过期
+  // 举例
+  "Cache-control": max-age=30 // 30s 后过期
+  // 'public / private': private 只能给一个用户用，不能分享，此用户可以存储此 response
+  // 'must-revalidate': 必须验证
   // 'no-store': 不需要缓存的资源
   // 'no-cache' + Etag: 频繁变动
   // 'max-age=31536000' + Etag: 代码文件, 一旦文件名变动即重新下载

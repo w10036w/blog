@@ -5,11 +5,14 @@
 [js 实现斐波那契数列 (数组缓存、动态规划、尾调用优化)](https://www.jianshu.com/p/bbc7e54a98d6)
 
 ## String
+
 新方法
+
 - `String.fromCodePoint()`: 弥补 `String.fromCharCode()`(从 Unicode 码点返回对应字符，但是这个方法不能识别码点大于 `0xFFFF` 的字符), 识别全部 Unicode, 和 `codePointAt()` 互反;
 - `String.raw()`: 不对 `\n` 等转义字符转义(如换行等), 原样返回
 
 ### unicode
+
 ```js
 '\u0061' // 'a'
 '\u{6F}' // 'o'
@@ -20,6 +23,7 @@ let hello = 123; hell\u{6F}===123 // !!!
 ```
 
 ### 字符串遍历 (可识别 UTF-16, for loop 不可以)
+
 ```js
 for (let codePoint of 'foo') {
   console.log(codePoint) // "f", "o", "o"
@@ -33,31 +37,51 @@ for (let codePoint of 'foo') {
 ### 新方法 `includes(), startsWith(), endsWith(), repeat(), padStart(), padEnd(), trimStart(), trimEnd(), matchAll()`
 
 ## Object
+
 Object.freeze / Object.isFrozen
 
 Object.seal / Object.isSealed: 密封一个对象，阻止添加新属性并将所有现有属性标记为不可配置。当前属性的值只要可写就可以改变。
 
 拓展方法
+
 ```js
 Ojbect.preventExtensions(o) // 禁止拓展
 ```
 
 ## Class
 
-实现私有变量可以靠 `WeakMap` (无引用即被回收) 或 `Symbol`
+<https://segmentfault.com/a/1190000022076671>
+
+实现私有变量可以靠 `WeakMap` (无引用即被回收) 或 `Symbol`, 
+
+## Map
+
+[Map vs Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)
+
+- Accidental Keys: object contains default properties (from prototype) while Map not
+- Key Types: object keys must be either string or symbol while Map keys can be anything (functions, objects, any primitives)
+- Key Order: Maps keys are ordered in a simple, straightforward way, while object keys order is not reliable
+- Size: `map.size()`, `Object.keys(obj).length`
+- Iteration: iterable Map vs uniterable Object (but can use `for in` to iterate the enumerable properties' key, and iterable via `keys`, `entries` ...)
+- Performance: if frequently add/remove, Map is better
+- Serialization & Parsing: Map no native support, while object can be done by `JSON.stringify()`, `JSON.parse()`
 
 ## Reflect & Proxy
+
 `Reflect`
+
 1. **Object 语言内部方法**: 将 Object 对象的一些属于语言内部的方法如 `Object.defineProperty`, 放到 Reflect 对象上。现阶段，某些方法同时在 Object 和 Reflect 对象上部署，未来的新方法将只部署在 Reflect 对象上。也就是说，从 Reflect 对象上可以拿到语言内部的方法。
 2. **Object 部分方法的返回值改变**: 让其变得更合理。比如，`Object.defineProperty(obj, name, desc)` 在无法定义属性时，会抛出一个错误，而 Reflect.defineProperty(obj, name, desc) 则会返回 `false`.
 3. **object 操作函数化**: 如 `name in obj` -> `Reflect.has(obj, name)`, `delete obj[name]` -> `Reflect.deleteProperty(obj, name)`
 4. **与 `Proxy` 方法一一对应**: 让 Proxy 对象可以方便地调用对应的 Reflect 方法，完成默认行为，作为修改行为的基础。也就是说，不管 Proxy 怎么修改默认行为，你总可以在 Reflect 上获取默认行为。
 
 `Proxy`
+
 - 修改某些操作的默认行为，等同于在语言层面做出修改，所以属于一种 “元编程”（meta programming），即对编程语言进行编程。
 - 在目标对象之前架设一层 “拦截”，外界对该对象的访问，都必须先通过这层拦截，因此提供了一种机制，可以对外界的访问进行过滤和改写.
 
 ### 基本用法 basic usage
+
 ```js
 p = new Proxy(target={}, handler={
   // 拦截: 对象属性的读取
@@ -119,9 +143,11 @@ p = new Proxy(target={}, handler={
 ```
 
 ### 用法举例
+
 > 参考 [ES6-Proxy 与数据劫持](https://segmentfault.com/a/1190000019198822), [抱歉，学会 Proxy 真的可以为所欲为](https://zhuanlan.zhihu.com/p/35080324)
 
 安全枚举类型, 用作 state machine action type
+
 ```js
 export default function enum(object) {
   return new Proxy(object, {
@@ -138,7 +164,9 @@ export default function enum(object) {
   })
 }
 ```
+
 测试, 断言, 如监听函数调用情况
+
 ```js
 function spy(spyFn) {
   spyFn.toBeCalledTimes = 0
@@ -159,6 +187,7 @@ expect(callback.lastCalledWith).toBe(colors[1])
 ```
 
 数组
+
 ```js
 let arr = [1,2,3,4]
 const keys = ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'];
@@ -186,7 +215,9 @@ let p=new Proxy(arr, {
 p.push(5) // push; set arr[4]=5;
 console.log(p, p[-1]) // [ 1, 2, 3, 4, 5 ] 5
 ```
+
 表单校验
+
 ```js
 let person = {
     name: 'xiaoming',
@@ -208,7 +239,9 @@ let boy = new Proxy(person, handler)
 boy.name = 'xiaohong' // OK
 boy.age = '18' // 报错  用户年龄必须是数字类型
 ```
+
 对嵌套属性的支持
+
 ```js
 let obj = {
   info: {
@@ -237,6 +270,7 @@ proxy.info.blogs.push('proxy')
 ```
 
 ### 没有 proxy 时 Object.defineProperty / Object.defineProperties
+
 ```js
 // with its default value
 Object.defineProperty(obj='target', prop='keyOrSymbol', descriptor={
@@ -255,7 +289,9 @@ Object.defineProperty(obj='target', prop='keyOrSymbol', descriptor={
   set() {},
 })
 ```
+
 区别
+
 - `definedProperty` 的作用是劫持一个对象的属性，劫持属性的 `getter` 和 `setter` 方法，在对象的属性发生变化时进行特定的操作。而 Proxy 劫持的是整个对象。
 - Proxy 会返回一个代理对象，我们只需要操作新对象即可，而 Object.defineProperty  只能遍历对象属性直接修改。
 - `definedProperty` 不支持数组，更准确的说是不支持数组的各种 API。而 Proxy 可以支持数组的各种 API。
@@ -286,9 +322,11 @@ for (var i in obj) { console.log(i) } // key
 Object.getOwnPropertySymbols(obj) // [Symbol(name)]
 Reflect.ownKeys(obj) // ['key', Symbol(name)]
 ```
+
 ### 重要新增 symbol 属性
 
 #### `Symbol.iterator`
+
 ```js
 // 是否能遍历 + 使用 for...of (可遍历意味可展开)
 const myIterable = {
@@ -303,6 +341,7 @@ for (let v of myIterable) { console.log(v) } // 1, 2, 3
 ```
 
 #### `Symbol.toPrimitive`
+
 ```js
 let obj = {
   [Symbol.toPrimitive](hint) {
@@ -325,7 +364,9 @@ String(obj) // 'str'
 ```
 
 #### `Symbol.toStringTag`
+
 影响 `Object.prototype.toString.call(o)` 的结果
+
 ```js
 ({[Symbol.toStringTag]: 'Foo'}.toString()) // 'Foo'
 class Collection {
@@ -338,10 +379,13 @@ Object.prototype.toString.call(x) // "[object xxx]"
 ```
 
 #### `Symbol.hasInstance`
+
 定义 instanceof 的返回结果
 
 ### 应用
+
 - 因 JSON中不能保存 `Symbol`, 可用以防止 `xss`
+
   ```js
     // JSON
   let expectedTextButGotJSON = {
@@ -355,7 +399,9 @@ Object.prototype.toString.call(x) // "[object xxx]"
   let message = { text: expectedTextButGotJSON };
   <p>{message.text}</p>
   ```
+
 - React 判断有效 `ReactElement`
+
   ```js
   var REACT_ELEMENT_TYPE =
   (typeof Symbol==='function' && Symbol.for && Symbol.for('react.element')) ||
@@ -364,7 +410,9 @@ Object.prototype.toString.call(x) // "[object xxx]"
     return typeof object==='object' && object!==null && object.$$typeof===REACT_ELEMENT_TYPE;
   };
   ```
+
 - 因其不可枚举, 可用作私有属性, 如 `[Symbol.toPrimitive]`, `[Symbol.Iterator]`
+
   ```js
   const privateField = Symbol();
   class myClass {
@@ -379,9 +427,11 @@ Object.prototype.toString.call(x) // "[object xxx]"
     }
   }
   ```
+
 - 防属性/键值碰撞
 
 ## Function
+
 ### name
 
 ```js
@@ -399,12 +449,16 @@ foo.bind({}).name // "bound foo"
 ```
 
 ### 参数默认值, ...rest
+
 - 对 `length` (函数预期传入的参数个数) 的影响: 指定默认值的参数及之后的参数都不计入, `...` 参数也不会计入。
+
 ```js
 (function (a, b = 5, c) {}).length // 1
 (function (a, ...args) {}).length // 1
 ```
+
 - 对 `作用域`, 一旦设置了参数的默认值，函数进行声明初始化时，参数会形成一个单独的作用域（context）。等到初始化结束，这个作用域就会消失。这种语法行为，在不设置参数默认值时，是不会出现的。
+
 ```js
 var x = 1;
 (function f(x, y = x) {
@@ -425,12 +479,17 @@ x // 1
 ```
 
 ## JS Collection 集合
+
 > [初学者应该了解的数据结构：Array、HashMap 与 List](https://juejin.im/post/5b3731b36fb9a00e5326f087#heading-21)
+
 ## Array
+
 ```js
 .from(arrayLike) // convert arrayLike to array
 ```
+
 Q & A
+
 ```js
 // Reflect 会返回 symbol 属性 key, getOwnPropertyNames 会返回不可枚举的属性 key
 Reflect.ownKeys(obj).length ≥ Object.getOwnPropertyNames(obj).length ≥ Object.keys(obj).length
@@ -453,22 +512,31 @@ F. 亦假又亦真的对象  ——  if (obj) {alert("执行不到")} 但 if (ob
 参考答案：AB
 
 A:
+
 ```js
 obj = new Proxy({}, {getPrototypeOf(){return obj}})
 ```
+
 B:
+
 ```js
 obj = new Proxy({}, {has(){return true}})
 ```
+
 C:
+
 ```js
 obj = {[Symbol.hasInstance](){return true}}
 ```
+
 D:
+
 ```js
 obj = {[Symbol.toStringTag]: "haha"}
 ```
+
 E:
+
 ```js
 obj = {[Symbol.toPrimitive](hint){return hint==="number" ? 1 : 10}}
 ```
@@ -482,6 +550,7 @@ F: `document.all` 具有其性质
 
 ![promise](../../assets/img/interview-es6-promise.png)
 实现要点
+
 - status = 'pending' | 'resolved' | 'rejected';
 - value = undefined, reason = undefined, 分别在 resolve / reject 后赋值给参数
 - onFullfilledArray = [], onRejectedArray = [], 分别在 resovle / reject 时依次执行
@@ -491,6 +560,7 @@ F: `document.all` 具有其性质
 - 定义 resolvePromise
 
 注意事项
+
 - 在 Pending 转为另外两种之一的状态时候，状态不可在改变..
 - Promise 的 `then` 为异步。而 `new Promise()` 构造函数内为同步
 - Promise 的 `catch` **不能捕获任意情况的错误** (比如 then 里面的 setTimout 内手动抛出一个 Error)
@@ -499,7 +569,9 @@ F: `document.all` 具有其性质
 - Promise 的 `catch, then`,return 的都是一个新的 `Promise`(在 Promise 没有被中断的情况下)
 
 ### Promise.all
+
 `Promise.all` (iterable) 在下列情况任一满足时返回
+
 1. iterable 为空时, **同步** 立即返回 Promise.all([])
 2. 所有在可迭代参数中的 promises 完成 (返回 `[promise]`)
 3. 任一 `promise` `reject` (返回 `rejected promise`), 如果是立即 reject, 则同步 reject
@@ -507,6 +579,7 @@ F: `document.all` 具有其性质
 例如: 有四个 promise 在一定的时间之后调用成功函数，有一个立即调用失败函数，那么 Promise.all 将立即变为失败。
 
 ### 链式调用
+
 ```js
 let task = Promise.resolve()
 for (let i = 0; i < promises.length; i++) {
@@ -519,9 +592,11 @@ promises.reduce((task, p) => {
 ```
 
 ### `.race([PromiseLike])`
+
 将多个 Promise 实例，包装成一个新的 Promise 实例. 返回率先改变状态的 Promise
 
 用来 request timeout
+
 ```js
 const p = Promise.race([
   fetch('/resource-that-may-take-a-while'),
@@ -532,16 +607,20 @@ const p = Promise.race([
 ```
 
 ### `.allSettled([PromiseLike])` (ES2020)
+
 当所有 Promise resolve / reject 时返回. 弥补 Promise.all 任一错误即抛弃其他结果的行为
 
 ### `.any()` (stage3)
+
 - 任一 fulfill, 返回 fulfil
 - 所有都 reject, 返回 `AggregateError`: [rejectedPromise]
 
 ## Generator
+
 Generator 函数返回特殊遍历器对象, 只有调用 `next` 方法才会遍历下一个内部状态，所以其实提供了一种可以暂停执行 + 懒运行的函数. `yield` 表达式就是暂停标志。
 
 遍历器对象的 `next` 方法的运行逻辑如下。
+
 1. 遇到 yield 表达式，就暂停执行后面的操作，并将紧跟在 `yield` 后面的那个表达式的值 (懒求值, 只有此时才会求值)，作为返回的对象的 `value` 属性值。
 2. 下一次调用 next 方法时，再继续往下执行，直到遇到下一个 yield 表达式。
 3. 如果没有再遇到 `yield`，就一直运行到函数到 `return` 为止，并将 return 语句后面的表达式的值，作为返回的对象的 `value` 属性值. 同时返回 `done: true`.
@@ -550,6 +629,7 @@ Generator 函数返回特殊遍历器对象, 只有调用 `next` 方法才会遍
 如果 Generator 无 `yield`, 即为一个懒函数, 只有调用 `.next()` 时内部才执行
 
 常见写法
+
 ```js
 function* genFn() {
   yield 1
@@ -567,9 +647,11 @@ realFn.next() // 1
 ```
 
 ### `yield`
+
 `yield*` 在一个 Generator 函数里面执行另一个 `Generator / Iterator` 函数 (返回全部遍历值, 而不是 `[Generator] {}`)
 
 如果是非 Generator 的 Iterator, 也可被遍历
+
 ```js
 function* foo() {
   yield 'a';
@@ -598,6 +680,7 @@ read.next().value // "h"
 ```
 
 上例, 只有 `foo` 有 `return` 时才能将值传递给 `bar`
+
 ```js
 function* foo() {
   yield 'a';
@@ -632,7 +715,9 @@ function* logReturned(genObj) {
 ```
 
 ### yield 用法
+
 yield 表达式如果用在另一个表达式之中，必须放在圆括号里面。
+
 ```js
 function* demo() {
   console.log('Hello' + yield); // SyntaxError
@@ -644,10 +729,14 @@ function* demo() {
 ```
 
 ## [for...in vs for of](https://www.jianshu.com/p/c43f418d6bf0)
+
 ### 对象用 for...in
+
 通常用 `for...in` 来遍历对象的键名
+
 - 可以遍历到对象的原型方法及继承自原型链上的属性/方法, 如果不想遍历原型方法和属性的话，可以在循环内部判断一下, `hasOwnPropery` 方法可以判断某属性是否是该对象的实例属性
 - 如用来遍历数组, 则会返回非期望结果, 如以下会多返回 `method`, `name`
+
   ```js
   Array.prototype.method=function(){
   　　console.log(this.length);
@@ -660,11 +749,13 @@ function* demo() {
   ```
 
 ### 迭代器用 for...of
+
 `for of` 适用遍历数 / 数组对象 / 字符串 /map/set 等拥有迭代器对象的集合。但是不能遍历对象，因为没有迭代器对象。与 `forEach()` 不同的是，它可以正确响应 break、continue 和 return 语句
 
 所有拥有 `Symbol.iterator` 的对象被称为可迭代的。可迭代对象的概念几乎贯穿于整门语言之中，不仅是 `for of` 循环，还有 Map 和 Set 构造函数、解构赋值，以及新的展开操作符。
 
 `for...of` 循环首先调用集合的 `Symbol.iterator 方法`，紧接着返回一个 `新的迭代器对象`。迭代器对象可以是任意具有.next () 方法的对象; `for...of` 循环将重复调用这个方法，每次循环调用一次。
+
 ```js
 var zeroesForeverIterator = {
   [Symbol.iterator]: function () {

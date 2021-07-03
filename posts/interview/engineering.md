@@ -1,6 +1,12 @@
 # interview - engineer
 
+## dependency inversion principle
+
+该设计原则指出高层策略性的代码不应该依赖实现底层细节的代码，恰恰相反，那些实现底层细节的代码应该依赖高层策略性的代码。​
+依赖倒置原则的最重要问题就是确保应用程序或框架的主要组件从非重要的底层组件实现细节解耦出来，这将确保程序的最重要的部分不会因为低层次组件的变化修改而受影响。
+
 ## clean code principals
+
 - “If it isn’t tested, it’s broken”
 - Choose meaningful names
 - Classes and functions should be small and obey the Single Responsibility Principle (SRP)
@@ -9,6 +15,7 @@
 ## ESLint
 
 ### 原理
+
 ESLint 使用 [espree](https://link.zhihu.com/?target=https%3A//github.com/eslint/espree) 来解析我们的 JS 语句，来生成抽象语法树 AST
 
 根据 rules 定义

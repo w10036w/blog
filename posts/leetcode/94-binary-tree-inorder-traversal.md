@@ -1,7 +1,9 @@
 ## [94. Binary Tree Inorder Traversal](https://leetcode.com/problems/binary-tree-inorder-traversal/)
+
 Given a binary tree, return the inorder traversal of its nodes' values.
 
 Example:
+
 ```js
 Input: [1,null,2,3]
    1
@@ -11,7 +13,9 @@ Input: [1,null,2,3]
    3
 
 Output: [1,3,2]
+
 ```
+
 see [binary-tree](../algorithms/binary-tree.md)
 
 My solution

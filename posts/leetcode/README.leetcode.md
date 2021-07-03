@@ -2,21 +2,24 @@
 
 [O(logn) 是怎么回事](https://juejin.im/entry/593f56528d6d810058a355f4)
 
-
 [算法](algorithms/index.md) 如下
+
 1. 基础技巧：分治、二分、贪心
 2. 排序算法：快速排序、归并排序、计数排序
 3. 搜索算法：回溯、递归、深度优先遍历，广度优先遍历，二叉搜索树等
 4. 图论：最短路径、最小生成树
 5. 动态规划：背包问题、最长子序列
+
 [数据结构](data-structure.zh.md) 如下
+
 1. 数组与链表：单 / 双向链表栈与队列
-1. 哈希表
-1. 堆：最大堆 ／ 最小堆
-1. 树与图：最近公共祖先、并查集
-1. 字符串：前缀树（字典树） ／ 后缀树
+2. 哈希表
+3. 堆：最大堆 ／ 最小堆
+4. 树与图：最近公共祖先、并查集
+5. 字符串：前缀树（字典树） ／ 后缀树
 
 ## Array
+
 - [1. Two Sum](1-two-sum.md)
 - [11. Container With Most Water](11-container-with-most-water.md)
 - [13. Roman to Integer](13-roman-to-integer.md)
@@ -37,6 +40,7 @@
 - [912. Sort an Array](912-sort-an-array.md)
 
 ## 2 pointers
+
 - [19. Remove Nth Node From End of List](19-remove-nth-node-from-end-of-list.md)
 - [26. Remove Duplicates from Sorted Array](26-remove-duplicates-from-sorted-array.md)
 - [27. Remove Element](27-remove-element.md)
@@ -45,10 +49,12 @@
 - [344. Reverse String](344-reverse-string.md)
 
 ## Sort
+
 - [75. Sort Colors](75-sort-colors.md)
 - [149. Max Points on a Line](149-max-points-on-a-line.md)
 
 ## Hash Table / Dict
+
 - [3. Longest Substring without Repeating Characters](3-longest-substring-without-repeating-characters.md)
 - [36. Valid Sudoku](36-valid-sudoku.md)
 - [49. Group Anagrams](49-group-anagrams.md)
@@ -61,6 +67,7 @@
 - [720. Longest Word in Dictionary](720-longest-word-in-dict.md)
 
 ## DFS (Deep First Search)+[Backtracking](algorithms/backtracking.md)
+
 - [22. Generate Parentheses](22-generate-parentheses.md)
 - [39. Combination Sum](39-combination-sum.md)
 - [40. Combination Sum II](40-combination-sum-ii.md)
@@ -85,6 +92,7 @@
 - [784. Letter Case Permutation](784-letter-case-permuatation.md)
 
 ## LinkedList
+
 - [21. Merge Two Sorted Lists](21-merge-two-sorted-lists.md)
 - [23. Merge k Sorted Lists](23-merge-k-sorted-lists.md)
 - [25. Reverse Nodes in k-Group](25-reverse-nodes-in-k-group.md)
@@ -98,10 +106,12 @@
 - [445. Add Two Numbers II](445-add-two-numbers-ii.md)
 
 ## Stack
+
 - [20. Valid Parentheses](20-valid-parentheses.md)
 - [155. Min Stack](155-min-stack.md)
 
 ## Tree
+
 - [94. Binary Tree Inorder Traversal](94-binary-tree-inorder-traversal.md)
 - [102. Binary Tree Level Order Traversal](102-binary-tree-level-order-traversal.md)
 - [103. Binary Tree Zigzag Level Order Traversal](103-binary-tree-zigzag-level-order-traversal.md) !!!
@@ -116,6 +126,7 @@
 - [637. Average of Levels in Binary Tree](637-average-of-levels-in-binary-tree.md)
 
 ## Binary Search
+
 - [33. Search in Rotated Sorted Array](33-search-in-rotated-sorted-arry.md)
 - [34. Find First and Last Position of Element in Sorted Array](34-find-first-and-last-position-of-element-in-sorted-array.md)
 - [109. Convert Sorted List to Binary Search Tree](109-convert-sorted-list-to-bst.md)
@@ -124,9 +135,11 @@
 - [617. Merge Two Binary Trees](617-merge-two-binary-trees.md)
 
 ## RegExp
+
 - [771. Jewels and Stones](771-jewel-and-stones.md)
 
 ## DP
+
 - [5. Longest Palindromic Substring](5-longest-palindromic-substring.md)
 - [32. Longest Valid Parentheses](32-longest-valid-parentheses.md)
 - [53. Maximum Subarray !!](53-maximum-subarray.md)
@@ -139,17 +152,21 @@
 - [343. Integer Break](343-integer-break.md)
 
 ## Divide and Conquer
+
 - [108. Convert Sorted Array to Binary Search Tree](108-convert-sorted-array-to-binary-search-tree.md)
 
 ## Graph
+
 - [1202. Smallest String With Swaps](1202-smallest-string-with-swaps.md)
 
 ## Bitwise
+
 - [29. Divide Two Integers](29-divide-two-integers.md)
 - [136. Single Number](136-single-number.md)
 - [371. Sum of Two Integers](371-sum-of-two-integers.md)
 
 ## Uncategoried
+
 - [12. Integer to Roman](12-integer-to-roman.md)
 - [14. Longest Common Prefix](14-longest-common-prefix.md)
 - [14. Longest Common Prefix](14-longest-common-prefix.md)
@@ -159,11 +176,13 @@
 - [1057. Campus Bikes](1057-campus-bikes.md)
 
 ## Archived
+
 - [Add 2 Numbers](add2numbers.md)
 - [Zig Zag Conversion](algozigzagconversion.md)
 - [Reverse Integer](reverseinteger.md)
 
 ## SKIP or BAD
+
 - [38. Count and Say](38-count-and-say.md)
 - [58. Length of Last Word](58-length-of-last-word.md)
 - [89. Gray Code (meaningless)](https://leetcode.com/problems/gray-code)
@@ -174,5 +193,6 @@
 - [812. Largest Triangle Area (google)](812-largest-triangle-area.md)
 
 ## Reference
+
 1. [JS-paopao2](https://github.com/paopao2/leetcode-js)
 2. [JS-azl](https://github.com/azl397985856/leetcode)

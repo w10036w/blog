@@ -686,7 +686,9 @@ console.log("macro2")
 
 ![gc](../../assets/img/interview-js-gc.gif)
 
-优化
+[Node.js 中的垃圾回收](https://juejin.cn/post/6844903878928891911)
+
+GC 优化
 
 - 分代回收
 - 增量回收
@@ -830,7 +832,7 @@ A:
 
 ```js
 // 核心代码
-async function asyncPool(jobs, limit, callback) {
+async function asyncPool(jobs,  , callback) {
   const res = {}
   const pool = []
   const handler = job => // fetch
@@ -967,6 +969,8 @@ interface StaticLifecycle<P, S> {
 ### modern browser observers
 
 > <https://xiaotianxia.github.io/blog/vuepress/js/four_kinds_of_observers.html>
+>
+> <https://medium.com/@jitubutwal144/different-types-of-observers-supported-by-modern-browsers-4db7a86f6b9d>
 
 - MutationObserver
 

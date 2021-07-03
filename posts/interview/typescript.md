@@ -3,6 +3,7 @@
 ## 文档
 
 - [中文入门](https://ts.xcatliu.com/)
+- [typescript & react 方法](https://mp.weixin.qq.com/s/P-NsmO46HKnRxroLea0Q_A)
 
 ## 常用特性，关键词
 

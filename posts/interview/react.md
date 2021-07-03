@@ -180,9 +180,9 @@ componentDidMount() {
 
 `updateFiberAndView` 是位于一个 `requestIdleCallback` 中，因此它的时间很有限，分给 DFS 部分的时间也更少，因此它们不能做太多事情。这怎么办呢，标记一下，留给 commit 阶段做。于是产生了一个任务系统。
 
-每个 Fiber 分配到新的任务时，就通过位操作，累加一个 sideEffect。sideEffect 字面上是副作用的意思，非常重 FP 流的味道，但我们理解为任务更方便我们的理解。
+每个 Fiber 分配到新的任务时，就通过位操作，累加一个 `sideEffect`. `sideEffect` 字面上是副作用的意思，非常重 FP 流的味道，但我们理解为任务更方便我们的理解。
 
-每个 Fiber 可能有多个任务，比如它要插入 DOM 或移动，就需要加上 Replacement，需要设置样式，需要加上 Update。
+每个 `Fiber` 可能有多个任务，比如它要插入 DOM 或移动，就需要加上 Replacement，需要设置样式，需要加上 Update。
 
 怎么添加任务呢？
 
@@ -496,6 +496,8 @@ Key points:
 `Fiber`: 新的`协调引擎`或重新实现核心算法。它的主要目标是支持`虚拟 DOM 的增量渲染` (能够将渲染工作分割成块，并将其分散到多个帧中)。React Fiber 的目标是提高其在动画、布局、手势、暂停、中止或重用等方面的适用性，并为不同类型的更新分配优先级，以及新的并发原语。
 
 Q: `redux` 问题 [参考掘金](https://juejin.im/post/5b9617835188255c781c9e2f)
+
+> [浅谈React数据流管理 - 爱火锅的言先生的文章 - 知乎](https://zhuanlan.zhihu.com/p/375573961)
 
 A: redux 本身有哪些作用？我们先来快速的过一下 redux 的核心思想（工作流程）：
 

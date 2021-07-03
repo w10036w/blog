@@ -41,7 +41,9 @@ var permute = function(nums) {
   return res
 };
 ```
+
 Naive Solu
+
 ```js
 var permute = function(nums) {
   var r = [];

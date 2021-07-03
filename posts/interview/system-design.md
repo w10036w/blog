@@ -1,12 +1,21 @@
 # interview - system design
 
-> https://soulmachine.gitbooks.io/system-design/content/cn/
+> <https://soulmachine.gitbooks.io/system-design/content/cn/>
 
 ## 通用方法
 
-1. 拿到题目后，分析，询问细节需求并和面试官保持沟通
+1. 拿到题目后，**先分析拆解**，询问细节需求并和面试官保持沟通
 2. 什么场景，用户量，访问量(QPS), 分解需求写出功能列表并筛选出核心功能列表
 3. 采用什么级别的存储模式，建表 [ 数据库系统，文件系统，缓存系统 ]， 比如管理关系性强的数据如 twitter 用户数据，用 SQL, 推文相关，用 NoSQL, 媒体文件用 文件存储系统，如 Amazon S3，用户之间的关系用图数据库
+
+当面试官要求你在45分钟内设计大规模分布式系统时，你需要指出高层组件并描述它们之间如何交互的，而不是花时间说明如何通过避免缓冲区副本的方式来减少20毫秒反应时间的。
+
+高层模块：计算，存储，后端，前端，缓存，队列，网络，负载均衡，限流，权限验证，大数据统计，可扩展性(如中间件机制，插件机制)等
+
+技术上实现，非技术上实现等
+
+API design
+[RESTFUL](https://arunrajeevan.medium.com/dos-and-donts-in-rest-736c561e00fa), graphql
 
 ### QPS 预估
 
@@ -44,6 +53,8 @@
 
 参考：[硅谷之路 58: 如何设计 WhatsAPP](https://zhuanlan.zhihu.com/p/20923244)
 
+参考 [System Design: WhatsApp](https://interviewdaemon.medium.com/system-design-whatsapp-788705bd4fb0)
+
 #### 数据结构，数据库
 
 表设计
@@ -71,7 +82,7 @@ channel manager
 
 方法
 
-1. 消息打包，批量发送（通过一个 http / socket），共享信息头和信息尾
+1. 消息打包，批量发送（通过一个 http / socket），共享信息头和信息尾， messagequeue
 2. 消息压缩
 
 #### 发给离线用户消息
@@ -93,3 +104,18 @@ Twitter 架构设计中讲了非常通用的 push／pull 模型。push 模型就
 #### 加密
 
 针对每个 channel 使用同步加密算法
+
+
+### 5. 权限控制系统 RBAC
+
+### 6. Youtube / Netflix 系统特征
+
+- qps 巨大
+- region 多，跨大洋大洲
+- 弹性服务
+- 宕机处理
+- 文件存储系统
+- 非文件类存储系统
+- 视频流设计
+- 会员制，权限设计
+- 权限

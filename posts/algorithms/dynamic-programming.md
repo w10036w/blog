@@ -16,7 +16,29 @@ Output: 10
 Solution
 
 ```js
-var fn
+
+function knapsack(w, v, n, C) {
+  const m = []
+  for (let i = 0; i < n; i++) {
+    m[i] = []
+    for (let j = 0; j <= C; j++) {
+      if (i === 0) {
+        m[i][j] = w[i] > j ? 0 : v[i]
+        continue
+      }
+      if (w[i] > j) m[i][j] = m[i - 1][j]
+      else m[i][j] = Math.max(m[i - 1][j], m[i - 1][j - w[i]] + v[i])
+    }
+  }
+  return m[n - 1][C]
+}
+
+// let w = [4, 6, 2, 2, 5, 1]
+// let v = [8, 10, 6, 3, 7, 2]
+// let n = w.length
+// let C = 12
+// console.log(knapsack(w, v, n, C))
+
 ```
 
 most powerful `fibonacci` js function

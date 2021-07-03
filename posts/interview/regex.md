@@ -1,29 +1,37 @@
 # interview - regex
 
 ## 声明 (ES6)
+
 ```js
 var re = new RegExp('xyz', 'i');
 re = new RegExp(/xyz/i);
 re = new RegExp(/xyz/ig, 'i'); // re.flags === 'i'
 ```
+
 ## 方法
+
 - match()
 - replace()
 - search()
 - split()
 
 ## 新增标记 (flag) (TC39)
+
 `s`: 正则表达式中 `.` 匹配除回车外的任何单字符，标记 `s` 改变这种行为，**允许行终止符的出现**
+
 ```js
 /hello.world/.test('hello\nworld');  // false
 /hello.world/s.test('hello\nworld'); // true
 ```
+
 `u`
+
 1. `Unicode` 转义, 处理大于 `\uFFFF` 的 `UTF-16` 编码
 2. `.` 识别 `UTF-16`
 3. 新增大括号识别 `Unicode`
 4. `UTF-16` 数量正确识别
 5. 预定义模式
+
 ```js
 // 1
 /^\uD83D/u.test('\uD83D\uDC2A') // false

@@ -90,7 +90,9 @@ I have led full stack development focusing on web application, and initiate solu
 
 - Atomic everything: [Facebook revamp: CSS, no more sass/less, vs Tailwind / CSS in JS](https://juejin.cn/post/6917073600474415117), JS -> [Recoil](https://juejin.cn/post/6881493149261250568)
 
-### resume writting
+logic -> Ramda
+
+### resume rewrite
 
 > 清晰简洁的描述出了自己在公司推动了什么事情，解决了什么难点，而不是千篇一律的流水账。
 > <https://juejin.cn/post/6921890174842454023>

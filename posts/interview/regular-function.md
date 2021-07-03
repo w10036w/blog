@@ -75,11 +75,11 @@ Array.prototype.filter = function(fn, thisArg) {
 ```js
 flat = arr => {
   // if allow reduce
-  return arr.reduce((acc, cur) => {
-    if (Array.isArray(cur)) acc.push(...flat(cur))
-    else acc.push(cur)
-    return acc
-  }, [])
+  // return arr.reduce((acc, cur) => {
+  //   if (Array.isArray(cur)) acc.push(...flat(cur))
+  //   else acc.push(cur)
+  //   return acc
+  // }, [])
   // not allowed
   var res = []
   arr.forEach(e => {
@@ -118,6 +118,56 @@ p.then(responseText => {
   console.log(new Error(status))
 })
 ```
+
+### xhr get upload progress
+
+> 复杂可参考 [文件上传带进度条](https://zhuanlan.zhihu.com/p/55542168)
+
+```js
+var formData = new FormData(); 
+formData.append("file", document.getElementById('file').files[0]); 
+formData.append("token", token_value); // 其他参数按这样子加入
+
+var xhr = new XMLHttpRequest();
+xhr.open('POST', '/uploadurl');
+// 上传完成后的回调函数
+xhr.onload = function () {
+  if (xhr.status === 200) {
+　　console.log('上传成功');
+  } else {
+  　console.log('上传出错');
+  }
+};
+// 获取上传进度
+xhr.upload.onprogress = function (event) {
+  if (event.lengthComputable) {
+    var percent = Math.floor(event.loaded / event.total * 100) ;
+    // 设置进度显示
+    $("#J_upload_progress").progress('set progress', percent); // use jquery progress plugin
+    // or change div width  <div id='container'>
+  }
+};
+xhr.send(formData);
+```
+
+### [文件切片上传 file slice upload](https://juejin.cn/post/6844904046436843527)
+
+#### 前端
+
+> 前端大文件上传网上的大部分文章已经给出了解决方案，核心是利用 Blob.prototype.slice 方法，和数组的 slice 方法相似，调用的 slice 方法可以返回原文件的某个切片
+>
+> 这样我们就可以根据预先设置好的切片最大数量将文件切分为一个个切片，然后借助 http 的可并发性，同时上传多个切片，这样从原本传一个大文件，变成了同时传多个小的文件切片，可以大大减少上传时间
+>
+> 另外由于是并发，传输到服务端的顺序可能会发生变化，所以我们还需要给每个切片记录顺序
+
+#### 服务端
+
+> 服务端需要负责接受这些切片，并在接收到所有切片后合并切片
+
+何时合并切片: 前端进行配合，前端在每个切片中都携带切片最大数量的信息，当服务端接受到这个数量的切片时自动合并，也可以额外发一个请求主动通知服务端进行切片的合并
+
+如何合并切片: nodejs 的 读写流（readStream/writeStream），将所有切片的流传输到最终文件的流里
+>
 
 ### Iterator (TODO)
 
@@ -425,9 +475,10 @@ console.log(sum(100, 200)(300)(400)())
 
 ```js
 compose = (...fns) => (...args) => {
+  if (fns.length===0) throw Error()
   let i = fns.length - 1
-  let res = fns[i].apply(this, args)
-  while (i--) res = fns[i].call(this, res)
+  let res = fns[i].apply(this, args) // apply is compulsory
+  while (i--) res = fns[i].call(this, res) // call is too as we need to keep context
   return res
 }
 pipe = (...fns) => (...args) => {
@@ -1029,3 +1080,97 @@ var qq = setInterval(() => {
 #### Object merge
 
 和 deepClone 有些类似
+
+#### Get Url Params
+
+```js
+function getAllUrlParams(url) {
+
+  // get query string from url (optional) or window
+  var queryString = url ? url.split('?')[1] : window.location.search.slice(1);
+
+  // we'll store the parameters here
+  var obj = {};
+
+  // if query string exists
+  if (queryString) {
+
+    // stuff after # is not part of query string, so get rid of it
+    queryString = queryString.split('#')[0];
+
+    // split our query string into its component parts
+    var arr = queryString.split('&');
+
+    for (var i = 0; i < arr.length; i++) {
+      // separate the keys and the values
+      var a = arr[i].split('=');
+
+      // set parameter name and value (use 'true' if empty)
+      var paramName = a[0];
+      var paramValue = typeof (a[1]) === 'undefined' ? true : a[1];
+
+      // (optional) keep case consistent
+      paramName = paramName.toLowerCase();
+      if (typeof paramValue === 'string') paramValue = paramValue.toLowerCase();
+
+      // if the paramName ends with square brackets, e.g. colors[] or colors[2]
+      if (paramName.match(/\[(\d+)?\]$/)) {
+
+        // create key if it doesn't exist
+        var key = paramName.replace(/\[(\d+)?\]/, '');
+        if (!obj[key]) obj[key] = [];
+
+        // if it's an indexed array e.g. colors[2]
+        if (paramName.match(/\[\d+\]$/)) {
+          // get the index value and add the entry at the appropriate position
+          var index = /\[(\d+)\]/.exec(paramName)[1];
+          obj[key][index] = paramValue;
+        } else {
+          // otherwise add the value to the end of the array
+          obj[key].push(paramValue);
+        }
+      } else {
+        // we're dealing with a string
+        if (!obj[paramName]) {
+          // if it doesn't exist, create property
+          obj[paramName] = paramValue;
+        } else if (obj[paramName] && typeof obj[paramName] === 'string'){
+          // if property does exist and it's a string, convert it to an array
+          obj[paramName] = [obj[paramName]];
+          obj[paramName].push(paramValue);
+        } else {
+          // otherwise add the property
+          obj[paramName].push(paramValue);
+        }
+      }
+    }
+  }
+
+  return obj;
+}
+```
+
+#### Promise.all
+
+```js
+Promise.prototype.all = function(promises) {
+  let results = [];
+  let promiseCount = 0;
+  let promisesLength = promises.length;
+  return new Promise(function(resolve, reject) {
+    for (let val of promises) {
+      Promise.resolve(val).then(function(res) {
+        promiseCount++;
+        // results.push(res);
+        results[i] = res;
+        // 当所有函数都正确执行了，resolve输出所有返回结果。
+        if (promiseCount === promisesLength) {
+          return resolve(results);
+        }
+      }, function(err) {
+        return reject(err);
+      });
+    }
+  });
+};
+```

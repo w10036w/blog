@@ -1,4 +1,9 @@
 ## [146. LRU Cache](https://leetcode.com/problems/lru-cache/)
+
+> 要点：存储一个 Map 来保存 capacity 数量的 双向链表，同时记录 head, tail
+>
+> 更新时，如果是已存在的key，找出来更新，把它推到head；如果是新的，新建一个 node，推到当前的 head 前并更新 head，如果 size 超了要丢掉 tail，并更新新tail
+
 Design and implement a data structure for Least Recently Used (LRU) cache. It should support the following operations: get and put.
 
 get(key) - Get the value (will always be positive) of the key if the key exists in the cache, otherwise return -1.
@@ -10,6 +15,7 @@ Follow up:
 Could you do both operations in O(1) time complexity?
 
 Example:
+
 ```js
 LRUCache cache = new LRUCache( 2 /* capacity */ );
 

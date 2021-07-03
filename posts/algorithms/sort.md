@@ -1,6 +1,9 @@
 # interview - sort
+
 ## Quick Sort
+
 best
+
 - 记录一个索引l从数组最左侧开始，记录一个索引r从数组右侧开始
 - 在 `l<r` 的条件下，找到右侧小于 target 的值 array[r], 并将其赋值到 array[l]
 - 在 `l<r` 的条件下，找到左侧大于target的值 array[l], 并将其赋值到 array[r]
@@ -51,16 +54,20 @@ function quickSort(arr, l=0, r=arr.length-1) {
 ```
 
 ## Merge Sort
+
 > 参考 [ConardLi](https://github.com/ConardLi/awesome-coding-js/blob/master/%E7%AE%97%E6%B3%95%E5%88%86%E7%B1%BB/%E6%8E%92%E5%BA%8F/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F.md)
 
 分割：
+
 - 将数组从中点进行分割，分为左、右两个数组
 - 递归分割左、右数组，直到数组长度小于2
 
 归并 (治理)
+
 - 如果需要合并，那么左右两数组已经有序了。
 - 创建一个临时存储数组temp，比较两数组第一个元素，将较小的元素加入临时数组
 - 若左右数组有一个为空，那么此时另一个数组一定大于temp中的所有元素，直接将其所有元素加入temp
+
 ```js
 
 // best
@@ -104,6 +111,7 @@ function merge(arr1, arr2) {
 ```
 
 ## Heap Sort 堆排序
+
 - 创建一个大顶堆，大顶堆的堆顶一定是最大的元素
 - 交换第一个元素和最后一个元素，让剩余的元素继续调整为大顶堆
 - 从后往前以此和第一个元素交换并重新构建，排序完成

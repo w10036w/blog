@@ -18,3 +18,7 @@
 ### Sentry
 
 > <https://juejin.im/post/5dba5a39e51d452a2378348a>
+
+### performance optimization
+
+[你知道的前端优化手段](https://juejin.cn/post/6966857691381645325)
