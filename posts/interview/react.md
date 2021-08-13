@@ -122,7 +122,7 @@ async, batch, trigger `update` & `rerender` (if `shouldComponentUpdate` is not o
 
 这是由于 setState 的两种更新机制导致的，只有在 **批量更新模式** 中，才会是 “异步” 的。
 
-直接传递对象的 `setState({ ... }, () => {})` 会被合并成一次
+直接传递对象的 `setState({ ... }, () => {})` 会被合并成一次, 相同 key 值的会被更后面的覆盖
 
 使用函数传递 `setState(prev => ({}), () => {})` 不会被合并
 
@@ -148,6 +148,14 @@ componentDidMount() {
   // 2, 2
 }
 ```
+
+> [你真的理解setState吗？ - 虹晨的文章 - 知乎](
+https://zhuanlan.zhihu.com/p/39512941)
+
+1. setState  只在合成事件和钩子函数中是“异步”的，在原生事件和setTimeout 中都是同步的。
+2. setState 的“异步”并不是说内部由异步代码实现，其实本身执行的过程和代码都是同步的，只是合成事件和钩子函数的调用顺序在更新之前，导致在合成事件和钩子函数中没法立马拿到更新后的值，形成了所谓的“异步”，当然可以通过第二个参数 setState(partialState, callback) 中的callback拿到更新后的结果。
+3. setState 的批量更新优化也是建立在“异步”（合成事件、钩子函数）之上的，在原生事件和setTimeout 中不会批量更新，在“异步”中如果对同一个值进行多次setState，setState的批量更新策略会对其进行覆盖，取最后一次的执行，如果是同时setState多个不同的值，在更新时会对其进行合并批量更新。
+
 
 ### Diff VDOM ( O(n^3) -> O(n) )
 
@@ -439,6 +447,26 @@ function render() {
   effectCursor = 0 // 注意将 effectCursor 重置为0
 }
 ```
+
+#### [存取状态的比较 useState vs useRef vs useMemo](https://dev.to/raicuparta/compute-values-on-component-mount-with-react-hooks-state-vs-ref-4epk?signin=true)
+
+##### useState
+
+- for storing values that persist across renders;
+- updates trigger a re-render;
+- updates via setter function.
+
+##### useRef
+
+- also for storing values that persist across renders;
+- updates don't trigger a re-render;
+- mutable directly via the .current property.
+
+##### useMemo
+
+- for performance optimization only
+
+#### [计算属性的实现 | A React state hook for computed values](https://dev.to/elad/a-react-state-hook-for-computed-values-9p)
 
 #### Class vs Hooks (todo)
 

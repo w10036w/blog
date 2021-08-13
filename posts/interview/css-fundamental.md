@@ -261,3 +261,25 @@ will-change: transform;
 ```
 
 #### [垂直排版](https://juejin.cn/post/6966449320744714277)
+
+#### 字体
+
+```html
+<link rel="stylesheet" href="https://" type="text/css"/>
+```
+
+```css
+@font-face {fonta-family: 'myfont'; src: url('myfont.tff');} 
+/** or */
+@import url ('https://..........');
+```
+
+
+[引入字体最佳实践](https://web.dev/font-best-practices/)
+
+
+[Optimize WebFont loading and rendering](https://web.dev/optimize-webfont-loading/#the-font-loading-api)
+
+1. font is **lazy loading**, meaning it will ONLY be loaded after css selector uses the `font-family`
+2. thus we need to use `<link rel="preload">` to prefetch the font family
+3. use `font-display` inside `@font-face`
