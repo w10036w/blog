@@ -6,7 +6,7 @@
 
 ## Lazy Load
 
-- resouces in a page: listen to scroll
+- resouces in a page: IntersectionObserver listen to scroll
 - routes: `code splitting` / `React.lazy + Suspense` / 3rd libs such as react-loadable
 
 ## Error Handling
