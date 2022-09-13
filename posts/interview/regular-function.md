@@ -1009,7 +1009,7 @@ function lazyload() {
 `Intersection Observer`可以不用监听`scroll`事件，做到元素一可见便调用回调，在回调里面我们来判断元素是否可见。
 
 ```js
-if (IntersectionObserver) {
+if ("IntersectionObserver" in window) {
   let lazyImageObserver = new IntersectionObserver((entries, observer) => {
     entries.forEach((entry, index) => {
       let lazyImage = entry.target
@@ -1026,6 +1026,32 @@ if (IntersectionObserver) {
     lazyImageObserver.observe(img[i])
   }
 }
+```
+
+better solution by [web.dev](https://web.dev/lazy-loading-images/#images-inline-intersection-observer)
+give a class for each image
+```js
+// html
+/**
+ * <img class="lazy" data-src="xxx" data-srcset="image-to-lazy-load-2x.jpg 2x, image-to-lazy-load-1x.jpg 1x" />
+ */
+document.addEventListener("DOMContentLoaded", function() {
+  var images = [...document.querySelectorAll("img[data-src]")] // specify images that need to be lazy-loaded
+  
+  let ob = new IntersectionObserver((entries, observer) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const img = e.target
+      img.src = img.dataset.src // === img.src = img.getAttribute("data-src")
+      img.srcset = img.dataset.srcset
+      img.removeAttribute("data-src")
+      // img.classList.remove("lazy")
+      ob.unobserve(img)
+    })
+  })
+  images.forEach(e => ob.observe(e))
+})
+
 ```
 
 #### RateLimit control (FB intern)

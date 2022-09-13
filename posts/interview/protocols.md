@@ -463,6 +463,12 @@ crossOrigin 属性的值默认为 anonymous，即不携带 cookie，如果设置
 - `sprites, minify, compress`
 - `lazyload` 非首屏视口内容懒加载
 
+### frame-based vs stream-based
+
+Frame-Based: I told you that I'm sending you 8 bytes and I send you 6 bytes, you would wait for the next 2 bytes and than say "this is a message".
+
+Stream-Based: I send you 6 bytes. I send you 2 bytes. Is it one message? two messages? six messages? How do you know where one message starts and another begins?
+
 ## Q & A
 
 [TCP 连接和 HTTP 请求](https://zhuanlan.zhihu.com/p/93586950)
